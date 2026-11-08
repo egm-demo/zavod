@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#081a1b">
+<title>Поющий пруд</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
+<style>
+:root{--ink:#f6efe4;--muted:#b7c4bd;--accent:#5fb3a8;--gold:#e9c46a;--chip:rgba(10,20,22,.55);--line:rgba(246,239,228,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#081a1b;color:var(--ink);font-family:Manrope,system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#c{position:fixed;inset:0;width:100%;height:100%;touch-action:none;display:block}
+.top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 6px) 12px 0;display:flex;justify-content:space-between;align-items:center;pointer-events:none;z-index:3}
+.top>*{pointer-events:auto}
+.back{color:#d3ddd7;text-decoration:none;font-size:14px;min-height:44px;display:flex;align-items:center;padding:0 12px 0 6px}
+.icon{width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--chip);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.icon svg{width:22px;height:22px}
+.head{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 50px);text-align:center;pointer-events:none;z-index:3}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:34px;line-height:1;letter-spacing:.01em;text-shadow:0 2px 14px rgba(0,0,0,.5)}
+h1 i{color:var(--accent);transition:color .8s}
+.moods{display:flex;gap:6px;justify-content:center;margin:12px auto 0;padding:0 12px;max-width:520px;pointer-events:auto}
+.moods button{flex:1;max-width:110px;min-height:44px;border-radius:22px;border:1px solid var(--line);background:var(--chip);color:var(--muted);font:500 14px Manrope,system-ui,sans-serif;cursor:pointer;transition:all .4s}
+.moods button[aria-pressed="true"]{color:#0b1416;background:var(--accent);border-color:var(--accent);font-weight:600}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:0 12px max(14px, calc(env(safe-area-inset-bottom) + 6px));z-index:3;pointer-events:none}
+.bar>*{pointer-events:auto;max-width:520px;margin:0 auto}
+.volrow{display:flex;align-items:center;gap:10px;padding:0 6px;height:44px}
+.volrow svg{width:20px;height:20px;flex:none;color:var(--muted)}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:44px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:2px;background:linear-gradient(to right,var(--accent) var(--v,70%),rgba(246,239,228,.38) var(--v,70%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--ink);margin-top:-10.5px;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+input[type=range]::-moz-range-track{height:3px;background:rgba(246,239,228,.22)}
+input[type=range]::-moz-range-progress{height:3px;background:var(--accent)}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border:0;border-radius:50%;background:var(--ink)}
+.btns{display:flex;gap:8px}
+.btns button{flex:1;min-height:60px;border-radius:16px;border:1px solid var(--line);background:rgba(8,16,18,.82);color:var(--ink);font:500 13px/1.15 Manrope,system-ui,sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:7px 6px;transition:all .3s}
+.btns button svg{width:22px;height:22px;flex:none}
+.btns button span{min-height:2.3em;display:flex;align-items:center;text-align:center}
+.btns button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#0b1416;font-weight:600}
+.start{position:fixed;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;pointer-events:none;z-index:2;transition:opacity 1.2s}
+.start.gone{opacity:0}
+.start .ring{width:74px;height:74px;margin:0 auto 18px;border-radius:50%;border:1px solid rgba(246,239,228,.5);animation:pulse 2.6s ease-out infinite}
+.start .t{font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;font-style:italic}
+.start .s{color:var(--muted);font-size:15px;margin-top:6px}
+@keyframes pulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 130px);transform:translate(-50%,10px);width:calc(100% - 40px);max-width:420px;background:rgba(8,14,16,.8);border:1px solid var(--line);border-radius:16px;padding:12px 16px;font-size:14px;line-height:1.45;color:var(--ink);text-align:center;opacity:0;pointer-events:none;transition:opacity .6s,transform .6s;z-index:4}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){.start .ring{animation:none}}
+</style>
+
+
+
+<!--pwa--><link rel="manifest" href="../../manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="../../icons/icon-192.png"><link rel="apple-touch-icon" href="../../icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('../../sw.js'))</script><!--/pwa-->
+</head>
+<body>
+<canvas id="c" aria-label="Пруд: касайся воды, чтобы играть"></canvas>
+
+<div class="top">
+  <a class="back" href="../../index.html">‹ все приложения</a>
+  <button class="icon" id="mute" aria-label="Выключить звук" aria-pressed="false"></button>
+</div>
+
+<div class="head">
+  <h1>Поющий <i>пруд</i></h1>
+  <div class="moods" id="moods"></div>
+</div>
+
+<div class="start" id="start">
+  <div class="ring"></div>
+  <p class="t">Коснись воды</p>
+  <p class="s">и пруд зазвучит</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="bar">
+  <div class="volrow">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
+    <input type="range" id="vol" min="0" max="100" value="70" aria-label="Громкость">
+  </div>
+  <div class="btns">
+    <button id="tool" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 19c-4-1.5-6.5-6-5-10.5 2.2 2.3 4.4 5 5 10.5zm0 0c4-1.5 6.5-6 5-10.5-2.2 2.3-4.4 5-5 10.5zm0 0c-1.5-4.5 0-10 0-13 0 3 1.5 8.5 0 13z" fill="currentColor"/></svg><span>Посадить<br>кувшинку</span></button>
+    <button id="auto" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 17V6l10-2v11"/><circle cx="6.5" cy="17" r="2.5"/><circle cx="16.5" cy="15" r="2.5"/></svg><span>Сыграй сам</span></button>
+    <button id="clear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 12c2.5-3 5.5-3 8 0s5.5 3 8 0"/></svg><span>Тишина</span></button>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const LS = 'kuv_music_';
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(LS+k); return v===null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(LS+k, JSON.stringify(v)); }catch(e){} }
+};
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Настроения ---------- */
+const MOODS = {
+  pond:  {name:'Пруд',   root:62, scale:[0,2,4,7,9],        count:13, bpm:92, timbre:'bell',   ir:2.8, wet:.30, dly:.16,
+          c:{top:'#123230',bot:'#071718',ripple:'176,234,222',glow:'95,179,168',pad:'#5f8f63',pad2:'#7fae7a',petal:'#f0b6c4',petal2:'#f6efe4',core:'#e9c46a',accent:'#5fb3a8',moon:'246,239,228'}},
+  egypt: {name:'Египет', root:52, scale:[0,1,4,5,7,8,10],   count:16, bpm:76, timbre:'pluck',  ir:3.6, wet:.38, dly:.20, drone:true,
+          c:{top:'#24143a',bot:'#060409',ripple:'233,196,106',glow:'150,110,200',pad:'#3c4d3a',pad2:'#5a6d52',petal:'#a684cf',petal2:'#e6d8f5',core:'#e9c46a',accent:'#e9c46a',moon:'233,196,106'}},
+  night: {name:'Ночь',   root:57, scale:[0,3,5,7,10],       count:13, bpm:66, timbre:'epiano', ir:4.6, wet:.48, dly:.24,
+          c:{top:'#0e1c42',bot:'#03070f',ripple:'156,186,255',glow:'80,110,200',pad:'#33594f',pad2:'#4b7769',petal:'#f6efe4',petal2:'#dbe4ff',core:'#e9c46a',accent:'#8fb3ff',moon:'220,230,255'}},
+  rain:  {name:'Дождь',  root:65, scale:[0,2,4,6,7,9,11],   count:16, bpm:84, timbre:'drop',   ir:2.4, wet:.30, dly:.18, rain:true,
+          c:{top:'#1f2d31',bot:'#0a1214',ripple:'208,224,228',glow:'130,160,170',pad:'#5f8f63',pad2:'#7fae7a',petal:'#f0b6c4',petal2:'#f6efe4',core:'#e9c46a',accent:'#a9c7cc',moon:'200,215,220'}}
+};
+const LOOPS = [4,6,8,3,5,4,12,6];
+
+/* ---------- Состояние ---------- */
+const S = {
+  mood: MOODS[store.get('mood','pond')] ? store.get('mood','pond') : 'pond',
+  vol: store.get('vol', 70),
+  muted: store.get('muted', false),
+  lilies: [], ripples: [], tool: 'note', auto: false, rainOn: true,
+  beat: 0, vBeat: 0, nextT: 0, events: [], press: null, plantCount: store.get('count', 0),
+  autoDeg: 5, autoX: .5, idSeq: 1,
+  stats: {beats:0, scheduled:0, lilyPlays:{}, croaks:0, drops:0, autoNotes:0}
+};
+(store.get('lilies', []) || []).forEach(l => {
+  if (typeof l.x==='number' && typeof l.y==='number')
+    S.lilies.push({id:S.idSeq++, x:l.x, y:l.y, n:l.n||4, phase:0, frog:!!l.frog, rot:l.rot||0, auto:false, pulse:0, croak:0, born:performance.now()-2000, dying:0});
+});
+const mood = () => MOODS[S.mood];
+function saveLilies(){ store.set('lilies', S.lilies.filter(l=>!l.auto && !l.dying).map(l=>({x:+l.x.toFixed(4),y:+l.y.toFixed(4),n:l.n,frog:l.frog,rot:+l.rot.toFixed(2)}))); }
+
+/* ---------- Ноты ---------- */
+const mtof = m => 440*Math.pow(2,(m-69)/12);
+function notes(){ const m=mood(), a=[]; for(let o=0;a.length<m.count;o++) for(const iv of m.scale){ if(a.length<m.count) a.push(m.root+12*o+iv); } return a; }
+const PLAY_TOP=.16, PLAY_BOT=.80;
+function degFromY(yn){ const n=notes(); const t=Math.min(1,Math.max(0,(yn-PLAY_TOP)/(PLAY_BOT-PLAY_TOP))); return Math.round((1-t)*(n.length-1)); }
+function yFromDeg(d){ const n=notes(); return PLAY_TOP + (1-d/(n.length-1))*(PLAY_BOT-PLAY_TOP); }
+const beatDur = () => 60/mood().bpm/2; // восьмая
+
+/* ---------- Звук ---------- */
+let A = null;
+function makeIR(ctx, sec){
+  const len = Math.floor(ctx.sampleRate*sec), b = ctx.createBuffer(2,len,ctx.sampleRate);
+  for(let ch=0;ch<2;ch++){ const d=b.getChannelData(ch); let lp=0;
+    for(let i=0;i<len;i++){ const t=i/len; const n=(Math.random()*2-1); lp = lp + (n-lp)*(0.55-0.4*t); d[i] = lp*Math.pow(1-t,2.8)*(i<ctx.sampleRate*0.012?i/(ctx.sampleRate*0.012):1); } }
+  return b;
+}
+function unlock(){
+  if (A) { if (A.ctx.state!=='running') A.ctx.resume(); return; }
+  const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return;
+  const ctx = new AC({latencyHint:'interactive'});
+  const bus = ctx.createGain(); bus.gain.value = .75;
+  const dry = ctx.createGain(); dry.gain.value = 1;
+  const revSend = ctx.createGain(); revSend.gain.value = mood().wet;
+  const conv = ctx.createConvolver(); conv.buffer = makeIR(ctx, mood().ir);
+  const revOut = ctx.createGain(); revOut.gain.value = .9;
+  const dlySend = ctx.createGain(); dlySend.gain.value = mood().dly;
+  const delay = ctx.createDelay(2); delay.delayTime.value = beatDur()*3;
+  const dlyF = ctx.createBiquadFilter(); dlyF.type='lowpass'; dlyF.frequency.value=2400;
+  const fb = ctx.createGain(); fb.gain.value=.36;
+  const glue = ctx.createDynamicsCompressor(); glue.threshold.value=-18; glue.knee.value=10; glue.ratio.value=3; glue.attack.value=.01; glue.release.value=.3;
+  const lim = ctx.createDynamicsCompressor(); lim.threshold.value=-4; lim.knee.value=0; lim.ratio.value=20; lim.attack.value=.002; lim.release.value=.12;
+  const master = ctx.createGain(); master.gain.value = S.muted?0:volGain();
+  const an = ctx.createAnalyser(); an.fftSize = 2048;
+  bus.connect(dry); dry.connect(glue);
+  bus.connect(revSend); revSend.connect(conv); conv.connect(revOut); revOut.connect(glue);
+  bus.connect(dlySend); dlySend.connect(delay); delay.connect(dlyF); dlyF.connect(fb); fb.connect(delay); dlyF.connect(glue); dlyF.connect(revSend);
+  glue.connect(lim); lim.connect(master); master.connect(an); an.connect(ctx.destination);
+  A = {ctx, bus, revSend, conv, dlySend, delay, master, an, voices:0, drone:null, peak:0, peakBuf:new Float32Array(2048)};
+  // iOS: тихий буфер разблокирует вывод
+  const sb = ctx.createBufferSource(); sb.buffer = ctx.createBuffer(1,1,22050); sb.connect(ctx.destination); sb.start(0);
+  if (ctx.state!=='running') ctx.resume();
+  S.nextT = ctx.currentTime + .08; S.beat = 0;
+  S.lilies.forEach(l => l.phase = (l.id*3) % l.n);
+  if (mood().drone) startDrone();
+  setInterval(schedule, 25);
+  document.getElementById('start').classList.add('gone');
+  if (!store.get('hint', false)) { setTimeout(()=>toast('Коснись воды — прозвучит нота. Подержи палец — вырастет кувшинка и будет петь сама. Коснись кувшинки, чтобы она ушла.', 7000), 900); store.set('hint', true); }
+}
+const volGain = () => Math.pow(S.vol/100, 1.6) * .9;
+function applyVol(){ if(A) A.master.gain.setTargetAtTime(S.muted?0:volGain(), A.ctx.currentTime, .05); }
+
+function vgain(peak, t, a, dec){
+  const g = A.ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(peak, t+a); g.gain.exponentialRampToValueAtTime(0.0001, t+a+dec); return g;
+}
+function osc(type, f, t, stop){ const o=A.ctx.createOscillator(); o.type=type; o.frequency.setValueAtTime(f,t); o.start(t); o.stop(stop); return o; }
+
+function playNote(midi, x, t, vel){
+  if(!A || A.voices>30) return false;
+  const ctx=A.ctx, f=mtof(midi), m=mood(); vel = vel==null?1:vel;
+  const lvl = vel * Math.max(.45, 1-(midi-55)/55);
+  const out = ctx.createGain(); out.gain.value = 1;
+  let node = out;
+  if (ctx.createStereoPanner){ const p=ctx.createStereoPanner(); p.pan.value=(x-.5)*1.1; out.connect(p); node=p; }
+  node.connect(A.bus);
+  let end, last;
+  if (m.timbre==='bell'){
+    const dec = 2.4-.8*x; end = t+dec+.05;
+    const c = osc('sine', f, t, end), ratio = 2+x*1.5;
+    const mo = osc('sine', f*ratio, t, end), mg = ctx.createGain();
+    mg.gain.setValueAtTime(f*ratio*(.5+2*x), t); mg.gain.exponentialRampToValueAtTime(f*.04, t+.9);
+    mo.connect(mg); mg.connect(c.frequency);
+    const g = vgain(.17*lvl, t, .004, dec); c.connect(g); g.connect(out);
+    const th = osc('sine', f*4, t, t+.25), tg = vgain(.05*lvl*(1-x)+.005, t, .002, .16); th.connect(tg); tg.connect(out);
+    last = c;
+  } else if (m.timbre==='pluck'){
+    const dec = 1.7; end = t+dec+.05;
+    const a = osc('sawtooth', f, t, end), b = osc(x>.5?'square':'triangle', f*1.004, t, end);
+    const fl = ctx.createBiquadFilter(); fl.type='lowpass'; fl.Q.value=3;
+    fl.frequency.setValueAtTime(Math.min(12000,f*(3+7*x)), t); fl.frequency.exponentialRampToValueAtTime(f*1.1, t+.5);
+    const g = vgain(.11*lvl, t, .003, dec);
+    a.connect(fl); b.connect(fl); fl.connect(g); g.connect(out);
+    const s = osc('sine', f/2, t, end), sg = vgain(.06*lvl, t, .004, dec*.8); s.connect(sg); sg.connect(out);
+    last = a;
+  } else if (m.timbre==='epiano'){
+    const dec = 3.2; end = t+dec+.05;
+    const c = osc('sine', f, t, end), mo = osc('sine', f, t, end), mg = ctx.createGain();
+    mg.gain.setValueAtTime(f*(.5+1.4*x), t); mg.gain.exponentialRampToValueAtTime(f*.06, t+1.2);
+    mo.connect(mg); mg.connect(c.frequency);
+    const g = vgain(.17*lvl, t, .006, dec); c.connect(g); g.connect(out);
+    const tine = osc('sine', f*4, t, t+.6), tg = vgain(.025*lvl*(.3+x), t, .002, .45); tine.connect(tg); tg.connect(out);
+    last = c;
+  } else { // drop
+    const dec = 1.1; end = t+dec+.05;
+    const c = osc('sine', f*.72, t, end); c.frequency.exponentialRampToValueAtTime(f, t+.045);
+    const g = vgain(.16*lvl, t, .003, dec); c.connect(g); g.connect(out);
+    const h = osc('triangle', f*2, t, end), hg = vgain(.035*lvl*(.2+x), t, .003, dec*.5); h.connect(hg); hg.connect(out);
+    last = c;
+  }
+  A.voices++;
+  last.onended = () => { A.voices--; try{ out.disconnect(); node.disconnect(); }catch(e){} };
+  return true;
+}
+function croakSound(t, pitch){
+  if(!A) return; const ctx=A.ctx;
+  for (let i=0;i<2;i++){
+    const t0 = t + i*.15, f0 = (i?240:200)*pitch;
+    const o = osc('sawtooth', f0, t0, t0+.2); o.frequency.exponentialRampToValueAtTime(f0*.62, t0+.12);
+    const bp = ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=720*pitch; bp.Q.value=2.2;
+    const g = vgain(.11, t0, .015, .12);
+    o.connect(bp); bp.connect(g); g.connect(A.bus);
+  }
+}
+function removeSound(t){
+  if(!A) return; const o = osc('sine', 520, t, t+.35); o.frequency.exponentialRampToValueAtTime(260, t+.3);
+  const g = vgain(.05, t, .01, .28); o.connect(g); g.connect(A.bus);
+}
+function startDrone(){
+  if(!A || A.drone) return; const ctx=A.ctx, t=ctx.currentTime, r=mood().root;
+  const g = ctx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(.06, t+4);
+  const fl = ctx.createBiquadFilter(); fl.type='lowpass'; fl.frequency.value=300; fl.Q.value=1.5;
+  const lfo = ctx.createOscillator(); lfo.frequency.value=.07; const lg = ctx.createGain(); lg.gain.value=140; lfo.connect(lg); lg.connect(fl.frequency); lfo.start();
+  const os = [ ['sawtooth', mtof(r-24)], ['sawtooth', mtof(r-17)*1.003], ['sine', mtof(r-12)] ].map(([ty,f])=>{ const o=ctx.createOscillator(); o.type=ty; o.frequency.value=f; o.connect(fl); o.start(); return o; });
+  fl.connect(g); g.connect(A.bus);
+  A.drone = {g, os:[...os, lfo]};
+}
+function stopDrone(){
+  if(!A || !A.drone) return; const d=A.drone, t=A.ctx.currentTime;
+  d.g.gain.cancelScheduledValues(t); d.g.gain.setValueAtTime(Math.max(.0001,d.g.gain.value), t); d.g.gain.exponentialRampToValueAtTime(.0001, t+1.8);
+  d.os.forEach(o=>o.stop(t+2)); A.drone=null;
+}
+
+/* ---------- Планировщик ---------- */
+function schedule(){
+  if(!A) return; const ctx=A.ctx, now=ctx.currentTime;
+  const ahead = document.hidden ? 1.6 : .14;
+  if (S.nextT < now - .25) S.nextT = now + .05;
+  while (S.nextT < now + ahead){
+    const t = S.nextT, b = S.beat;
+    S.events.push({t, type:'beat', b});
+    for (const l of S.lilies){
+      if (l.dying) continue;
+      if (((b - l.phase) % l.n + l.n) % l.n === 0){
+        const d = degFromY(l.y);
+        if (playNote(notes()[d], l.x, t, .8)){
+          S.stats.scheduled++; S.stats.lilyPlays[l.id] = (S.stats.lilyPlays[l.id]||0)+1;
+          S.events.push({t, type:'lily', id:l.id});
+        }
+      }
+    }
+    const frogs = S.lilies.filter(l=>l.frog && !l.dying);
+    if (frogs.length && Math.random() < .012*Math.min(3,frogs.length)){
+      const f = frogs[Math.floor(Math.random()*frogs.length)];
+      croakSound(t + beatDur()*.5, .9+Math.random()*.25); S.stats.croaks++;
+      S.events.push({t:t+beatDur()*.5, type:'croak', id:f.id});
+    }
+    if (mood().rain && S.rainOn && Math.random() < .3){
+      const x=.06+Math.random()*.88, y=PLAY_TOP+Math.random()*(PLAY_BOT-PLAY_TOP);
+      const tt = t + (Math.random()<.3 ? beatDur()*.5 : 0);
+      if (playNote(notes()[degFromY(y)], x, tt, .5)) { S.stats.drops++; S.events.push({t:tt, type:'drop', x, y, s:.6}); }
+    }
+    if (S.auto) autoStep(b, t);
+    S.stats.beats++; S.beat++; S.nextT += beatDur();
+  }
+}
+function autoStep(b, t){
+  const n = notes();
+  if (b % 2 === 0 && (b % 32) < 26 && Math.random() < .55){
+    const steps=[-2,-1,-1,0,1,1,2,-3,3]; S.autoDeg = Math.max(1, Math.min(n.length-2, S.autoDeg + steps[Math.floor(Math.random()*steps.length)]));
+    S.autoX = Math.max(.12, Math.min(.88, S.autoX + (Math.random()-.5)*.22));
+    const y = yFromDeg(S.autoDeg);
+    if (playNote(n[S.autoDeg], S.autoX, t, .85)) { S.stats.autoNotes++; S.events.push({t, type:'drop', x:S.autoX, y, s:1}); }
+  }
+  if (b % 24 === 12){
+    const autos = S.lilies.filter(l=>l.auto && !l.dying);
+    if (autos.length < 4 && Math.random() < .7){
+      const chord=[0,2,4,7,9].map(i=>Math.min(n.length-1,i+Math.floor(Math.random()*2)*Math.floor(n.length/3)));
+      const d = chord[Math.floor(Math.random()*chord.length)];
+      S.events.push({t, type:'plant', x:.12+Math.random()*.76, y:yFromDeg(d), auto:true});
+    } else if (autos.length >= 3 && Math.random() < .6){ autos[0].dying = performance.now(); }
+  }
+}
+
+/* ---------- Действия ---------- */
+let W=0, H=0, dpr=1;
+const cv = document.getElementById('c'), g2 = cv.getContext('2d');
+const padR = () => Math.max(24, Math.min(40, Math.min(W,H)*.075));
+function ripple(xn, yn, s){ S.ripples.push({x:xn, y:yn, born:performance.now(), s:s||1}); if (S.ripples.length>40) S.ripples.shift(); }
+function playAt(xn, yn){
+  unlock(); if(!A) { ripple(xn,yn,1); return; }
+  S.rainOn = true;
+  playNote(notes()[degFromY(yn)], xn, A.ctx.currentTime+.01, 1); ripple(xn, yn, 1);
+}
+function plantAt(xn, yn, auto){
+  if (S.lilies.filter(l=>!l.dying).length >= 14) { toast('Пруд уже полон. Коснись кувшинки, чтобы освободить место.'); return null; }
+  const n = LOOPS[S.plantCount % LOOPS.length];
+  const l = {id:S.idSeq++, x:xn, y:yn, n, phase:(S.beat+1)%n, frog:!auto && S.plantCount%3===1, rot:Math.random()*Math.PI*2, auto:!!auto, pulse:0, croak:0, born:performance.now(), dying:0};
+  S.plantCount++; store.set('count', S.plantCount);
+  S.lilies.push(l); ripple(xn, yn, 1.3); if(!auto) saveLilies(); return l;
+}
+function removeLily(l){ l.dying = performance.now(); removeSound(A?A.ctx.currentTime+.01:0); ripple(l.x,l.y,.8); saveLilies(); }
+function frogPos(l){ const r=padR(); const a=l.rot+Math.PI*1.15; return {x:l.x*W+Math.cos(a)*r*.68, y:l.y*H+Math.sin(a)*r*.68}; }
+function hit(px, py){
+  const r=padR();
+  for (let i=S.lilies.length-1;i>=0;i--){ const l=S.lilies[i]; if(l.dying) continue;
+    if (l.frog){ const f=frogPos(l); if (Math.hypot(px-f.x,py-f.y) < r*.42) return {l, frog:true}; }
+    if (Math.hypot(px-l.x*W, py-l.y*H) < r+6) return {l, frog:false};
+  }
+  return null;
+}
+function croakNow(l){ unlock(); if(!A) return; const t=A.ctx.currentTime+.01; croakSound(t, 1+Math.random()*.15); S.stats.croaks++; S.events.push({t, type:'croak', id:l.id}); }
+
+cv.addEventListener('pointerdown', e => {
+  e.preventDefault(); const x=e.clientX, y=e.clientY, xn=x/W, yn=y/H;
+  try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+  const h = hit(x,y);
+  if (h && h.frog){ croakNow(h.l); S.press=null; return; }
+  if (h){ unlock(); S.press={x,y,t0:performance.now(),lily:h.l,moved:false}; return; }
+  playAt(xn, yn);
+  if (S.tool==='lily'){ plantAt(xn, yn); S.press=null; return; }
+  const p = {x,y,t0:performance.now(),lily:null,lx:x,ly:y,planted:false};
+  p.timer = setTimeout(()=>{ if(S.press===p && !p.moved){ plantAt(p.x/W, p.y/H); p.planted=true; } }, 480);
+  S.press = p;
+});
+cv.addEventListener('pointermove', e => {
+  const p=S.press; if(!p) return; const x=e.clientX, y=e.clientY;
+  if (Math.hypot(x-p.x,y-p.y) > 14){ p.moved = true; if(p.timer) clearTimeout(p.timer); }
+  if (!p.lily && !p.planted && Math.hypot(x-p.lx,y-p.ly) > 42){ playAt(x/W, y/H); p.lx=x; p.ly=y; }
+});
+const endPress = e => {
+  const p=S.press; if(!p) return; if(p.timer) clearTimeout(p.timer);
+  if (p.lily && !p.moved && e.type==='pointerup' && performance.now()-p.t0 < 600) removeLily(p.lily);
+  S.press=null;
+};
+cv.addEventListener('pointerup', endPress); cv.addEventListener('pointercancel', endPress);
+cv.addEventListener('contextmenu', e=>e.preventDefault());
+['pointerdown','touchend','click'].forEach(ev => document.addEventListener(ev, () => { if (A && A.ctx.state!=='running') A.ctx.resume(); }, {capture:true, passive:true}));
+// любая кнопка интерфейса тоже включает звук
+document.querySelectorAll('.top button, .moods, .bar').forEach(el => el.addEventListener('pointerdown', unlock, {passive:true}));
+document.addEventListener('visibilitychange', () => { if(!document.hidden && A && A.ctx.state!=='running') A.ctx.resume(); });
+
+/* ---------- Интерфейс ---------- */
+const moodsEl = document.getElementById('moods');
+Object.entries(MOODS).forEach(([k,m]) => { const b=document.createElement('button'); b.textContent=m.name; b.dataset.m=k; b.addEventListener('click',()=>setMood(k)); moodsEl.appendChild(b); });
+function setMood(k){
+  if(!MOODS[k]) return; const prev = S.mood; S.mood = k; store.set('mood', k);
+  const m = mood();
+  document.documentElement.style.setProperty('--accent', m.c.accent);
+  document.querySelector('meta[name=theme-color]').content = m.c.bot;
+  moodsEl.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.m===k));
+  if (A && prev!==k){
+    const t=A.ctx.currentTime;
+    A.conv.buffer = makeIR(A.ctx, m.ir);
+    A.revSend.gain.setTargetAtTime(m.wet, t, .3); A.dlySend.gain.setTargetAtTime(m.dly, t, .3);
+    A.delay.delayTime.setTargetAtTime(beatDur()*3, t, .2);
+    if (m.drone) startDrone(); else stopDrone();
+    S.rainOn = true;
+    playNote(notes()[Math.floor(notes().length/2)], .5, t+.02, .7);
+  }
+}
+const muteBtn = document.getElementById('mute');
+function drawMute(){
+  muteBtn.innerHTML = S.muted
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
+  muteBtn.setAttribute('aria-pressed', S.muted); muteBtn.setAttribute('aria-label', S.muted?'Включить звук':'Выключить звук');
+}
+muteBtn.addEventListener('click', () => { S.muted=!S.muted; store.set('muted',S.muted); drawMute(); applyVol(); });
+const vol = document.getElementById('vol');
+vol.value = S.vol; vol.style.setProperty('--v', S.vol+'%');
+vol.addEventListener('input', () => { S.vol=+vol.value; vol.style.setProperty('--v', S.vol+'%'); store.set('vol',S.vol); if(S.muted){S.muted=false;store.set('muted',false);drawMute();} applyVol(); });
+const toolBtn = document.getElementById('tool');
+toolBtn.addEventListener('click', () => { S.tool = S.tool==='lily'?'note':'lily'; toolBtn.setAttribute('aria-pressed', S.tool==='lily'); if(S.tool==='lily') toast('Теперь каждое касание сажает кувшинку. Нажми ещё раз, чтобы просто играть.', 3500); });
+const autoBtn = document.getElementById('auto');
+function setAuto(on){
+  S.auto = on; autoBtn.setAttribute('aria-pressed', on); autoBtn.querySelector('span').textContent = on ? 'Играет сам' : 'Сыграй сам';
+  if (!on) S.lilies.forEach(l => { if(l.auto && !l.dying) l.dying = performance.now(); });
+}
+autoBtn.addEventListener('click', () => { unlock(); setAuto(!S.auto); if (S.auto) toast('Пруд сочиняет сам. Можно положить телефон и заниматься делами.', 3500); });
+document.getElementById('clear').addEventListener('click', () => {
+  setAuto(false); S.rainOn = false; const now=performance.now();
+  S.lilies.forEach(l => { if(!l.dying) l.dying = now; }); saveLilies();
+  if (A && A.drone && !mood().drone) stopDrone();
+});
+let toastT=0; const toastEl=document.getElementById('toast');
+function toast(msg, ms){ toastEl.textContent=msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove('on'), ms||3000); }
+
+/* ---------- Рисование ---------- */
+const stars = Array.from({length:70}, () => ({x:Math.random(), y:Math.random(), r:Math.random()*1.1+.3, p:Math.random()*6.28, s:.5+Math.random()*1.5}));
+const rainLines = Array.from({length:60}, () => ({x:Math.random(), y:Math.random(), v:.6+Math.random()*.6, l:10+Math.random()*16}));
+function resize(){
+  dpr = Math.min(2, window.devicePixelRatio||1); W = innerWidth; H = innerHeight;
+  cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr); g2.setTransform(dpr,0,0,dpr,0,0);
+}
+addEventListener('resize', resize);
+
+function drawBg(now){
+  const m=mood(), c=m.c;
+  const gr = g2.createLinearGradient(0,0,0,H); gr.addColorStop(0,c.top); gr.addColorStop(1,c.bot);
+  g2.fillStyle = gr; g2.fillRect(0,0,W,H);
+  // лунная дорожка
+  const mx = W*.74, my = H*.3;
+  const rg = g2.createRadialGradient(mx,my,0,mx,my,Math.max(W,H)*.45);
+  rg.addColorStop(0,`rgba(${c.moon},.11)`); rg.addColorStop(1,`rgba(${c.moon},0)`);
+  g2.fillStyle = rg; g2.fillRect(0,0,W,H);
+  g2.strokeStyle = `rgba(${c.moon},.13)`; g2.lineWidth = 1.2;
+  for (let i=0;i<9;i++){ const yy = my + (i-4)*18, w = (40 - Math.abs(i-4)*7) * (1+.15*Math.sin(now/900+i)); const off = reduced?0:Math.sin(now/1300+i*1.7)*6;
+    g2.beginPath(); g2.moveTo(mx-w+off,yy); g2.lineTo(mx+w+off,yy); g2.stroke(); }
+  if (S.mood==='egypt'){
+    // отражение полумесяца и тонкий золотой треугольник
+    g2.save(); g2.globalAlpha=.5; g2.fillStyle='rgba(233,196,106,.55)';
+    g2.beginPath(); g2.arc(mx, my-70, 16, Math.PI*.32, Math.PI*1.68); g2.arc(mx+8, my-70, 13, Math.PI*1.52, Math.PI*.48, true); g2.closePath(); g2.fill();
+    g2.globalAlpha=.10; g2.strokeStyle='#e9c46a'; g2.lineWidth=1;
+    g2.beginPath(); g2.moveTo(W*.08,H*.86); g2.lineTo(W*.32,H*.58); g2.lineTo(W*.56,H*.86); g2.closePath(); g2.stroke();
+    g2.beginPath(); g2.moveTo(W*.40,H*.86); g2.lineTo(W*.58,H*.66); g2.lineTo(W*.76,H*.86); g2.stroke();
+    g2.restore();
+  }
+  // звёзды в воде
+  for (const s of stars){ const a = reduced ? .35 : .2+.25*(1+Math.sin(now/1000*s.s+s.p))/2;
+    g2.fillStyle = `rgba(${c.moon},${a})`; g2.beginPath(); g2.arc(s.x*W, s.y*H, s.r, 0, 6.283); g2.fill(); }
+  if (m.rain && S.rainOn && !reduced){
+    g2.strokeStyle='rgba(210,225,230,.10)'; g2.lineWidth=1;
+    for (const r of rainLines){ r.y += r.v*.012; if (r.y>1.05){ r.y=-.05; r.x=Math.random(); }
+      const x=r.x*W, y=r.y*H; g2.beginPath(); g2.moveTo(x,y); g2.lineTo(x-r.l*.25,y+r.l); g2.stroke(); }
+  }
+}
+function drawRipples(now){
+  const c=mood().c;
+  S.ripples = S.ripples.filter(r => now - r.born < 2600);
+  for (const r of S.ripples){
+    const age=(now-r.born)/2600, x=r.x*W, y=r.y*H, rings = reduced?1:3;
+    for (let i=0;i<rings;i++){ const a = age - i*.09; if (a<=0) continue;
+      const R = (12 + a*150)*r.s, al = (1-a)*(1-a)*.55*(1-i*.25)*Math.min(1,r.s);
+      g2.strokeStyle=`rgba(${c.ripple},${al})`; g2.lineWidth = 1.6-i*.4;
+      g2.beginPath(); g2.ellipse(x,y,R,R*.62,0,0,6.283); g2.stroke(); }
+    if (age<.35){ const gl = g2.createRadialGradient(x,y,0,x,y,30*r.s); gl.addColorStop(0,`rgba(${c.ripple},${.35*(1-age/.35)})`); gl.addColorStop(1,`rgba(${c.ripple},0)`);
+      g2.fillStyle=gl; g2.beginPath(); g2.arc(x,y,30*r.s,0,6.283); g2.fill(); }
+  }
+}
+function drawLily(l, now){
+  const c=mood().c, r=padR(), x=l.x*W, y=l.y*H;
+  let k = Math.max(0, Math.min(1, (now-l.born)/600)); k = 1-Math.pow(1-k,3);
+  let alpha = 1; if (l.dying){ const d=Math.min(1,Math.max(0,(now-l.dying)/600)); alpha = 1-d; k *= 1-d*.3; }
+  if (k < .02 || alpha <= 0) return;
+  g2.save(); g2.globalAlpha = alpha; g2.translate(x,y); g2.scale(k,k);
+  // тень и лист
+  g2.fillStyle='rgba(0,0,0,.28)'; g2.beginPath(); g2.ellipse(3,5,r,r*.92,0,0,6.283); g2.fill();
+  g2.fillStyle=c.pad; g2.beginPath(); g2.moveTo(0,0); g2.arc(0,0,r,l.rot+.24,l.rot-.24+6.283); g2.closePath(); g2.fill();
+  g2.strokeStyle=c.pad2; g2.lineWidth=1; g2.globalAlpha=alpha*.6;
+  for (let i=1;i<7;i++){ const a=l.rot+.24+i*(6.283-.48)/7; g2.beginPath(); g2.moveTo(0,0); g2.lineTo(Math.cos(a)*r*.86,Math.sin(a)*r*.86); g2.stroke(); }
+  g2.globalAlpha=alpha;
+  // точки ритма
+  const pos = (((S.vBeat - l.phase) % l.n) + l.n) % l.n;
+  for (let i=0;i<l.n;i++){ const a=-Math.PI/2+i*6.283/l.n;
+    g2.fillStyle = i===pos ? c.core : `rgba(${c.ripple},.28)`;
+    g2.beginPath(); g2.arc(Math.cos(a)*(r+8),Math.sin(a)*(r+8), i===pos?2.6:1.8, 0, 6.283); g2.fill(); }
+  // цветок
+  const fo = l.frog ? .24 : .1, fx = Math.cos(l.rot+Math.PI*.15)*r*fo, fy = Math.sin(l.rot+Math.PI*.15)*r*fo, s=r*(l.frog?.55:.62);
+  const pk = 1 + (reduced?0:l.pulse*.2);
+  if (l.pulse>.02){ const gl=g2.createRadialGradient(fx,fy,0,fx,fy,s*2.6); gl.addColorStop(0,`rgba(${c.glow},${.5*l.pulse})`); gl.addColorStop(1,`rgba(${c.glow},0)`); g2.fillStyle=gl; g2.beginPath(); g2.arc(fx,fy,s*2.6,0,6.283); g2.fill(); }
+  g2.save(); g2.translate(fx,fy);
+  g2.fillStyle=c.petal;
+  for (let i=0;i<8;i++){ g2.save(); g2.rotate(l.rot+i*Math.PI/4); g2.beginPath(); g2.ellipse(0,-s*.5*pk,s*.2,s*.5*pk,0,0,6.283); g2.fill(); g2.restore(); }
+  g2.fillStyle=c.petal2;
+  for (let i=0;i<6;i++){ g2.save(); g2.rotate(l.rot+.3+i*Math.PI/3); g2.beginPath(); g2.ellipse(0,-s*.3*pk,s*.13,s*.32*pk,0,0,6.283); g2.fill(); g2.restore(); }
+  g2.fillStyle=c.core; g2.beginPath(); g2.arc(0,0,s*.15*(1+l.pulse*.3),0,6.283); g2.fill();
+  g2.restore(); g2.restore();
+  if (l.frog) drawFrog(l, k, alpha);
+}
+function drawFrog(l, k, alpha){
+  const p=frogPos(l), r=padR()*k, s=r*.46;
+  g2.save(); g2.globalAlpha=alpha; g2.translate(p.x,p.y);
+  const bob = reduced?0:Math.sin(performance.now()/700+l.id)*.6;
+  g2.translate(0,bob);
+  g2.fillStyle='rgba(0,0,0,.25)'; g2.beginPath(); g2.ellipse(1.5,s*.55,s*.95,s*.45,0,0,6.283); g2.fill();
+  if (l.croak>.01){ g2.fillStyle=`rgba(246,239,228,${.75*l.croak})`; g2.beginPath(); g2.ellipse(0,s*.35,s*.5*(1+l.croak*.5),s*.38*(1+l.croak*.6),0,0,6.283); g2.fill(); }
+  g2.fillStyle='#9ccc8c'; g2.strokeStyle='rgba(20,40,24,.7)'; g2.lineWidth=1.2; g2.beginPath(); g2.ellipse(0,0,s*.95,s*.72,0,0,6.283); g2.fill(); g2.stroke();
+  g2.fillStyle='#86b878'; g2.beginPath(); g2.ellipse(-s*.75,s*.35,s*.35,s*.22,-.4,0,6.283); g2.ellipse(s*.75,s*.35,s*.35,s*.22,.4,0,6.283); g2.fill();
+  g2.fillStyle='#a9d898';
+  g2.beginPath(); g2.arc(-s*.45,-s*.55,s*.32,0,6.283); g2.arc(s*.45,-s*.55,s*.32,0,6.283); g2.fill();
+  g2.fillStyle='#0e1a1c'; g2.beginPath(); g2.arc(-s*.45,-s*.58,s*.15,0,6.283); g2.arc(s*.45,-s*.58,s*.15,0,6.283); g2.fill();
+  g2.fillStyle='rgba(255,255,255,.8)'; g2.beginPath(); g2.arc(-s*.4,-s*.64,s*.05,0,6.283); g2.arc(s*.5,-s*.64,s*.05,0,6.283); g2.fill();
+  g2.strokeStyle='#3e6a40'; g2.lineWidth=1; g2.beginPath(); g2.arc(0,-s*.05,s*.3,.25,Math.PI-.25); g2.stroke();
+  g2.restore();
+}
+function drawPress(now){
+  const p=S.press; if(!p || p.lily || p.moved || p.planted || S.tool==='lily') return;
+  const a = Math.min(1,(now-p.t0)/480); if (a<.15) return;
+  g2.strokeStyle=`rgba(${mood().c.ripple},.7)`; g2.lineWidth=2;
+  g2.beginPath(); g2.arc(p.x,p.y,padR()+10,-Math.PI/2,-Math.PI/2+a*6.283); g2.stroke();
+}
+function processEvents(){
+  if(!A) return; const now=A.ctx.currentTime;
+  S.events.sort((a,b)=>a.t-b.t);
+  while (S.events.length && S.events[0].t <= now){
+    const e = S.events.shift();
+    if (e.type==='beat') S.vBeat = e.b;
+    else if (e.type==='lily'){ const l=S.lilies.find(q=>q.id===e.id); if(l){ l.pulse=1; if(!reduced) ripple(l.x,l.y,.55); } }
+    else if (e.type==='croak'){ const l=S.lilies.find(q=>q.id===e.id); if(l) l.croak=1; }
+    else if (e.type==='drop') ripple(e.x,e.y,e.s);
+    else if (e.type==='plant'){ if (S.auto) plantAt(e.x,e.y,true); }
+  }
+}
+let lastF = performance.now();
+function frame(now){
+  requestAnimationFrame(frame);
+  now = Math.max(now, performance.now());
+  const dt = Math.min(.1,Math.max(0,(now-lastF)/1000)); lastF = now;
+  processEvents();
+  drawBg(now);
+  drawRipples(now);
+  S.lilies = S.lilies.filter(l => !(l.dying && now-l.dying > 600));
+  for (const l of S.lilies){ l.pulse *= Math.pow(.02, dt); l.croak *= Math.pow(.05, dt); drawLily(l, now); }
+  drawPress(now);
+  if (A){ A.an.getFloatTimeDomainData(A.peakBuf); let pk=0; for (let i=0;i<A.peakBuf.length;i+=2){ const v=Math.abs(A.peakBuf[i]); if(v>pk) pk=v; } if (pk>A.peak) A.peak=pk; }
+}
+
+resize(); setMood(S.mood); drawMute();
+requestAnimationFrame(frame);
+
+window.__pond = { S, MOODS, get A(){ return A; }, notes, degFromY, plantAt, playAt, setMood, setAuto, unlock };
+})();
+</script>
+</body>
+</html>

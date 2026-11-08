@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1a1c">
+<title>Тихая заводь</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
+<style>
+:root{--bg:#0e1a1c;--bg2:#13262a;--ink:#f6efe4;--muted:#b7c4bd;--pink:#f0b6c4;--leaf:#7fae7a;--gold:#e9c46a;--line:rgba(246,239,228,.12)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;padding:calc(env(safe-area-inset-top) + 28px) 20px calc(env(safe-area-inset-bottom) + 40px);overflow-x:hidden}
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none}
+main{position:relative;z-index:1;max-width:560px;margin:0 auto}
+header{margin-bottom:28px}
+h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:46px;line-height:1;letter-spacing:.01em}
+h1 i{color:var(--pink);font-style:italic}
+.sub{margin-top:12px;color:var(--muted);font-size:15px;line-height:1.5;max-width:30em}
+.group{margin-top:30px}
+.group h2{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:22px;color:var(--gold);margin-bottom:10px;padding-left:2px}
+a.app{display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:center;padding:14px 4px;border-top:1px solid var(--line);color:inherit;text-decoration:none;min-height:76px;transition:background .2s}
+a.app:last-child{border-bottom:1px solid var(--line)}
+a.app:active,a.app:hover{background:rgba(246,239,228,.04)}
+a.app svg{width:56px;height:56px}
+.t{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;line-height:1.1}
+.d{color:var(--muted);font-size:14px;line-height:1.4;margin-top:3px}
+footer{margin-top:40px;color:var(--muted);font-size:13px;line-height:1.5;opacity:.8}
+@media (prefers-reduced-motion:reduce){#sky{display:none}}
+</style>
+
+
+
+<!--pwa--><link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="./icons/icon-192.png"><link rel="apple-touch-icon" href="./icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'))</script><!--/pwa-->
+</head>
+<body>
+<canvas id="sky"></canvas>
+<main>
+<header>
+  <h1>Тихая <i>заводь</i></h1>
+  <p class="sub">Десять маленьких приложений: поиграть, подышать, порисовать и поговорить с собой. Всё хранится только в этом телефоне.</p>
+</header>
+
+<section class="group"><h2>Для души</h2>
+<a class="app" href="apps/pond/index.html"><svg viewBox="0 0 56 56"><ellipse cx="28" cy="36" rx="22" ry="8" fill="#5f8f63"/><path d="M28 34c-6-2-10-8-8-14 3 3 6 6 8 14zm0 0c6-2 10-8 8-14-3 3-6 6-8 14zm0 0c-2-6 0-14 0-18 0 4 2 12 0 18z" fill="#f0b6c4"/></svg><div><div class="t">Пруд настроений</div><div class="d">Каждый день — одна кувшинка. За месяц вырастает пруд твоего настроения.</div></div></a>
+<a class="app" href="apps/jar/index.html"><svg viewBox="0 0 56 56"><rect x="16" y="14" width="24" height="34" rx="8" fill="none" stroke="#f6efe4" stroke-width="2"/><rect x="18" y="9" width="20" height="5" rx="2" fill="#7fae7a"/><circle cx="24" cy="32" r="3" fill="#e9c46a"/><circle cx="32" cy="38" r="2" fill="#e9c46a"/><circle cx="30" cy="26" r="2.5" fill="#e9c46a"/></svg><div><div class="t">Банка светлячков</div><div class="d">Записывай хорошее — оно светится. В плохой день достань одного светлячка.</div></div></a>
+<a class="app" href="apps/breathe/index.html"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="22" fill="none" stroke="#7fae7a" stroke-width="1.5" opacity=".5"/><circle cx="28" cy="28" r="14" fill="none" stroke="#7fae7a" stroke-width="1.5"/><path d="M28 36c-5-3-7-9-4-14 2 4 4 9 4 14zm0 0c5-3 7-9 4-14-2 4-4 9-4 14z" fill="#f0b6c4"/></svg><div><div class="t">Дыши с кувшинкой</div><div class="d">Цветок раскрывается на вдохе и закрывается на выдохе. Пара минут — и спокойнее.</div></div></a>
+</section>
+
+<section class="group"><h2>Поговорить с собой</h2>
+<a class="app" href="apps/mirror/index.html"><svg viewBox="0 0 56 56"><rect x="14" y="8" width="28" height="40" rx="3" fill="#2a1838" stroke="#e9c46a" stroke-width="1.5"/><path d="M18 28c4-6 16-6 20 0-4 6-16 6-20 0z" fill="none" stroke="#e9c46a" stroke-width="1.5"/><circle cx="28" cy="28" r="3" fill="#e9c46a"/></svg><div><div class="t">Зазеркалье</div><div class="d">Метафорические карты, как у психологов. Не гадание — способ услышать себя.</div></div></a>
+<a class="app" href="apps/thought/index.html"><svg viewBox="0 0 56 56"><ellipse cx="28" cy="40" rx="20" ry="5" fill="#13262a" stroke="#7fae7a"/><circle cx="20" cy="34" r="6" fill="#5a5a66"/><path d="M36 36c-4-2-6-7-3-11 2 3 3 7 3 11zm0 0c4-2 6-7 3-11-2 3-3 7-3 11z" fill="#f0b6c4"/><path d="M26 32h4" stroke="#e9c46a" stroke-width="1.5"/></svg><div><div class="t">Перевернуть мысль</div><div class="d">Дневник мыслей: когда накрутила себя — разобрать по полочкам и выдохнуть.</div></div></a>
+</section>
+
+<section class="group"><h2>Поиграть</h2>
+<a class="app" href="apps/frogs/index.html"><svg viewBox="0 0 56 56"><ellipse cx="28" cy="38" rx="18" ry="7" fill="#5f8f63"/><ellipse cx="28" cy="30" rx="11" ry="8" fill="#7fae7a"/><circle cx="23" cy="23" r="4" fill="#7fae7a"/><circle cx="33" cy="23" r="4" fill="#7fae7a"/><circle cx="23" cy="23" r="1.6" fill="#0e1a1c"/><circle cx="33" cy="23" r="1.6" fill="#0e1a1c"/></svg><div><div class="t">Лягушачий пасьянс</div><div class="d">Головоломка: лягушки прыгают друг через друга, пока не останется одна.</div></div></a>
+<a class="app" href="apps/mahjong/index.html"><svg viewBox="0 0 56 56"><rect x="10" y="14" width="22" height="28" rx="3" fill="#cdbfa6"/><rect x="8" y="12" width="22" height="28" rx="3" fill="#f6efe4"/><rect x="26" y="18" width="22" height="28" rx="3" fill="#cdbfa6"/><rect x="24" y="16" width="22" height="28" rx="3" fill="#f6efe4"/><path d="M35 36c-3-2-5-6-3-9 2 2 3 5 3 9zm0 0c3-2 5-6 3-9-2 2-3 5-3 9z" fill="#d97a93"/></svg><div><div class="t">Маджонг «Тихая заводь»</div><div class="d">Классический маджонг, только на костяшках — кувшинки, стрекозы и луна.</div></div></a>
+<a class="app" href="apps/sniper/index.html"><svg viewBox="0 0 56 56"><circle cx="40" cy="14" r="6" fill="#f6efe4"/><path d="M8 46L26 20 46 40" fill="none" stroke="#e9c46a" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="8" cy="46" r="3" fill="#e9c46a"/><rect x="42" y="38" width="8" height="10" rx="3" fill="#e9c46a" opacity=".8"/></svg><div><div class="t">Ночной снайпер</div><div class="d">Один выстрел светом: отрази его от зеркал и зажги все фонарики.</div></div></a>
+</section>
+
+<section class="group"><h2>Творить</h2>
+<a class="app" href="apps/monet/index.html"><svg viewBox="0 0 56 56"><rect x="8" y="10" width="40" height="34" fill="#3b6b78"/><g fill="#7fae7a"><circle cx="18" cy="32" r="5"/><circle cx="36" cy="24" r="4"/></g><g fill="#f0b6c4"><circle cx="18" cy="30" r="2"/><circle cx="36" cy="22" r="1.6"/></g><path d="M12 16h8M26 18h10M14 38h12" stroke="#9cc4cf" stroke-width="2" stroke-linecap="round"/></svg><div><div class="t">Мой Моне</div><div class="d">Рисуй пальцем — кисти сами делают мазки как на картинах с кувшинками.</div></div></a>
+<a class="app" href="apps/music/index.html"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="6" fill="none" stroke="#f6efe4" stroke-width="1.5"/><circle cx="28" cy="28" r="13" fill="none" stroke="#f6efe4" stroke-width="1.2" opacity=".6"/><circle cx="28" cy="28" r="21" fill="none" stroke="#f6efe4" stroke-width="1" opacity=".3"/><circle cx="28" cy="28" r="2.5" fill="#e9c46a"/></svg><div><div class="t">Поющий пруд</div><div class="d">Касайся воды — она звучит. Посади кувшинки, и пруд сыграет мелодию сам.</div></div></a>
+</section>
+
+<footer>Сделано с любовью. Совет: открой в Safari → «Поделиться» → «На экран Домой», и заводь будет как обычное приложение.</footer>
+</main>
+<script>
+(()=>{const c=document.getElementById('sky'),x=c.getContext('2d');let w,h,d=devicePixelRatio||1,f=[];
+function r(){w=innerWidth;h=innerHeight;c.width=w*d;c.height=h*d;x.setTransform(d,0,0,d,0,0)}r();addEventListener('resize',r);
+for(let i=0;i<18;i++)f.push({x:Math.random(),y:Math.random(),p:Math.random()*6,s:.3+Math.random()*.7});
+(function t(ms){x.clearRect(0,0,w,h);for(const o of f){o.x+=Math.sin(ms/3000+o.p)*.0003*o.s;o.y+=Math.cos(ms/4000+o.p)*.0002;const a=(Math.sin(ms/700*o.s+o.p)+1)/2;const X=((o.x%1)+1)%1*w,Y=((o.y%1)+1)%1*h;const g=x.createRadialGradient(X,Y,0,X,Y,10);g.addColorStop(0,`rgba(233,196,106,${.55*a})`);g.addColorStop(1,'rgba(233,196,106,0)');x.fillStyle=g;x.fillRect(X-10,Y-10,20,20)}requestAnimationFrame(t)})(0)})();
+</script>
+</body>
+</html>

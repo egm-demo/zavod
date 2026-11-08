@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1420">
+<title>Ночной снайпер</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
+<style>
+:root{--bg:#0b1420;--ink:#f6efe4;--muted:#a9b4b8;--gold:#e9c46a;--rose:#f0b6c4;--violet:#5b3f7a;--deep:#2a1838;--card:#132230}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+body{background:radial-gradient(120% 70% at 70% 0%,#1b2b44 0%,#0e1a26 45%,#0a1119 100%)}
+button{font:inherit;color:inherit}
+#app{position:relative;max-width:520px;margin:0 auto;height:100%;display:flex;flex-direction:column;
+ padding:calc(env(safe-area-inset-top) + 6px) calc(env(safe-area-inset-right) + 12px) calc(env(safe-area-inset-bottom) + 10px) calc(env(safe-area-inset-left) + 12px)}
+.top{display:flex;align-items:center;justify-content:space-between;min-height:44px;gap:8px}
+.back{color:var(--muted);text-decoration:none;font-size:14px;display:inline-flex;align-items:center;min-height:44px;padding-right:8px}
+.back:active{color:var(--ink)}
+.iconbtn{width:44px;height:44px;border-radius:50%;border:1px solid rgba(246,239,228,.14);background:rgba(19,34,48,.6);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.iconbtn svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+h1{font-family:"Cormorant Garamond",Prata,Georgia,serif;font-weight:600;font-size:34px;margin:6px 0 2px;letter-spacing:.5px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 14px;line-height:1.45}
+.screen{display:none;flex:1;min-height:0;flex-direction:column}
+.screen.on{display:flex}
+/* menu */
+#menu{overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#menu::-webkit-scrollbar{display:none}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding-bottom:18px}
+.lv{position:relative;aspect-ratio:1/1.08;min-height:64px;border-radius:14px;border:1px solid rgba(233,196,106,.18);background:linear-gradient(180deg,#16283a,#101d2a);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:4px}
+.lv .n{font-family:"Cormorant Garamond",Georgia,serif;font-size:26px;font-weight:600;line-height:1}
+.lv .st{display:flex;gap:3px}
+.lv .st i{width:9px;height:9px;transform:rotate(45deg);border-radius:2px;background:rgba(246,239,228,.14)}
+.lv .st i.f{background:var(--gold);box-shadow:0 0 6px rgba(233,196,106,.7)}
+.lv.locked{opacity:.42;cursor:default;border-color:rgba(246,239,228,.1)}
+.lv.locked .n{color:var(--muted)}
+.lv.cur{border-color:rgba(233,196,106,.6);box-shadow:0 0 14px rgba(233,196,106,.18)}
+.how{border-top:1px solid rgba(246,239,228,.08);padding:14px 2px 6px;color:var(--muted);font-size:13.5px;line-height:1.55}
+.how b{color:var(--ink);font-weight:600}
+/* game */
+.hud{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:2px 2px 8px}
+.hud .t{font-family:"Cormorant Garamond",Georgia,serif;font-size:24px;font-weight:600;line-height:1.1}
+.hud .s{color:var(--muted);font-size:13px;margin-top:2px}
+.shots{display:flex;gap:6px;align-items:center;padding-bottom:3px}
+.shots span{color:var(--muted);font-size:12px;margin-right:2px}
+.shots i{width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(233,196,106,.8)}
+.shots i.used{background:transparent;box-shadow:none;border:1px solid rgba(246,239,228,.25)}
+.shots i.extra{background:#c9a6d9;box-shadow:0 0 6px rgba(201,166,217,.6)}
+.board{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative}
+canvas{display:block;border-radius:18px;touch-action:none;box-shadow:0 10px 40px rgba(0,0,0,.45),0 0 0 1px rgba(246,239,228,.06)}
+.bar{display:flex;gap:10px;margin-top:10px}
+.btn{flex:1;min-height:48px;border-radius:24px;border:1px solid rgba(246,239,228,.16);background:rgba(19,34,48,.75);cursor:pointer;font-size:15px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn.gold{background:linear-gradient(180deg,#f0d38a,#d9ae4f);color:#1d1608;border-color:transparent;font-weight:600}
+.btn:active{transform:translateY(1px)}
+.hint{position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:13.5px;color:rgba(246,239,228,.8);pointer-events:none;transition:opacity .5s;text-shadow:0 1px 6px #000}
+/* overlay */
+.ov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(6,10,16,.62);z-index:5;padding:24px}
+.ov.on{display:flex}
+.card{width:100%;max-width:340px;background:linear-gradient(180deg,#172a3d,#101c29);border:1px solid rgba(233,196,106,.22);border-radius:22px;padding:22px 20px 18px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.card h2{font-family:"Cormorant Garamond",Georgia,serif;font-size:30px;font-weight:600;margin:2px 0 6px}
+.card p{color:var(--muted);margin:0 0 16px;font-size:14.5px;line-height:1.5}
+.bigstars{display:flex;justify-content:center;gap:14px;margin:10px 0 14px}
+.bigstars i{width:22px;height:22px;transform:rotate(45deg);border-radius:4px;background:rgba(246,239,228,.12)}
+.bigstars i.f{background:var(--gold);box-shadow:0 0 14px rgba(233,196,106,.8)}
+.card .bar{flex-direction:column}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+
+
+<!--pwa--><link rel="manifest" href="../../manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="../../icons/icon-192.png"><link rel="apple-touch-icon" href="../../icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('../../sw.js'))</script><!--/pwa-->
+</head>
+<body>
+<div id="app">
+ <div class="top">
+  <a class="back" href="../../index.html">‹ все приложения</a>
+  <button class="iconbtn" id="mute" aria-label="Звук"></button>
+ </div>
+
+ <section class="screen on" id="menu">
+  <h1>Ночной снайпер</h1>
+  <p class="sub">Одна вспышка света за выстрел. Отскоки от стен и зеркал, и все фонарики должны загореться.</p>
+  <div class="grid" id="grid"></div>
+  <div class="how">
+   <b>Как играть.</b> Потяните пальцем по полю в сторону, обратную цели, как рогатку, и отпустите. Пунктир показывает первые отскоки. Шар проходит сквозь фонарики и зажигает их.<br>
+   <b>Зеркала</b> отражают свет, <b>тёмные камни</b> гасят его, от <b>листа кувшинки</b> шар отскакивает и плывёт медленнее, <b>лунные ворота</b> переносят свет в парные.<br>
+   Уложиться в норму выстрелов — три звезды.
+  </div>
+ </section>
+
+ <section class="screen" id="game">
+  <div class="hud">
+   <div><div class="t" id="lvTitle"></div><div class="s" id="lvSub"></div></div>
+   <div class="shots" id="shots"></div>
+  </div>
+  <div class="board" id="board">
+   <canvas id="cv" aria-label="Игровое поле"></canvas>
+   <div class="hint" id="hint">Потяните назад и отпустите</div>
+  </div>
+  <div class="bar">
+   <button class="btn" id="toMenu">Уровни</button>
+   <button class="btn" id="restart">Заново</button>
+  </div>
+ </section>
+
+ <div class="ov" id="ov"><div class="card">
+  <h2 id="ovT"></h2>
+  <div class="bigstars" id="ovS"></div>
+  <p id="ovP"></p>
+  <div class="bar">
+   <button class="btn gold" id="ovNext">Дальше</button>
+   <button class="btn" id="ovRetry">Ещё раз</button>
+  </div>
+ </div></div>
+</div>
+
+<script>
+'use strict';
+/*ENGINE-START*/
+var W = 360, H = 540, BR = 6, MT = 2.5, LR = 11, PR = 15, EPS = 1e-7;
+var MAXLEN = 7000, MAXEV = 80;
+
+function rayCircle(px, py, dx, dy, cx, cy, R) {
+  var fx = px - cx, fy = py - cy;
+  var b = fx * dx + fy * dy, c = fx * fx + fy * fy - R * R;
+  if (c < 0) return -1;
+  var disc = b * b - c;
+  if (disc < 0) return -1;
+  var t = -b - Math.sqrt(disc);
+  return t > EPS ? t : -1;
+}
+function raySeg(px, py, dx, dy, qx, qy, ex, ey) {
+  var den = dx * ey - dy * ex;
+  if (Math.abs(den) < 1e-12) return -1;
+  var wx = qx - px, wy = qy - py;
+  var t = (wx * ey - wy * ex) / den;
+  var u = (wx * dy - wy * dx) / den;
+  if (u < 0 || u > 1 || t <= EPS) return -1;
+  return t;
+}
+
+function castRay(lv, px, py, dx, dy, skipPortal) {
+  var best = { t: Infinity }, t, i;
+  if (dx > 1e-12) { t = (W - BR - px) / dx; if (t > EPS && t < best.t) best = { t: t, nx: -1, ny: 0, k: 'wall' }; }
+  if (dx < -1e-12) { t = (BR - px) / dx; if (t > EPS && t < best.t) best = { t: t, nx: 1, ny: 0, k: 'wall' }; }
+  if (dy > 1e-12) { t = (H - BR - py) / dy; if (t > EPS && t < best.t) best = { t: t, nx: 0, ny: -1, k: 'wall' }; }
+  if (dy < -1e-12) { t = (BR - py) / dy; if (t > EPS && t < best.t) best = { t: t, nx: 0, ny: 1, k: 'wall' }; }
+  var ms = lv.mirrors || [];
+  var R = BR + MT;
+  for (i = 0; i < ms.length; i++) {
+    var m = ms[i], ax = m[0], ay = m[1], bx = m[2], by = m[3];
+    var ex = bx - ax, ey = by - ay, l = Math.hypot(ex, ey);
+    var nx = -ey / l, ny = ex / l;
+    for (var s = -1; s <= 1; s += 2) {
+      var onx = nx * s, ony = ny * s;
+      if (onx * dx + ony * dy >= 0) continue;
+      t = raySeg(px, py, dx, dy, ax + onx * R, ay + ony * R, ex, ey);
+      if (t > 0 && t < best.t) best = { t: t, nx: onx, ny: ony, k: 'mirror', id: i };
+    }
+    var ends = [[ax, ay], [bx, by]];
+    for (var e = 0; e < 2; e++) {
+      t = rayCircle(px, py, dx, dy, ends[e][0], ends[e][1], R);
+      if (t > 0 && t < best.t) {
+        var hx = px + dx * t - ends[e][0], hy = py + dy * t - ends[e][1];
+        best = { t: t, nx: hx / R, ny: hy / R, k: 'mirror', id: i };
+      }
+    }
+  }
+  var st = lv.stones || [];
+  for (i = 0; i < st.length; i++) {
+    t = rayCircle(px, py, dx, dy, st[i][0], st[i][1], st[i][2] + BR);
+    if (t > 0 && t < best.t) best = { t: t, k: 'stone', id: i };
+  }
+  var pd = lv.pads || [];
+  for (i = 0; i < pd.length; i++) {
+    var RR = pd[i][2] + BR;
+    t = rayCircle(px, py, dx, dy, pd[i][0], pd[i][1], RR);
+    if (t > 0 && t < best.t) {
+      best = { t: t, nx: (px + dx * t - pd[i][0]) / RR, ny: (py + dy * t - pd[i][1]) / RR, k: 'pad', id: i };
+    }
+  }
+  var po = lv.portals || [];
+  for (i = 0; i < po.length; i++) {
+    for (var j = 0; j < 2; j++) {
+      if (skipPortal && skipPortal[0] === i && skipPortal[1] === j) continue;
+      t = rayCircle(px, py, dx, dy, po[i][j][0], po[i][j][1], PR);
+      if (t > 0 && t < best.t) best = { t: t, k: 'portal', id: i, end: j };
+    }
+  }
+  return best;
+}
+
+// Trace a shot. Returns {segs:[{ax,ay,bx,by,len,s0,slow,k}], hits:[{i,s}], len, endKind}
+function trace(lv, angleDeg, maxSegs) {
+  var a = angleDeg * Math.PI / 180;
+  var dx = Math.cos(a), dy = Math.sin(a);
+  var px = lv.start[0], py = lv.start[1];
+  var segs = [], s = 0, bounces = 0, maxB = lv.maxB || 8, skip = null, slow = false, endKind = 'fade';
+  for (var ev = 0; ev < MAXEV; ev++) {
+    var hit = castRay(lv, px, py, dx, dy, skip);
+    skip = null;
+    var t = hit.t;
+    var cut = false;
+    if (s + t > MAXLEN) { t = MAXLEN - s; cut = true; }
+    var bx = px + dx * t, by = py + dy * t;
+    segs.push({ ax: px, ay: py, bx: bx, by: by, len: t, s0: s, slow: slow, k: cut ? 'fade' : hit.k, id: hit.id });
+    s += t;
+    if (maxSegs && segs.length >= maxSegs) { endKind = 'preview'; break; }
+    if (cut) { endKind = 'fade'; break; }
+    if (hit.k === 'stone') { endKind = 'stone'; break; }
+    if (hit.k === 'portal') {
+      var P = lv.portals[hit.id], A = P[hit.end], B = P[1 - hit.end];
+      var hx = bx - A[0], hy = by - A[1];
+      var ch = -2 * (hx * dx + hy * dy);
+      var ox = hx + dx * ch, oy = hy + dy * ch;
+      px = B[0] + ox; py = B[1] + oy;
+      skip = [hit.id, 1 - hit.end];
+      segs[segs.length - 1].tp = true;
+      continue;
+    }
+    bounces++;
+    if (bounces > maxB) { endKind = 'fade'; break; }
+    var dn = dx * hit.nx + dy * hit.ny;
+    dx -= 2 * dn * hit.nx; dy -= 2 * dn * hit.ny;
+    var dl = Math.hypot(dx, dy); dx /= dl; dy /= dl;
+    px = bx + hit.nx * 1e-6; py = by + hit.ny * 1e-6;
+    slow = hit.k === 'pad';
+  }
+  var hits = [], ls = lv.lanterns, rr = LR + BR;
+  for (var li = 0; li < ls.length; li++) {
+    var cx = ls[li][0], cy = ls[li][1];
+    for (var k = 0; k < segs.length; k++) {
+      var g = segs[k];
+      if (g.len <= 0) continue;
+      var ux = (g.bx - g.ax) / g.len, uy = (g.by - g.ay) / g.len;
+      var wx = cx - g.ax, wy = cy - g.ay;
+      var pr = wx * ux + wy * uy;
+      var q = pr < 0 ? 0 : pr > g.len ? g.len : pr;
+      var ddx = g.ax + ux * q - cx, ddy = g.ay + uy * q - cy;
+      if (ddx * ddx + ddy * ddy <= rr * rr) {
+        // first touch distance along segment
+        var off = Math.sqrt(Math.max(0, rr * rr - (wx * wx + wy * wy - pr * pr)));
+        var sq = Math.max(0, Math.min(g.len, pr - off));
+        hits.push({ i: li, s: g.s0 + sq });
+        break;
+      }
+    }
+  }
+  return { segs: segs, hits: hits, len: s, endKind: endKind };
+}
+
+function maskOf(tr) { var m = 0; for (var i = 0; i < tr.hits.length; i++) m |= 1 << tr.hits[i].i; return m; }
+
+// Brute-force solver: scans angles, finds robust masks (contiguous run >= minRun steps),
+// returns minimal number of shots to light all lanterns and the angles to use.
+function solveLevel(lv, step, minRun) {
+  step = step || 0.1; minRun = minRun || 5;
+  var n = Math.round(360 / step), full = (1 << lv.lanterns.length) - 1;
+  var masks = new Array(n);
+  for (var i = 0; i < n; i++) masks[i] = maskOf(trace(lv, i * step));
+  // runs (circular)
+  var runs = {}; // mask -> {w, a}
+  var startIdx = 0;
+  while (startIdx < n && masks[startIdx] === masks[(startIdx - 1 + n) % n]) startIdx++;
+  if (startIdx >= n) startIdx = 0;
+  var j = 0;
+  while (j < n) {
+    var idx = (startIdx + j) % n, m = masks[idx], len = 1;
+    while (j + len < n && masks[(startIdx + j + len) % n] === m) len++;
+    if (m && (!runs[m] || runs[m].w < len)) runs[m] = { w: len, a: ((startIdx + j + (len - 1) / 2) % n) * step };
+    j += len;
+  }
+  var list = [];
+  for (var key in runs) if (runs[key].w >= minRun) list.push({ m: +key, w: runs[key].w, a: runs[key].a });
+  // keep maximal masks only
+  list.sort(function (x, y) { return pc(y.m) - pc(x.m) || y.w - x.w; });
+  var maxl = [];
+  for (i = 0; i < list.length; i++) {
+    var sub = false;
+    for (var k = 0; k < maxl.length; k++) if ((list[i].m & maxl[k].m) === list[i].m) { sub = true; break; }
+    if (!sub) maxl.push(list[i]);
+  }
+  function pc(x) { var c = 0; while (x) { c += x & 1; x >>>= 1; } return c; }
+  var best = null;
+  function dfs(cover, chosen, depth, limit, from) {
+    if (cover === full) { best = chosen.slice(); return true; }
+    if (depth >= limit) return false;
+    for (var q = from; q < maxl.length; q++) {
+      if ((maxl[q].m | cover) === cover) continue;
+      chosen.push(maxl[q]);
+      if (dfs(cover | maxl[q].m, chosen, depth + 1, limit, q + 1)) return true;
+      chosen.pop();
+    }
+    return false;
+  }
+  var minShots = -1;
+  for (var lim = 1; lim <= 6; lim++) { if (dfs(0, [], 0, lim, 0)) { minShots = lim; break; } }
+  var minW = best ? Math.min.apply(null, best.map(function (b) { return b.w; })) * step : 0;
+  return { ok: minShots > 0 && minShots <= lv.par, minShots: minShots, par: lv.par, window: +minW.toFixed(2),
+    angles: best ? best.map(function (b) { return +b.a.toFixed(1); }) : [], masks: maxl.length };
+}
+/*ENGINE-END*/
+/*LEVELS-START*/
+var LEVELS = [
+ { name: 'Первый свет', par: 1, start: [180, 500], pv: 3, maxB: 4,
+   lanterns: [[180, 150]] },
+ { name: 'Дорожка', par: 1, start: [180, 500], pv: 3, maxB: 4,
+   lanterns: [[130, 390], [80, 280], [30, 170]] },
+ { name: 'Отражение', par: 1, start: [180, 500], pv: 3, maxB: 5,
+   lanterns: [[290, 330], [70, 110]], stones: [[180, 260, 26]] },
+ { name: 'Зеркальце', par: 2, start: [180, 500], pv: 3, maxB: 5,
+   mirrors: [[140, 290, 220, 210]], lanterns: [[300, 250], [180, 400], [60, 120]] },
+ { name: 'Камень на пути', par: 2, start: [180, 500], pv: 3, maxB: 6,
+   stones: [[180, 300, 34]], lanterns: [[180, 120], [60, 380], [300, 380]] },
+ { name: 'Два берега', par: 2, start: [60, 500], pv: 3, maxB: 6,
+   mirrors: [[220, 170, 340, 170]], lanterns: [[300, 420], [60, 90], [180, 300], [300, 90]] },
+ { name: 'Коридор', par: 2, start: [180, 510], pv: 3, maxB: 8,
+   mirrors: [[120, 120, 120, 420], [240, 120, 240, 420]],
+   lanterns: [[180, 80], [60, 200], [300, 300], [180, 260]] },
+ { name: 'Кувшинка', par: 2, start: [180, 500], pv: 2, maxB: 6,
+   pads: [[180, 260, 30]], lanterns: [[80, 160], [280, 160], [180, 80]] },
+ { name: 'Треугольник', par: 3, start: [180, 500], pv: 2, maxB: 7,
+   mirrors: [[60, 180, 140, 100], [220, 100, 300, 180]],
+   stones: [[180, 230, 22]], lanterns: [[180, 60], [60, 320], [300, 320], [180, 140]] },
+ { name: 'Тихая заводь', par: 2, start: [300, 500], pv: 2, maxB: 7,
+   pads: [[120, 200, 26], [250, 330, 22]], stones: [[60, 440, 20]],
+   lanterns: [[60, 80], [300, 60], [180, 420], [40, 300]] },
+ { name: 'Окно', par: 4, start: [180, 500], pv: 2, maxB: 7,
+   mirrors: [[20, 270, 150, 270], [210, 270, 340, 270]],
+   lanterns: [[180, 120], [60, 140], [300, 140], [60, 400], [300, 400]] },
+ { name: 'Ворота луны', par: 2, start: [180, 500], pv: 2, maxB: 6,
+   portals: [[[60, 420], [300, 140]]], stones: [[180, 300, 40]],
+   lanterns: [[300, 60], [180, 140], [60, 300]] },
+ { name: 'Лабиринт теней', par: 3, start: [40, 500], pv: 2, maxB: 9,
+   mirrors: [[0, 380, 220, 380], [140, 240, 360, 240], [0, 110, 220, 110]],
+   lanterns: [[300, 450], [60, 310], [300, 170], [60, 60], [320, 60]] },
+ { name: 'Колодец', par: 3, start: [180, 500], pv: 2, maxB: 8,
+   mirrors: [[90, 200, 150, 260], [270, 200, 210, 260]],
+   stones: [[180, 120, 24], [40, 260, 18], [320, 260, 18]],
+   lanterns: [[60, 60], [300, 60], [180, 330], [100, 420], [260, 420]] },
+ { name: 'Светлячки', par: 2, start: [180, 510], pv: 1, maxB: 8,
+   pads: [[90, 170, 22], [270, 170, 22], [90, 380, 22]],
+   lanterns: [[50, 30], [330, 90], [145, 105], [30, 300], [265, 245]] },
+ { name: 'Отражённый сад', par: 3, start: [320, 500], pv: 1, maxB: 8,
+   mirrors: [[40, 300, 120, 220], [240, 120, 320, 200], [140, 400, 220, 400]],
+   stones: [[180, 260, 22]], lanterns: [[60, 120], [300, 300], [180, 60], [60, 430], [180, 180]] },
+ { name: 'Двойные ворота', par: 2, start: [60, 500], pv: 1, maxB: 8,
+   portals: [[[300, 460], [60, 200]], [[300, 280], [180, 80]]],
+   mirrors: [[120, 340, 240, 340]],
+   lanterns: [[300, 60], [60, 60], [180, 220], [300, 380], [60, 330]] },
+ { name: 'Рубеж', par: 2, start: [180, 510], pv: 1, maxB: 9,
+   mirrors: [[0, 300, 140, 300], [220, 300, 360, 300], [150, 160, 210, 160]],
+   stones: [[180, 230, 16]],
+   lanterns: [[40, 40], [320, 40], [100, 110], [60, 230], [300, 230], [180, 400]] },
+ { name: 'Ночное озеро', par: 3, start: [180, 500], pv: 1, maxB: 10,
+   pads: [[100, 250, 24], [260, 250, 24]], mirrors: [[150, 120, 210, 160]],
+   stones: [[180, 380, 20], [40, 120, 16]],
+   lanterns: [[260, 100], [60, 40], [140, 250], [40, 420], [320, 420], [180, 60]] },
+ { name: 'Кривые зеркала', par: 3, start: [40, 510], pv: 1, maxB: 10,
+   mirrors: [[100, 420, 200, 470], [240, 320, 340, 270], [60, 220, 140, 160], [220, 120, 300, 60]],
+   stones: [[180, 220, 18], [300, 420, 16]],
+   lanterns: [[300, 500], [180, 380], [320, 180], [40, 60], [180, 40], [100, 300]] },
+ { name: 'Сквозь тьму', par: 3, start: [180, 510], pv: 1, maxB: 10,
+   portals: [[[40, 300], [320, 120]]],
+   mirrors: [[120, 400, 240, 400], [200, 200, 320, 260]],
+   stones: [[180, 300, 20], [100, 120, 18]],
+   lanterns: [[40, 450], [320, 450], [320, 330], [180, 40], [40, 40], [240, 140]] },
+ { name: 'Весна', par: 4, start: [180, 510], pv: 1, maxB: 12,
+   portals: [[[40, 470], [320, 80]]],
+   pads: [[180, 160, 24]],
+   mirrors: [[60, 300, 140, 340], [220, 340, 300, 300]],
+   stones: [[110, 200, 16], [250, 200, 16]],
+   lanterns: [[180, 40], [40, 120], [320, 220], [180, 270], [60, 400], [300, 420], [180, 400]] }
+];
+/*LEVELS-END*/
+
+// ---------- storage ----------
+var KEY = 'kuv_sniper_';
+function load(k, d) { try { var v = localStorage.getItem(KEY + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
+function save(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch (e) {} }
+var stars = load('stars', {});
+var muted = load('mute', false);
+var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+function unlockedUpTo() { var u = 0; while (u < LEVELS.length && stars[u] > 0) u++; return Math.min(u, LEVELS.length - 1); }
+
+// ---------- sound ----------
+var AC = null, master = null;
+function audio() {
+  if (muted) return null;
+  if (!AC) {
+    var C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
+    AC = new C(); master = AC.createGain(); master.gain.value = 0.5;
+    var dl = AC.createDelay(); dl.delayTime.value = 0.23; var fb = AC.createGain(); fb.gain.value = 0.3;
+    var lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2400;
+    master.connect(AC.destination); master.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(AC.destination);
+  }
+  if (AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function tone(f, t0, dur, vol, type) {
+  var a = audio(); if (!a) return;
+  var o = a.createOscillator(), g = a.createGain(), t = a.currentTime + (t0 || 0);
+  o.type = type || 'sine'; o.frequency.value = f;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol || 0.2, t + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
+  var o2 = a.createOscillator(), g2 = a.createGain(); o2.frequency.value = f * 2.01; o2.type = 'sine';
+  g2.gain.setValueAtTime(0, t); g2.gain.linearRampToValueAtTime((vol || 0.2) * 0.25, t + 0.01); g2.gain.exponentialRampToValueAtTime(0.0001, t + dur * 0.6);
+  o2.connect(g2); g2.connect(master); o2.start(t); o2.stop(t + dur);
+}
+var SCALE = [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.5];
+var litCount = 0;
+function sChime() { tone(SCALE[Math.min(litCount, SCALE.length - 1)], 0, 1.4, 0.18); litCount++; }
+function sShot() { tone(220, 0, 0.35, 0.08, 'triangle'); tone(330, 0.03, 0.3, 0.05, 'sine'); }
+function sBounce() { tone(392 + Math.random() * 40, 0, 0.18, 0.035, 'sine'); }
+function sThud() { tone(110, 0, 0.4, 0.1, 'triangle'); }
+function sWin() { [0, 2, 4, 5, 7].forEach(function (k, i) { tone(SCALE[k] / 2, i * 0.12, 1.8, 0.12); }); }
+
+var muteBtn = document.getElementById('mute');
+function drawMute() {
+  muteBtn.innerHTML = muted
+    ? '<svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>'
+    : '<svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg>';
+  muteBtn.setAttribute('aria-label', muted ? 'Включить звук' : 'Выключить звук');
+}
+muteBtn.onclick = function () { muted = !muted; save('mute', muted); drawMute(); if (!muted) tone(784, 0, 0.6, 0.12); };
+drawMute();
+
+// ---------- menu ----------
+var grid = document.getElementById('grid');
+function renderMenu() {
+  var u = unlockedUpTo(), h = '';
+  for (var i = 0; i < LEVELS.length; i++) {
+    var s = stars[i] || 0, lock = i > u;
+    h += '<button class="lv' + (lock ? ' locked' : '') + (i === u && !s ? ' cur' : '') + '" data-i="' + i + '" aria-label="Уровень ' + (i + 1) + (lock ? ', закрыт' : '') + '"><span class="n">' + (i + 1) + '</span><span class="st">' +
+      '<i class="' + (s > 0 ? 'f' : '') + '"></i><i class="' + (s > 1 ? 'f' : '') + '"></i><i class="' + (s > 2 ? 'f' : '') + '"></i></span></button>';
+  }
+  grid.innerHTML = h;
+}
+grid.onclick = function (e) {
+  var b = e.target.closest('.lv'); if (!b || b.classList.contains('locked')) return;
+  audio(); startLevel(+b.dataset.i);
+};
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function (s) { s.classList.toggle('on', s.id === id); });
+  if (id === 'menu') renderMenu(); else resize();
+}
+
+// ---------- game state ----------
+var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+var cur = 0, lv = null, lit = [], shotsUsed = 0, flying = null, aim = null, done = false, scale = 1, dpr = 1;
+var EXTRA = 2; // shots allowed above par
+var trail = [], sparks = [], hintShown = true;
+var starField = [];
+(function () { var s = 12345; function r() { s = (s * 16807) % 2147483647; return s / 2147483647; }
+  for (var i = 0; i < 90; i++) starField.push({ x: r() * W, y: r() * H * 0.92, r: 0.4 + r() * 1.2, p: r() * 6.28, sp: 0.6 + r() * 1.6 }); })();
+
+function startLevel(i) {
+  clearTimeout(ovTimer);
+  cur = i; lv = LEVELS[i]; lit = lv.lanterns.map(function () { return 0; });
+  shotsUsed = 0; flying = null; aim = null; done = false; trail = []; sparks = []; litCount = 0;
+  document.getElementById('lvTitle').textContent = (i + 1) + '. ' + lv.name;
+  document.getElementById('lvSub').textContent = 'Норма: ' + lv.par + ' ' + plural(lv.par, 'выстрел', 'выстрела', 'выстрелов');
+  document.getElementById('ov').classList.remove('on');
+  var hint = document.getElementById('hint');
+  hint.style.opacity = i < 2 ? 1 : 0;
+  renderShots(); show('game');
+}
+function plural(n, a, b, c) { var m = n % 10, h = n % 100; if (m === 1 && h !== 11) return a; if (m >= 2 && m <= 4 && (h < 10 || h >= 20)) return b; return c; }
+function renderShots() {
+  var total = lv.par + EXTRA, h = '';
+  h = '<span>выстрелы</span>';
+  for (var i = 0; i < total; i++) h += '<i class="' + (i < shotsUsed ? 'used' : (i >= lv.par ? 'extra' : '')) + '"></i>';
+  document.getElementById('shots').innerHTML = h;
+}
+
+function resize() {
+  var b = document.getElementById('board').getBoundingClientRect();
+  if (b.width < 10) return;
+  scale = Math.min(b.width / W, b.height / H);
+  dpr = Math.min(3, window.devicePixelRatio || 1);
+  cv.style.width = Math.floor(W * scale) + 'px'; cv.style.height = Math.floor(H * scale) + 'px';
+  cv.width = Math.floor(W * scale * dpr); cv.height = Math.floor(H * scale * dpr);
+}
+window.addEventListener('resize', resize);
+
+// ---------- input (slingshot) ----------
+function pt(e) { var r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / scale, y: (e.clientY - r.top) / scale }; }
+cv.addEventListener('pointerdown', function (e) {
+  if (!lv || flying || done) return;
+  audio();
+  cv.setPointerCapture && cv.setPointerCapture(e.pointerId);
+  var p = pt(e); aim = { x0: p.x, y0: p.y, x: p.x, y: p.y };
+  e.preventDefault();
+});
+cv.addEventListener('pointermove', function (e) { if (!aim) return; var p = pt(e); aim.x = p.x; aim.y = p.y; e.preventDefault(); });
+function aimAngle() {
+  var dx = aim.x0 - aim.x, dy = aim.y0 - aim.y;
+  if (Math.hypot(dx, dy) < 14) return null;
+  return Math.atan2(dy, dx) * 180 / Math.PI;
+}
+function release(e) {
+  if (!aim) return;
+  var a = aimAngle(); aim = null;
+  if (a == null) return;
+  fire(a);
+}
+cv.addEventListener('pointerup', release);
+cv.addEventListener('pointercancel', function () { aim = null; });
+
+function fire(angleDeg) {
+  if (flying || done || shotsUsed >= lv.par + EXTRA) return false;
+  shotsUsed++; renderShots();
+  document.getElementById('hint').style.opacity = 0;
+  var tr = trace(lv, angleDeg);
+  // time map: base speed px/s, slow segments at 45%
+  var V = reduced ? 900 : 520, t = 0;
+  tr.segs.forEach(function (g) { g.t0 = t; g.dur = g.len / (V * (g.slow ? 0.45 : 1)); t += g.dur; });
+  var hits = tr.hits.map(function (h) { return { i: h.i, t: sToT(tr.segs, h.s) }; }).sort(function (a, b) { return a.t - b.t; });
+  flying = { tr: tr, T: t, time: 0, hits: hits, hi: 0, seg: 0, fade: 0 };
+  trail = []; sShot();
+  return true;
+}
+function sToT(segs, s) {
+  for (var i = 0; i < segs.length; i++) { var g = segs[i]; if (s <= g.s0 + g.len + 1e-6) return g.t0 + (s - g.s0) / g.len * g.dur; }
+  return segs.length ? segs[segs.length - 1].t0 + segs[segs.length - 1].dur : 0;
+}
+function posAt(tr, time) {
+  var segs = tr.segs;
+  for (var i = 0; i < segs.length; i++) {
+    var g = segs[i];
+    if (time <= g.t0 + g.dur) { var u = g.dur > 0 ? (time - g.t0) / g.dur : 1; return { x: g.ax + (g.bx - g.ax) * u, y: g.ay + (g.by - g.ay) * u, i: i }; }
+  }
+  var L = segs[segs.length - 1]; return { x: L.bx, y: L.by, i: segs.length - 1 };
+}
+
+// ---------- fixed-timestep loop ----------
+var STEP = 1 / 120, acc = 0, last = performance.now(), clock = 0;
+function update(dt) {
+  clock += dt;
+  if (flying) {
+    var f = flying;
+    if (f.time < f.T) {
+      f.time = Math.min(f.T, f.time + dt);
+      var p = posAt(f.tr, f.time);
+      if (p.i > f.seg) {
+        for (var k = f.seg; k < p.i; k++) { var g = f.tr.segs[k]; if (g.k === 'mirror' || g.k === 'wall' || g.k === 'pad') { sBounce(); burst(g.bx, g.by, g.k === 'pad' ? '#9fd39a' : '#cfe3ff', 6); } }
+        f.seg = p.i;
+      }
+      trail.push({ x: p.x, y: p.y, tp: false, seg: p.i });
+      if (trail.length > 70) trail.shift();
+      while (f.hi < f.hits.length && f.hits[f.hi].t <= f.time) {
+        var li = f.hits[f.hi].i; f.hi++;
+        if (!lit[li]) { lit[li] = clock; sChime(); var L = lv.lanterns[li]; burst(L[0], L[1], '#ffd88a', 14); }
+      }
+      if (f.time >= f.T) {
+        var end = f.tr.endKind;
+        if (end === 'stone') { sThud(); var lg = f.tr.segs[f.tr.segs.length - 1]; burst(lg.bx, lg.by, '#8a8fa6', 10); }
+      }
+    } else {
+      f.fade += dt;
+      if (trail.length) trail.shift(); if (trail.length) trail.shift();
+      if (f.fade > 0.5) { flying = null; trail = []; afterShot(); }
+    }
+  }
+  for (var i = sparks.length - 1; i >= 0; i--) {
+    var s = sparks[i]; s.x += s.vx * dt; s.y += s.vy * dt; s.vx *= 0.97; s.vy *= 0.97; s.life -= dt;
+    if (s.life <= 0) sparks.splice(i, 1);
+  }
+}
+function burst(x, y, c, n) {
+  if (reduced) n = Math.ceil(n / 3);
+  for (var i = 0; i < n; i++) { var a = Math.random() * 6.283, v = 30 + Math.random() * 70; sparks.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.5 + Math.random() * 0.5, c: c }); }
+}
+function allLit() { return lit.every(function (v) { return v; }); }
+function afterShot() {
+  if (allLit()) { win(); return; }
+  if (shotsUsed >= lv.par + EXTRA) { lose(); }
+}
+function starsFor(used, par) { return used <= par ? 3 : used <= par + 1 ? 2 : 1; }
+function win() {
+  done = true; sWin();
+  var s = starsFor(shotsUsed, lv.par);
+  if (!stars[cur] || stars[cur] < s) stars[cur] = s;
+  save('stars', stars);
+  var last = cur === LEVELS.length - 1;
+  overlay(last ? 'Все огни горят' : 'Светло', s,
+    'Выстрелов: ' + shotsUsed + ', норма ' + lv.par + '.' + (s < 3 ? ' Можно попробовать точнее.' : '') + (last ? ' Вы прошли все уровни.' : ''),
+    last ? 'К уровням' : 'Дальше', true);
+}
+function lose() {
+  done = true;
+  var left = lit.filter(function (v) { return !v; }).length;
+  overlay('Свет погас', 0, 'Осталось ' + left + ' ' + plural(left, 'тёмный фонарик', 'тёмных фонарика', 'тёмных фонариков') + '. Попробуйте другой угол.', 'Заново', false);
+}
+var ovMode = null, ovTimer = 0;
+function overlay(t, s, p, next, isWin) {
+  ovMode = isWin ? 'win' : 'lose';
+  document.getElementById('ovT').textContent = t;
+  var e = document.getElementById('ovS'); e.style.display = isWin ? 'flex' : 'none';
+  e.innerHTML = '<i class="' + (s > 0 ? 'f' : '') + '"></i><i class="' + (s > 1 ? 'f' : '') + '"></i><i class="' + (s > 2 ? 'f' : '') + '"></i>';
+  document.getElementById('ovP').textContent = p;
+  document.getElementById('ovNext').textContent = next;
+  document.getElementById('ovRetry').style.display = isWin ? '' : 'none';
+  clearTimeout(ovTimer); ovTimer = setTimeout(function () { document.getElementById('ov').classList.add('on'); }, 350);
+}
+document.getElementById('ovNext').onclick = function () {
+  document.getElementById('ov').classList.remove('on');
+  if (ovMode === 'win') { if (cur < LEVELS.length - 1) startLevel(cur + 1); else show('menu'); }
+  else startLevel(cur);
+};
+document.getElementById('ovRetry').onclick = function () { startLevel(cur); };
+document.getElementById('restart').onclick = function () { if (lv) startLevel(cur); };
+document.getElementById('toMenu').onclick = function () { flying = null; aim = null; show('menu'); };
+
+// ---------- drawing ----------
+var moonImg = document.createElement('canvas');
+(function () { moonImg.width = moonImg.height = 144; var m = moonImg.getContext('2d'); m.scale(3, 3);
+  m.fillStyle = '#efe6cf'; m.beginPath(); m.arc(24, 24, 20, 0, 6.283); m.fill();
+  m.globalCompositeOperation = 'destination-out'; m.beginPath(); m.arc(15, 18, 18, 0, 6.283); m.fill(); })();
+function draw() {
+  if (!document.getElementById('game').classList.contains('on') || !lv) return;
+  var k = scale * dpr;
+  ctx.setTransform(k, 0, 0, k, 0, 0);
+  // sky
+  var g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#16233c'); g.addColorStop(0.55, '#0f1c2b'); g.addColorStop(1, '#0c1a1d');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // moon
+  var mx = lv.moon[0], my = lv.moon[1];
+  var mg = ctx.createRadialGradient(mx, my, 10, mx, my, 110);
+  mg.addColorStop(0, 'rgba(240,232,210,.20)'); mg.addColorStop(1, 'rgba(240,232,210,0)');
+  ctx.fillStyle = mg; ctx.fillRect(mx - 110, my - 110, 220, 220);
+  ctx.drawImage(moonImg, mx - 24, my - 24, 48, 48);
+  // stars
+  for (var i = 0; i < starField.length; i++) {
+    var s = starField[i], a = reduced ? 0.6 : 0.35 + 0.45 * (0.5 + 0.5 * Math.sin(clock * s.sp + s.p));
+    ctx.fillStyle = 'rgba(246,239,228,' + a.toFixed(3) + ')';
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
+  }
+  // water band
+  var wg = ctx.createLinearGradient(0, H - 70, 0, H);
+  wg.addColorStop(0, 'rgba(19,38,42,0)'); wg.addColorStop(1, 'rgba(19,38,42,.85)');
+  ctx.fillStyle = wg; ctx.fillRect(0, H - 70, W, 70);
+  ctx.strokeStyle = 'rgba(240,232,210,.08)'; ctx.lineWidth = 1;
+  for (var r = 0; r < 4; r++) { var yy = H - 40 + r * 10, off = reduced ? 0 : Math.sin(clock * 0.6 + r) * 8; ctx.beginPath(); ctx.moveTo(mx - 40 + off - r * 6, yy); ctx.lineTo(mx + 30 + off + r * 6, yy); ctx.stroke(); }
+
+  (lv.pads || []).forEach(drawPad);
+  (lv.portals || []).forEach(drawPortal);
+  (lv.stones || []).forEach(drawStone);
+  (lv.mirrors || []).forEach(drawMirror);
+  lv.lanterns.forEach(function (L, i) { drawLantern(L[0], L[1], lit[i]); });
+  drawCrystal();
+  if (aim) drawAim();
+  drawTrail();
+  sparks.forEach(function (s) { ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.6)); ctx.fillStyle = s.c; ctx.beginPath(); ctx.arc(s.x, s.y, 1.6, 0, 6.283); ctx.fill(); });
+  ctx.globalAlpha = 1;
+}
+function drawMirror(m) {
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = 'rgba(190,170,240,.22)'; ctx.lineWidth = 10;
+  ctx.beginPath(); ctx.moveTo(m[0], m[1]); ctx.lineTo(m[2], m[3]); ctx.stroke();
+  var gr = ctx.createLinearGradient(m[0], m[1], m[2], m[3]);
+  gr.addColorStop(0, '#b9c6e8'); gr.addColorStop(0.5, '#f4f0ff'); gr.addColorStop(1, '#a99bd6');
+  ctx.strokeStyle = gr; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(m[0], m[1]); ctx.lineTo(m[2], m[3]); ctx.stroke();
+}
+function drawStone(s) {
+  var x = s[0], y = s[1], r = s[2];
+  var g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r);
+  g.addColorStop(0, '#3a3a4c'); g.addColorStop(1, '#14141d');
+  ctx.fillStyle = g; ctx.beginPath();
+  for (var i = 0; i <= 12; i++) { var a = i / 12 * 6.283, rr = r * (0.92 + 0.08 * Math.sin(i * 2.7 + x)); ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(160,170,200,.45)'; ctx.lineWidth = 1.2; ctx.stroke();
+  ctx.strokeStyle = 'rgba(220,225,245,.35)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r * 0.8, 3.6, 4.7); ctx.stroke();
+}
+function drawPad(p) {
+  var x = p[0], y = p[1], r = p[2];
+  ctx.fillStyle = 'rgba(127,174,122,.18)'; ctx.beginPath(); ctx.arc(x, y, r + 4, 0, 6.283); ctx.fill();
+  ctx.fillStyle = '#5f8f63'; ctx.beginPath(); ctx.moveTo(x, y); ctx.arc(x, y, r, -1.2, 4.6); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(200,230,190,.35)'; ctx.lineWidth = 1;
+  for (var i = 0; i < 5; i++) { var a = -0.6 + i * 1.1; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(a) * r * 0.85, y + Math.sin(a) * r * 0.85); ctx.stroke(); }
+  ctx.fillStyle = '#f0b6c4'; ctx.beginPath(); ctx.arc(x + r * 0.35, y + r * 0.2, 3.2, 0, 6.283); ctx.fill();
+}
+function drawPortal(P, i) {
+  var cols = ['#c9a6d9', '#8ec5e6'];
+  P.forEach(function (q) {
+    var x = q[0], y = q[1];
+    var g = ctx.createRadialGradient(x, y, 2, x, y, PR + 8);
+    g.addColorStop(0, 'rgba(42,24,56,.95)'); g.addColorStop(0.6, 'rgba(120,84,160,.75)'); g.addColorStop(1, 'rgba(120,84,160,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, PR + 8, 0, 6.283); ctx.fill();
+    ctx.strokeStyle = cols[i % 2]; ctx.lineWidth = 2.5;
+    var rot = reduced ? 0 : clock * 0.8;
+    for (var k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(x, y, PR - 2, rot + k * 2.094, rot + k * 2.094 + 1.3); ctx.stroke(); }
+    ctx.lineWidth = 1; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.arc(x, y, PR - 7, 0, 6.283); ctx.stroke(); ctx.globalAlpha = 1;
+  });
+}
+function drawLantern(x, y, on) {
+  var age = on ? Math.min(1, (clock - on) / 0.5) : 0;
+  if (on) {
+    var fl = reduced ? 1 : 0.92 + 0.08 * Math.sin(clock * 3 + x);
+    var g = ctx.createRadialGradient(x, y, 2, x, y, 46 * fl);
+    g.addColorStop(0, 'rgba(255,214,140,' + (0.55 * age) + ')'); g.addColorStop(1, 'rgba(255,190,100,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 46, 0, 6.283); ctx.fill();
+  }
+  // string
+  ctx.strokeStyle = on ? 'rgba(233,196,106,.6)' : 'rgba(246,239,228,.25)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x, y - 14); ctx.lineTo(x, y - 19); ctx.stroke();
+  // body
+  ctx.beginPath(); ctx.ellipse(x, y, 9, 11, 0, 0, 6.283);
+  if (on) { var bg = ctx.createRadialGradient(x, y - 2, 1, x, y, 11); bg.addColorStop(0, '#fff3cf'); bg.addColorStop(1, '#f0a85a'); ctx.fillStyle = bg; }
+  else ctx.fillStyle = 'rgba(92,80,96,.9)';
+  ctx.fill();
+  ctx.strokeStyle = on ? 'rgba(160,80,30,.5)' : 'rgba(246,239,228,.5)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(x, y, 4, 11, 0, 0, 6.283); ctx.stroke();
+  ctx.fillStyle = on ? '#8c4a22' : 'rgba(246,239,228,.35)';
+  ctx.fillRect(x - 4, y - 13, 8, 2.5); ctx.fillRect(x - 4, y + 10.5, 8, 2.5);
+}
+function drawCrystal() {
+  var x = lv.start[0], y = lv.start[1], pulse = reduced ? 1 : 0.85 + 0.15 * Math.sin(clock * 2.2);
+  var g = ctx.createRadialGradient(x, y, 1, x, y, 30);
+  g.addColorStop(0, 'rgba(220,235,255,' + (0.5 * pulse) + ')'); g.addColorStop(1, 'rgba(180,200,255,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 30, 0, 6.283); ctx.fill();
+  ctx.fillStyle = '#e6eeff'; ctx.strokeStyle = '#9fb3e8'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x, y - 12); ctx.lineTo(x + 7, y); ctx.lineTo(x, y + 9); ctx.lineTo(x - 7, y); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - 7, y); ctx.lineTo(x + 7, y); ctx.moveTo(x, y - 12); ctx.lineTo(x, y + 9); ctx.strokeStyle = 'rgba(120,140,200,.5)'; ctx.stroke();
+}
+function drawAim() {
+  var a = aimAngle();
+  // pull line
+  ctx.strokeStyle = 'rgba(246,239,228,.25)'; ctx.lineWidth = 1.5; ctx.setLineDash([2, 4]);
+  ctx.beginPath(); ctx.moveTo(aim.x0, aim.y0); ctx.lineTo(aim.x, aim.y); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(246,239,228,.35)'; ctx.beginPath(); ctx.arc(aim.x, aim.y, 6, 0, 6.283); ctx.fill();
+  if (a == null) return;
+  var pv = lv.pv || 2, tr = trace(lv, a, pv);
+  var maxLen = pv >= 3 ? 9999 : pv === 2 ? 700 : 260, used = 0;
+  ctx.setLineDash([6, 7]); ctx.lineDashOffset = reduced ? 0 : -clock * 20; ctx.lineWidth = 2;
+  for (var i = 0; i < tr.segs.length && used < maxLen; i++) {
+    var g = tr.segs[i], len = Math.min(g.len, maxLen - used), u = len / g.len;
+    var alpha = 0.75 * (1 - used / (maxLen === 9999 ? 2000 : maxLen) * 0.7);
+    ctx.strokeStyle = 'rgba(255,230,170,' + Math.max(0.15, alpha).toFixed(2) + ')';
+    ctx.beginPath(); ctx.moveTo(g.ax, g.ay); ctx.lineTo(g.ax + (g.bx - g.ax) * u, g.ay + (g.by - g.ay) * u); ctx.stroke();
+    used += len;
+    if (g.k === 'stone' || g.tp) break;
+  }
+  ctx.setLineDash([]);
+}
+function drawTrail() {
+  if (!flying && !trail.length) return;
+  for (var i = 1; i < trail.length; i++) {
+    var p = trail[i - 1], q = trail[i];
+    if (Math.hypot(q.x - p.x, q.y - p.y) > 60) continue; // portal jump
+    var a = i / trail.length;
+    ctx.strokeStyle = 'rgba(255,225,160,' + (a * 0.7).toFixed(3) + ')'; ctx.lineWidth = 1 + a * 5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+  }
+  if (flying && flying.time < flying.T) {
+    var b = trail[trail.length - 1]; if (!b) return;
+    var g = ctx.createRadialGradient(b.x, b.y, 1, b.x, b.y, 22);
+    g.addColorStop(0, 'rgba(255,248,225,.95)'); g.addColorStop(0.3, 'rgba(255,220,150,.5)'); g.addColorStop(1, 'rgba(255,200,120,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x, b.y, 22, 0, 6.283); ctx.fill();
+    ctx.fillStyle = '#fffaf0'; ctx.beginPath(); ctx.arc(b.x, b.y, BR - 1, 0, 6.283); ctx.fill();
+  }
+}
+function frame(now) {
+  var dt = Math.min(0.1, (now - last) / 1000); last = now; acc += dt;
+  while (acc >= STEP) { update(STEP); acc -= STEP; }
+  draw();
+  requestAnimationFrame(frame);
+}
+
+// ---------- test / verification hooks ----------
+window.SNIPER = {
+  levels: LEVELS, trace: trace, solveLevel: solveLevel, startLevel: startLevel, fire: fire,
+  state: function () { return { level: cur, lit: lit.map(Boolean), shotsUsed: shotsUsed, flying: !!flying, done: done, stars: stars }; },
+  // Fast-forward the current flight (for automated checks)
+  finish: function () { var n = 0; while (flying && n++ < 20000) update(STEP); return this.state(); },
+  solveAll: function (step, minRun) {
+    return LEVELS.map(function (L, i) { var r = solveLevel(L, step || 0.1, minRun || 10); return { level: i + 1, name: L.name, lanterns: L.lanterns.length, par: L.par, minShots: r.minShots, ok: r.ok, angles: r.angles, windowDeg: r.window }; });
+  }
+};
+
+// place the moon in the emptiest top area of each level
+LEVELS.forEach(function (L) {
+  var pts = [L.start].concat(L.lanterns, L.stones || [], L.pads || []);
+  (L.portals || []).forEach(function (P) { pts.push(P[0], P[1]); });
+  (L.mirrors || []).forEach(function (m) { for (var t = 0; t <= 1; t += 0.25) pts.push([m[0] + (m[2] - m[0]) * t, m[1] + (m[3] - m[1]) * t]); });
+  var best = null;
+  for (var x = 40; x <= 320; x += 10) for (var y = 34; y <= 200; y += 10) {
+    var d = Infinity; pts.forEach(function (p) { d = Math.min(d, Math.hypot(p[0] - x, p[1] - y)); });
+    d = Math.min(d, x - 10, W - 10 - x) - y * 0.12;
+    if (!best || d > best.d) best = { d: d, x: x, y: y };
+  }
+  L.moon = [best.x, best.y];
+});
+renderMenu();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

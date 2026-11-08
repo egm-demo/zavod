@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1a1c">
+<title>Перевернуть мысль</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
+<style>
+:root{--bg:#0e1a1c;--bg2:#13262a;--card:#172d31;--card2:#1c363a;--ink:#f6efe4;--muted:#b3c2bb;--pink:#f0b6c4;--leaf:#7fae7a;--leaf2:#5f8f63;--gold:#e9c46a;--violet:#5b3f7a;--line:rgba(246,239,228,.18)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body{min-height:100vh;min-height:100dvh;overflow-x:hidden;background:radial-gradient(120% 70% at 50% 0%,#17302f 0%,var(--bg) 60%) fixed}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.wrap{position:relative;max-width:520px;margin:0 auto;min-height:100vh;min-height:100dvh;padding:calc(env(safe-area-inset-top) + 12px) 20px calc(env(safe-area-inset-bottom) + 24px);display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;min-height:44px;gap:8px}
+.back-all{color:var(--muted);text-decoration:none;font-size:14px;padding:12px 4px;min-height:44px;display:inline-flex;align-items:center}
+.top-btn{color:var(--muted);font-size:14px;padding:10px 6px;min-height:44px;display:inline-flex;align-items:center}
+.screen{display:none;flex:1;flex-direction:column}
+.screen.on{display:flex;animation:in .45s cubic-bezier(.2,.7,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.step{display:none;flex:1;flex-direction:column}
+.step.on{display:flex;animation:stepin .5s cubic-bezier(.2,.7,.2,1)}
+.step.on.backward{animation-name:stepback}
+@keyframes stepin{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes stepback{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:44px;line-height:1.02;margin-top:10px}
+h1 i{color:var(--pink);font-style:italic}
+h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:32px;line-height:1.08;margin:6px 0 10px}
+h3{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;line-height:1.15}
+.lead{color:var(--muted);font-size:15.5px;line-height:1.55}
+.small{font-size:13px;color:var(--muted);line-height:1.5}
+.kicker{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);opacity:.85}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:14px 22px;border-radius:16px;background:var(--pink);color:#2a1a22;font-weight:600;font-size:16px;transition:transform .15s,opacity .2s,background .2s;width:100%}
+.btn:active{transform:scale(.98)}
+.btn[disabled]{opacity:.35;pointer-events:none}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid rgba(246,239,228,.32)}
+.btn.soft{background:rgba(127,174,122,.16);color:var(--ink);border:1px solid rgba(127,174,122,.35)}
+.row{display:flex;gap:10px}
+.row .btn.ghost{flex:0 0 32%}
+.nav{margin-top:auto;padding-top:20px;display:flex;gap:10px}
+.nav .btn.ghost{flex:0 0 34%}
+textarea,input[type=search],input[type=text]{width:100%;background:rgba(246,239,228,.05);border:1px solid var(--line);border-radius:16px;padding:14px 16px;font-size:16px;line-height:1.5;color:var(--ink);outline:none;transition:border-color .2s,background .2s}
+textarea{min-height:130px;resize:vertical}
+textarea:focus,input:focus{border-color:rgba(240,182,196,.6);background:rgba(246,239,228,.07)}
+::placeholder{color:rgba(183,196,189,.82)}
+.field{margin-top:16px}
+.field label{display:block;font-size:15px;line-height:1.45;margin-bottom:8px;color:var(--ink)}
+.field label span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.field textarea{min-height:96px}
+/* progress */
+.prog{display:flex;gap:6px;margin:6px 0 14px}
+.prog i{flex:1;height:3px;border-radius:3px;background:rgba(246,239,228,.24);transition:background .4s}
+.prog i.done{background:var(--pink)}
+/* home */
+.hero-svg{width:100%;height:auto;display:block;margin:6px 0 2px}
+.home-actions{display:grid;gap:10px;margin-top:20px}
+.sos{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;border:1px solid rgba(233,196,106,.35);background:rgba(233,196,106,.07);text-align:left;min-height:64px;width:100%}
+.sos b{display:block;font-weight:600;font-size:16px}
+.sos span{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.sos svg{flex:0 0 36px}
+.sec-title{display:flex;align-items:baseline;justify-content:space-between;margin:30px 0 10px;gap:10px}
+.sec-title h3{font-size:24px}
+.link{color:var(--pink);font-size:14px;padding:10px 4px;min-height:44px;display:inline-flex;align-items:center}
+.entries{display:grid;gap:10px;margin-top:12px}
+.entry{display:block;width:100%;text-align:left;padding:14px 16px;border-radius:16px;background:var(--card);border:1px solid var(--line);min-height:44px}
+.entry .d{font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.entry .t{margin-top:6px;font-size:15px;line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+.entry .n{margin-top:6px;font-size:14px;color:var(--pink);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+.empty{padding:18px 4px;color:var(--muted);font-size:14px;line-height:1.5}
+.care{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);line-height:1.55}
+.care a{color:var(--ink);text-decoration:none;border-bottom:1px dotted var(--muted)}
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{min-height:44px;padding:10px 16px;border-radius:22px;border:1px solid var(--line);background:rgba(246,239,228,.04);font-size:15px;transition:all .2s}
+.chip.on{background:rgba(240,182,196,.18);border-color:var(--pink);color:#fff}
+.own{display:flex;gap:8px;margin-top:10px}
+.own input{flex:1;min-width:0;padding:10px 14px;border-radius:22px;min-height:44px}
+.own button{flex:0 0 auto;min-width:44px;min-height:44px;border-radius:22px;border:1px solid var(--line);padding:0 16px;font-size:14px}
+/* slider */
+.slider-box{margin-top:20px;padding:16px;border-radius:18px;background:var(--card);border:1px solid var(--line)}
+.slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.slider-head b{font-variant-numeric:lining-nums;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--pink);line-height:1}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin-top:6px;touch-action:pan-y}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:6px;background:linear-gradient(90deg,var(--leaf) 0%,var(--gold) 50%,#c9788e 100%)}
+input[type=range]::-moz-range-track{height:6px;border-radius:6px;background:linear-gradient(90deg,var(--leaf) 0%,var(--gold) 50%,#c9788e 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--ink);margin-top:-12px;box-shadow:0 2px 10px rgba(0,0,0,.4)}
+input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;background:var(--ink);border:0}
+.scale-words{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+/* distortions */
+.dist{display:grid;gap:10px;margin-top:8px}
+.dcard{display:block;width:100%;text-align:left;padding:14px 16px 14px 52px;border-radius:16px;background:var(--card);border:1px solid var(--line);position:relative;transition:all .25s;min-height:44px}
+.dcard::before{content:"";position:absolute;left:16px;top:17px;width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(246,239,228,.35);transition:all .25s}
+.dcard.on{background:rgba(91,63,122,.32);border-color:rgba(240,182,196,.55)}
+.dcard.on::before{background:var(--pink);border-color:var(--pink);box-shadow:inset 0 0 0 4px var(--card)}
+.dcard b{font-weight:600;font-size:15.5px;display:block}
+.dcard q{display:block;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--pink);margin-top:3px;quotes:"«" "»"}
+.dcard span{display:block;font-size:13.5px;color:var(--muted);line-height:1.45;margin-top:3px}
+.quote{margin-top:6px;padding:12px 16px;border-left:2px solid var(--pink);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;line-height:1.3;color:var(--ink);background:rgba(240,182,196,.06);border-radius:0 12px 12px 0;word-break:break-word}
+/* lily visual */
+.pond{margin-top:12px;border-radius:20px;overflow:hidden;background:radial-gradient(90% 80% at 50% 40%,#1b3c40,#0f2224);border:1px solid var(--line)}
+.pond svg{display:block;width:100%;height:auto}
+.result{margin-top:14px;text-align:center;font-size:15px;line-height:1.5;color:var(--muted);min-height:46px}
+.result b{color:var(--ink);font-weight:600}
+/* detail */
+.det-block{margin-top:18px}
+.det-block .kicker{display:block;margin-bottom:6px}
+.det-block p{font-size:15.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:13px;padding:6px 12px;border-radius:14px;background:rgba(246,239,228,.07);border:1px solid var(--line)}
+.meter{display:flex;align-items:center;gap:12px;font-size:15px}
+.meter .bar{flex:1;height:6px;border-radius:6px;background:var(--line);position:relative;overflow:hidden}
+.meter .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:6px}
+.danger{color:#e6a1a1}
+/* grounding */
+.g-num{font-variant-numeric:lining-nums;font-family:'Cormorant Garamond',serif;font-size:96px;line-height:.9;color:var(--gold);font-weight:500;margin-top:8px}
+.dots{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.dot{width:56px;height:56px;border-radius:50%;border:1.5px dashed rgba(246,239,228,.6);display:flex;align-items:center;justify-content:center;transition:all .3s}
+.dot svg{opacity:0;transform:scale(.4);transition:all .35s cubic-bezier(.3,1.6,.5,1)}
+.dot.on{border-style:solid;border-color:var(--pink);background:rgba(240,182,196,.12)}
+.dot.on svg{opacity:1;transform:none}
+.g-hint{margin-top:18px;font-size:14px;color:var(--muted);line-height:1.55}
+.breath{width:180px;height:180px;margin:26px auto 10px;border-radius:50%;background:radial-gradient(circle,rgba(240,182,196,.5),rgba(240,182,196,.1) 70%);box-shadow:0 0 0 1.5px rgba(240,182,196,.45),0 0 40px rgba(240,182,196,.15);animation:breathe 10s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.62)}45%,55%{transform:scale(1)}}
+.breath-word{text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:24px;color:var(--pink);min-height:30px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translate(-50%,20px);background:#f6efe4;color:#1b2a2c;padding:12px 18px;border-radius:14px;font-size:14px;opacity:0;pointer-events:none;transition:all .35s;z-index:20;max-width:calc(100% - 40px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.ripple{animation:rip 5s ease-out infinite;transform-origin:center;transform-box:fill-box}
+.ripple.r2{animation-delay:1.7s}.ripple.r3{animation-delay:3.4s}
+@keyframes rip{0%{opacity:.5;transform:scale(.4)}100%{opacity:0;transform:scale(1.25)}}
+.bob{animation:bob 6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.breath{transform:scale(.85)}}
+@media (min-width:700px){.wrap{padding-top:32px}}
+</style>
+
+
+
+<!--pwa--><link rel="manifest" href="../../manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="../../icons/icon-192.png"><link rel="apple-touch-icon" href="../../icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('../../sw.js'))</script><!--/pwa-->
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back-all" href="../../index.html">‹ все приложения</a>
+    <button class="top-btn" id="topHome" type="button" hidden>на главную</button>
+  </div>
+
+  <!-- HOME -->
+  <section class="screen on" id="s-home">
+    <h1>Перевернуть<br><i>мысль</i></h1>
+    <p class="lead" style="margin-top:12px">Когда внутри что-то зацепило, давай тихонько разберём это вместе. По одному вопросу — без спешки.</p>
+    <svg class="hero-svg" viewBox="0 0 360 120" aria-hidden="true">
+      <ellipse cx="180" cy="86" rx="150" ry="18" fill="none" stroke="rgba(246,239,228,.12)"/>
+      <ellipse cx="180" cy="86" rx="100" ry="11" fill="none" stroke="rgba(246,239,228,.16)"/>
+      <ellipse cx="180" cy="86" rx="56" ry="7" fill="#24484a"/>
+      <path d="M180 86 L232 82 A58 9 0 1 1 226 78 Z" fill="#5f8f63"/>
+      <g transform="translate(180 78)">
+        <path d="M0 0C-14-4-22-16-18-30-8-22-3-12 0 0Z" fill="#e8a3b4"/>
+        <path d="M0 0C14-4 22-16 18-30 8-22 3-12 0 0Z" fill="#e8a3b4"/>
+        <path d="M0 0C-24 2-34-6-34-14-20-12-9-8 0 0Z" fill="#d68ea0"/>
+        <path d="M0 0C24 2 34-6 34-14 20-12 9-8 0 0Z" fill="#d68ea0"/>
+        <path d="M0 0C-8-10-8-28 0-38 8-28 8-10 0 0Z" fill="#f6d3dc"/>
+        <circle cx="0" cy="-6" r="3.5" fill="#e9c46a"/>
+      </g>
+      <circle cx="70" cy="34" r="1.6" fill="#e9c46a" opacity=".8"/><circle cx="290" cy="22" r="1.3" fill="#e9c46a" opacity=".6"/><circle cx="318" cy="56" r="1.1" fill="#e9c46a" opacity=".5"/>
+    </svg>
+    <div class="home-actions">
+      <button class="btn" id="startBtn" type="button">Разобрать мысль</button>
+      <button class="btn ghost" id="resumeBtn" type="button" hidden>Продолжить начатое</button>
+      <button class="sos" id="sosBtn" type="button">
+        <svg viewBox="0 0 36 36" width="36" height="36" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="none" stroke="#e9c46a" stroke-opacity=".5"/><circle cx="18" cy="18" r="10" fill="none" stroke="#e9c46a" stroke-opacity=".75"/><circle cx="18" cy="18" r="4" fill="#e9c46a"/></svg>
+        <div><b>Быстрая помощь</b><span>Если накрыло прямо сейчас — вернёмся в «здесь и сейчас»</span></div>
+      </button>
+    </div>
+
+    <div class="sec-title"><h3>Мои записи</h3><button class="link" id="exportBtn" type="button">сохранить текстом</button></div>
+    <input type="search" id="search" placeholder="Найти по словам…" aria-label="Поиск по записям">
+    <div class="entries" id="entries"></div>
+
+    <div class="care">
+      Это бережный помощник для себя, он не заменяет психолога. Если очень тяжело — пожалуйста, поговори с живым человеком.<br>
+      Горячая линия экстренной психологической помощи МЧС России (круглосуточно, анонимно): <a href="tel:+74959895050">8 (495) 989-50-50</a>.<br>
+      Если есть угроза жизни — <a href="tel:112">112</a>.<br>
+      Записи хранятся только в этом телефоне.
+    </div>
+  </section>
+
+  <!-- FLOW -->
+  <section class="screen" id="s-flow">
+    <div class="prog" id="prog"></div>
+
+    <div class="step" data-step="1">
+      <div class="kicker">Шаг 1 из 7</div>
+      <h2>Что случилось?</h2>
+      <p class="lead">Просто опиши, как было — где ты была, кто рядом, что произошло. Как будто рассказываешь подруге.</p>
+      <div class="field"><textarea id="f-situation" placeholder="Например: сын не ответил на звонок весь вечер…"></textarea></div>
+      <div class="nav"><button class="btn ghost" data-act="cancel" type="button">Отложить</button><button class="btn" data-act="next" type="button">Дальше</button></div>
+    </div>
+
+    <div class="step" data-step="2">
+      <div class="kicker">Шаг 2 из 7</div>
+      <h2>Что ты подумала в тот момент?</h2>
+      <p class="lead">Самая первая мысль, которая мелькнула. Даже если она кажется глупой или слишком резкой — здесь можно всё.</p>
+      <div class="field"><textarea id="f-thought" placeholder="Например: со мной что-то не так, раз он не хочет говорить"></textarea></div>
+      <div class="nav"><button class="btn ghost" data-act="prev" type="button">Назад</button><button class="btn" data-act="next" type="button">Дальше</button></div>
+    </div>
+
+    <div class="step" data-step="3">
+      <div class="kicker">Шаг 3 из 7</div>
+      <h2>Что ты почувствовала?</h2>
+      <p class="lead">Отметь всё, что откликается. Чувств может быть несколько сразу.</p>
+      <div class="chips" id="emoChips"></div>
+      <div class="own"><input type="text" id="emoOwn" placeholder="Своё слово" maxlength="30" aria-label="Своё чувство"><button type="button" id="emoAdd">Добавить</button></div>
+      <div class="slider-box">
+        <div class="slider-head"><span class="small">Насколько сильно сейчас?</span><b id="beforeVal">60</b></div>
+        <input type="range" min="0" max="100" step="1" value="60" id="f-before" aria-label="Сила чувства">
+        <div class="scale-words"><span>чуть-чуть</span><span>очень сильно</span></div>
+      </div>
+      <div class="nav"><button class="btn ghost" data-act="prev" type="button">Назад</button><button class="btn" data-act="next" type="button">Дальше</button></div>
+    </div>
+
+    <div class="step" data-step="4">
+      <div class="kicker">Шаг 4 из 7</div>
+      <h2>Проверим мысль</h2>
+      <p class="lead">Наш ум иногда играет с нами в кривые зеркала. Посмотри, на что похожа твоя мысль, и отметь то, что узнаёшь.</p>
+      <div class="quote" id="q4"></div>
+      <div class="dist" id="distList" style="margin-top:14px"></div>
+      <p class="small" style="margin-top:12px">Если ничего не подошло — тоже хорошо. Просто иди дальше.</p>
+      <div class="nav"><button class="btn ghost" data-act="prev" type="button">Назад</button><button class="btn" data-act="next" type="button">Дальше</button></div>
+    </div>
+
+    <div class="step" data-step="5">
+      <div class="kicker">Шаг 5 из 7</div>
+      <h2>Посмотрим с другой стороны</h2>
+      <p class="lead">Можно ответить на один вопрос или на все. Пиши как получается.</p>
+      <div class="field"><label for="f-friend">Что бы ты сказала подруге с такой мыслью?<span>Мы к друзьям обычно добрее, чем к себе.</span></label><textarea id="f-friend"></textarea></div>
+      <div class="field"><label for="f-facts">Какие факты за и против?<span>Что точно известно, а что — догадка.</span></label><textarea id="f-facts"></textarea></div>
+      <div class="field"><label for="f-year">Как это будет выглядеть через год?<span>Будет ли это так же важно?</span></label><textarea id="f-year"></textarea></div>
+      <div class="nav"><button class="btn ghost" data-act="prev" type="button">Назад</button><button class="btn" data-act="next" type="button">Дальше</button></div>
+    </div>
+
+    <div class="step" data-step="6">
+      <div class="kicker">Шаг 6 из 7</div>
+      <h2>Новая, более бережная мысль</h2>
+      <p class="lead">Не нужно «думать позитивно». Попробуй сказать честно — но мягче и шире, чем было.</p>
+      <div class="small" style="margin-top:14px">Было:</div>
+      <div class="quote" id="q6"></div>
+      <div class="field"><textarea id="f-new" placeholder="Например: он мог просто устать. Я позвоню завтра — и это не про то, какая я мать"></textarea></div>
+      <div class="nav"><button class="btn ghost" data-act="prev" type="button">Назад</button><button class="btn" data-act="next" type="button">Дальше</button></div>
+    </div>
+
+    <div class="step" data-step="7">
+      <div class="kicker">Шаг 7 из 7</div>
+      <h2>А как сейчас?</h2>
+      <p class="lead">Прислушайся к себе ещё раз. Насколько сильно то чувство теперь?</p>
+      <div class="pond">
+        <svg viewBox="0 0 360 220" id="lilySvg" aria-hidden="true">
+          <defs>
+            <radialGradient id="stoneG" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#6c6a70"/><stop offset=".55" stop-color="#3d3c43"/><stop offset="1" stop-color="#1f1f25"/></radialGradient>
+            <radialGradient id="petalG" cx=".5" cy="1" r="1"><stop offset="0" stop-color="#f6efe4"/><stop offset=".55" stop-color="#f6d3dc"/><stop offset="1" stop-color="#f0b6c4"/></radialGradient>
+            <radialGradient id="petalG2" cx=".5" cy="1" r="1"><stop offset="0" stop-color="#f3dfe2"/><stop offset="1" stop-color="#d98ea2"/></radialGradient>
+          </defs>
+          <g fill="none" stroke="#f6efe4">
+            <ellipse class="ripple" cx="180" cy="150" rx="150" ry="30" stroke-opacity=".35"/>
+            <ellipse class="ripple r2" cx="180" cy="150" rx="150" ry="30" stroke-opacity=".35"/>
+            <ellipse class="ripple r3" cx="180" cy="150" rx="150" ry="30" stroke-opacity=".35"/>
+          </g>
+          <g id="pad" transform="translate(180 150)">
+            <path d="M0 0 L77.7 -1.6 A78 18 0 1 1 73.3 -6.2 Z" fill="#5f8f63"/>
+            <path d="M0 0 L-52 7 M0 0 L-24 13 M0 0 L22 13 M0 0 L50 8" stroke="#7fae7a" stroke-width="1" opacity=".55"/>
+          </g>
+          <g id="stone"><g class="bob">
+            <path d="M132 150 C128 132 140 112 162 106 C176 101 196 99 212 108 C226 116 232 132 228 148 C224 160 204 165 182 165 C160 166 136 162 132 150Z" fill="url(#stoneG)"/>
+            <path d="M150 124 C158 116 168 112 178 111" stroke="#a9aeb6" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".35"/>
+            
+          </g></g>
+          <g id="waterline"><path d="M118 148 A62 9 0 0 0 242 148 A62 24 0 0 1 118 148Z" fill="#1b3c40" opacity=".72"/><path d="M118 148 A62 9 0 0 0 242 148" fill="none" stroke="#9fc4c0" stroke-opacity=".5" stroke-width="1.3"/></g>
+          <g id="flower" transform="translate(180 146)"></g>
+          <g id="sparks" fill="#e9c46a"></g>
+        </svg>
+      </div>
+      <div class="slider-box">
+        <div class="slider-head"><span class="small">Сила чувства сейчас</span><b id="afterVal">60</b></div>
+        <input type="range" min="0" max="100" step="1" value="60" id="f-after" aria-label="Сила чувства сейчас">
+        <div class="scale-words"><span>чуть-чуть</span><span>очень сильно</span></div>
+      </div>
+      <div class="result" id="resultText"></div>
+      <div class="nav"><button class="btn ghost" data-act="prev" type="button">Назад</button><button class="btn" data-act="save" type="button">Сохранить</button></div>
+    </div>
+  </section>
+
+  <!-- DONE -->
+  <section class="screen" id="s-done">
+    <div style="margin-top:20px" class="kicker">Записано</div>
+    <h2>Ты молодец, что остановилась и разобралась</h2>
+    <p class="lead">Мысли — это не факты. Это просто мысли, и с ними можно разговаривать.</p>
+    <div class="quote" id="doneNew" style="margin-top:18px"></div>
+    <div class="nav" style="flex-direction:column"><button class="btn" id="doneHome" type="button">К моим записям</button></div>
+  </section>
+
+  <!-- DETAIL -->
+  <section class="screen" id="s-detail">
+    <div id="detail"></div>
+    <div class="nav"><button class="btn ghost" id="delBtn" type="button"><span class="danger">Удалить</span></button><button class="btn" id="detBack" type="button">Назад</button></div>
+  </section>
+
+  <!-- GROUNDING -->
+  <section class="screen" id="s-ground">
+    <div id="gBody"></div>
+  </section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+'use strict';
+var KEY_E='kuv_thought_entries', KEY_D='kuv_thought_draft';
+var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+var $=function(s){return document.querySelector(s)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function toast(t){var el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(function(){el.classList.remove('on')},2400)}
+
+var EMOS=['Тревога','Грусть','Обида','Злость','Страх','Стыд','Вина','Растерянность','Одиночество','Усталость','Раздражение','Беспомощность','Разочарование','Ревность'];
+var DIST=[
+ {id:'cat',n:'Катастрофизация',q:'Всё пропало',d:'Из маленькой неприятности ум рисует конец света.'},
+ {id:'mind',n:'Чтение мыслей',q:'Она точно думает, что я глупая',d:'Кажется, что знаешь, что у другого в голове — без доказательств.'},
+ {id:'bw',n:'Чёрно-белое мышление',q:'Либо идеально, либо никак',d:'Только «всё» или «ничего», без серединки.'},
+ {id:'should',n:'Долженствование',q:'Я должна всё успевать',d:'Жёсткие «должна» и «обязана», за которые потом себя ругаешь.'},
+ {id:'gen',n:'Обобщение',q:'Вечно у меня так',d:'Один случай превращается в «всегда» и «никогда».'},
+ {id:'pers',n:'Персонализация',q:'Это из-за меня он не в духе',d:'Берёшь на себя вину за то, что от тебя не зависит.'},
+ {id:'disc',n:'Обесценивание хорошего',q:'Да это просто повезло',d:'Хорошее не считается, а плохое считается вдвойне.'},
+ {id:'emo',n:'Эмоциональное обоснование',q:'Мне страшно — значит, опасно',d:'Чувство принимается за доказательство.'},
+ {id:'label',n:'Ярлыки',q:'Я неудачница',d:'Одна ошибка — и на себя вешается целое клеймо.'},
+ {id:'fort',n:'Предсказание будущего',q:'Ничего не получится',d:'Уверенность в плохом исходе заранее, как будто будущее уже известно.'}
+];
+var STEPS=7;
+
+/* ---------- draft ---------- */
+function blank(){return {situation:'',thought:'',emotions:[],before:60,distortions:[],friend:'',facts:'',year:'',newThought:'',after:null,step:1}}
+var D=load(KEY_D,null);
+function persist(){save(KEY_D,D)}
+
+/* ---------- screens ---------- */
+function show(id){
+  $$('.screen').forEach(function(s){s.classList.remove('on')});
+  var el=$('#s-'+id); el.classList.add('on');
+  $('#topHome').hidden=(id==='home');
+  window.scrollTo(0,0);
+  if(id==='home') renderHome();
+}
+$('#topHome').addEventListener('click',function(){ if(D) persist(); stopGround(); show('home'); });
+
+/* ---------- home ---------- */
+function entries(){return load(KEY_E,[])}
+function fmtDate(ts){var d=new Date(ts);return d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})+', '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}
+function renderHome(){
+  $('#resumeBtn').hidden=!(D && (D.situation||D.thought));
+  var q=($('#search').value||'').trim().toLowerCase();
+  var list=entries().slice().sort(function(a,b){return b.ts-a.ts});
+  var all=list.length;
+  if(q){list=list.filter(function(e){return entryText(e).toLowerCase().indexOf(q)>=0})}
+  var box=$('#entries');
+  if(!all){box.innerHTML='<div class="empty">Пока здесь пусто. Когда разберёшь первую мысль, она появится здесь — можно будет вернуться и перечитать.</div>';return}
+  if(!list.length){box.innerHTML='<div class="empty">Ничего не нашлось. Попробуй другое слово.</div>';return}
+  box.innerHTML=list.map(function(e){
+    var diff=(e.after!=null)?(e.before-e.after):null;
+    var dtxt=diff==null?'':(diff>0?'легче на '+diff:(diff===0?'без изменений':'сильнее на '+(-diff)));
+    return '<button class="entry" type="button" data-id="'+esc(e.id)+'"><div class="d"><span>'+esc(fmtDate(e.ts))+'</span><span>'+esc(dtxt)+'</span></div><div class="t">'+esc(e.thought||e.situation)+'</div>'+(e.newThought?'<div class="n">'+esc(e.newThought)+'</div>':'')+'</button>';
+  }).join('');
+}
+$('#search').addEventListener('input',renderHome);
+$('#entries').addEventListener('click',function(ev){var b=ev.target.closest('.entry');if(b)openDetail(b.getAttribute('data-id'))});
+$('#startBtn').addEventListener('click',function(){
+  if(D && (D.situation||D.thought) && !confirm('Есть начатая запись. Начать заново? Начатое пропадёт.')) return;
+  D=blank();persist();startFlow();
+});
+$('#resumeBtn').addEventListener('click',function(){startFlow()});
+$('#sosBtn').addEventListener('click',function(){startGround()});
+
+/* ---------- flow ---------- */
+var prog=$('#prog');
+for(var i=0;i<STEPS;i++){prog.appendChild(document.createElement('i'))}
+function startFlow(){
+  if(!D) D=blank();
+  $('#f-situation').value=D.situation;$('#f-thought').value=D.thought;
+  $('#f-before').value=D.before;$('#beforeVal').textContent=D.before;
+  $('#f-friend').value=D.friend;$('#f-facts').value=D.facts;$('#f-year').value=D.year;$('#f-new').value=D.newThought;
+  renderChips();renderDist();
+  show('flow');goStep(D.step||1,false);
+}
+function goStep(n,back){
+  D.step=n;persist();
+  $$('.step').forEach(function(s){s.classList.remove('on','backward')});
+  var el=$('.step[data-step="'+n+'"]');
+  if(back) el.classList.add('backward');
+  void el.offsetWidth; el.classList.add('on');
+  $$('#prog i').forEach(function(b,i){b.classList.toggle('done',i<n)});
+  if(n===4) $('#q4').textContent=D.thought;
+  if(n===6) $('#q6').textContent=D.thought;
+  if(n===7){ if(D.after==null) D.after=D.before; $('#f-after').value=D.after; updateLily(); }
+  validate();
+  window.scrollTo(0,0);
+}
+function validate(){
+  var ok=true;
+  if(D.step===1) ok=!!D.situation.trim();
+  if(D.step===2) ok=!!D.thought.trim();
+  var nb=$('.step[data-step="'+D.step+'"] [data-act="next"]');
+  if(nb) nb.disabled=!ok;
+}
+function bindText(id,key){$(id).addEventListener('input',function(e){D[key]=e.target.value;persist();validate()})}
+bindText('#f-situation','situation');bindText('#f-thought','thought');bindText('#f-friend','friend');bindText('#f-facts','facts');bindText('#f-year','year');bindText('#f-new','newThought');
+$('#s-flow').addEventListener('click',function(ev){
+  var b=ev.target.closest('[data-act]');if(!b)return;
+  var a=b.getAttribute('data-act');
+  if(a==='next'&&D.step<STEPS) goStep(D.step+1,false);
+  else if(a==='prev'&&D.step>1) goStep(D.step-1,true);
+  else if(a==='cancel'){persist();show('home');toast('Начатое сохранено — можно вернуться позже')}
+  else if(a==='save') finish();
+});
+
+/* emotions */
+function renderChips(){
+  var all=EMOS.slice();D.emotions.forEach(function(e){if(all.indexOf(e)<0)all.push(e)});
+  $('#emoChips').innerHTML=all.map(function(e){return '<button type="button" class="chip'+(D.emotions.indexOf(e)>=0?' on':'')+'" data-e="'+esc(e)+'">'+esc(e)+'</button>'}).join('');
+}
+$('#emoChips').addEventListener('click',function(ev){
+  var c=ev.target.closest('.chip');if(!c)return;var e=c.getAttribute('data-e');
+  var i=D.emotions.indexOf(e);if(i>=0)D.emotions.splice(i,1);else D.emotions.push(e);
+  c.classList.toggle('on',i<0);persist();
+});
+function addOwn(){var v=$('#emoOwn').value.trim();if(!v)return;v=v.charAt(0).toUpperCase()+v.slice(1);if(D.emotions.indexOf(v)<0)D.emotions.push(v);$('#emoOwn').value='';persist();renderChips()}
+$('#emoAdd').addEventListener('click',addOwn);
+$('#emoOwn').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addOwn()}});
+$('#f-before').addEventListener('input',function(e){D.before=+e.target.value;$('#beforeVal').textContent=D.before;D.after=null;persist()});
+
+/* distortions */
+function renderDist(){
+  $('#distList').innerHTML=DIST.map(function(d){return '<button type="button" class="dcard'+(D.distortions.indexOf(d.id)>=0?' on':'')+'" data-d="'+d.id+'" aria-pressed="'+(D.distortions.indexOf(d.id)>=0)+'"><b>'+d.n+'</b><q>'+d.q+'</q><span>'+d.d+'</span></button>'}).join('');
+}
+$('#distList').addEventListener('click',function(ev){
+  var c=ev.target.closest('.dcard');if(!c)return;var id=c.getAttribute('data-d');
+  var i=D.distortions.indexOf(id);if(i>=0)D.distortions.splice(i,1);else D.distortions.push(id);
+  c.classList.toggle('on',i<0);c.setAttribute('aria-pressed',String(i<0));persist();
+});
+
+/* lily morph */
+var NS='http://www.w3.org/2000/svg';
+var flower=$('#flower'), petals=[];
+(function buildFlower(){
+  // outer ring (8) then inner ring (6) then centre
+  var rings=[{n:8,len:46,w:15,fill:'url(#petalG2)',spread:1,tilt:.55},{n:6,len:38,w:13,fill:'url(#petalG)',spread:.8,tilt:.35},{n:4,len:28,w:10,fill:'#f6efe4',spread:.55,tilt:.2}];
+  rings.forEach(function(r,ri){
+    for(var k=0;k<r.n;k++){
+      var p=document.createElementNS(NS,'path');
+      var L=r.len,W=r.w;
+      p.setAttribute('d','M0 0 C'+(-W)+' '+(-L*.35)+' '+(-W*.7)+' '+(-L*.85)+' 0 '+(-L)+' C'+(W*.7)+' '+(-L*.85)+' '+W+' '+(-L*.35)+' 0 0Z');
+      p.setAttribute('fill',r.fill);
+      p.setAttribute('stroke','rgba(120,60,80,.18)');p.setAttribute('stroke-width','.6');
+      var frac=(r.n===1)?0:(k/(r.n-1))-.5; // -0.5..0.5
+      var off=(ri%2)?(1/(r.n*2)):0;
+      petals.push({el:p,ang:(frac+off)*170*r.spread,ring:ri,tilt:r.tilt});
+      flower.appendChild(p);
+    }
+  });
+  var c=document.createElementNS(NS,'circle');c.setAttribute('r','8');c.setAttribute('cy','-8');c.setAttribute('fill','#e9c46a');c.id='core';flower.appendChild(c);
+  var sp=$('#sparks');
+  [[110,70],[250,60],[290,110],[80,120],[200,40]].forEach(function(p){var c2=document.createElementNS(NS,'circle');c2.setAttribute('cx',p[0]);c2.setAttribute('cy',p[1]);c2.setAttribute('r','2');sp.appendChild(c2)});
+})();
+var bloomCur=0, bloomTarget=0, rafId=0;
+function bloomFor(before,after){
+  if(before<=0) return after<=0?1:0;
+  var rel=Math.max(0,(before-after)/before);            // how much it dropped
+  var abs=Math.max(0,(60-after)/60)*0.35;               // a low level also counts
+  return Math.max(0,Math.min(1,rel*0.9+abs*(after<before?1:0)));
+}
+function drawLily(b){
+  var e=b*b*(3-2*b); // smoothstep
+  var stone=$('#stone');
+  stone.setAttribute('opacity',(1-e*0.95).toFixed(3));
+  stone.setAttribute('transform','translate(0 '+(e*46).toFixed(1)+') scale(1)');
+  stone.style.transformOrigin='180px 140px';
+  $('#waterline').setAttribute('opacity',(1-e).toFixed(3));
+  var pad=$('#pad');var ps=0.25+0.75*Math.min(1,e*1.4);
+  pad.setAttribute('transform','translate(180 152) scale('+ps.toFixed(3)+' '+ps.toFixed(3)+')');
+  pad.setAttribute('opacity',Math.min(1,e*1.8).toFixed(3));
+  var open=Math.max(0,(e-0.15)/0.85);
+  petals.forEach(function(p){
+    var a=p.ang*open; var sy=(0.15+0.85*open)*(1-p.tilt*open*0.35);
+    var sc=0.2+0.8*open;
+    p.el.setAttribute('transform','rotate('+a.toFixed(2)+') scale('+(sc*1.35).toFixed(3)+' '+(sy*1.35).toFixed(3)+')');
+  });
+  flower.setAttribute('opacity',Math.min(1,open*2).toFixed(3));
+  $('#core').setAttribute('opacity',Math.max(0,(open-0.5)*2).toFixed(3));
+  $('#sparks').setAttribute('opacity',Math.max(0,(e-0.6)/0.4*0.85).toFixed(3));
+}
+function animateTo(t){
+  bloomTarget=t;
+  if(reduce){bloomCur=t;drawLily(t);return}
+  if(rafId) return;
+  (function tick(){
+    bloomCur+= (bloomTarget-bloomCur)*0.12;
+    if(Math.abs(bloomTarget-bloomCur)<0.002){bloomCur=bloomTarget;drawLily(bloomCur);rafId=0;return}
+    drawLily(bloomCur);rafId=requestAnimationFrame(tick);
+  })();
+}
+function updateLily(){
+  var a=+$('#f-after').value;D.after=a;$('#afterVal').textContent=a;persist();
+  animateTo(bloomFor(D.before,a));
+  var diff=D.before-a, txt;
+  if(diff>0){var pct=D.before?Math.round(diff/D.before*100):0;txt='Было <b>'+D.before+'</b>, стало <b>'+a+'</b> — легче на <b>'+diff+'</b>'+(pct?' ('+pct+'%)':'')+'. '+(bloomFor(D.before,a)>0.6?'Камень ушёл под воду, а на его месте раскрылась кувшинка.':'Камень понемногу уходит под воду.')}
+  else if(diff===0) txt='Было <b>'+D.before+'</b>, и пока так же. Это нормально — иногда чувству просто нужно время.';
+  else txt='Стало <b>'+a+'</b> — сильнее, чем было. Так бывает, когда задеваешь что-то важное. Может, попробовать «Быструю помощь»?';
+  $('#resultText').innerHTML=txt;
+}
+$('#f-after').addEventListener('input',updateLily);
+drawLily(0);
+
+function finish(){
+  var e={id:'e'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),ts:Date.now(),situation:D.situation.trim(),thought:D.thought.trim(),emotions:D.emotions.slice(),before:D.before,distortions:D.distortions.slice(),friend:D.friend.trim(),facts:D.facts.trim(),year:D.year.trim(),newThought:D.newThought.trim(),after:D.after==null?D.before:D.after};
+  var list=entries();list.push(e);save(KEY_E,list);
+  D=null;try{localStorage.removeItem(KEY_D)}catch(_){}
+  $('#doneNew').textContent=e.newThought||'Ты дала себе минуту внимания. Это уже много.';
+  show('done');
+}
+$('#doneHome').addEventListener('click',function(){show('home')});
+
+/* ---------- detail ---------- */
+var curId=null;
+function distName(id){for(var i=0;i<DIST.length;i++)if(DIST[i].id===id)return DIST[i].n;return id}
+function meter(label,v,color){return '<div class="meter"><span style="flex:0 0 74px">'+label+'</span><div class="bar"><i style="width:'+v+'%;background:'+color+'"></i></div><b style="flex:0 0 32px;text-align:right">'+v+'</b></div>'}
+function openDetail(id){
+  var e=entries().filter(function(x){return x.id===id})[0];if(!e)return;curId=id;
+  var h='<div class="kicker" style="margin-top:8px">'+esc(fmtDate(e.ts))+'</div>';
+  h+='<div class="det-block"><span class="kicker">Что случилось</span><p>'+esc(e.situation)+'</p></div>';
+  h+='<div class="det-block"><span class="kicker">Мысль</span><div class="quote">'+esc(e.thought)+'</div></div>';
+  if(e.emotions.length) h+='<div class="det-block"><span class="kicker">Чувства</span><div class="tags">'+e.emotions.map(function(x){return '<span class="tag">'+esc(x)+'</span>'}).join('')+'</div></div>';
+  h+='<div class="det-block" style="display:grid;gap:10px">'+meter('было',e.before,'#c9788e')+meter('стало',e.after,'#7fae7a')+'</div>';
+  if(e.distortions.length) h+='<div class="det-block"><span class="kicker">Кривые зеркала</span><div class="tags">'+e.distortions.map(function(x){return '<span class="tag">'+esc(distName(x))+'</span>'}).join('')+'</div></div>';
+  if(e.friend) h+='<div class="det-block"><span class="kicker">Подруге я бы сказала</span><p>'+esc(e.friend)+'</p></div>';
+  if(e.facts) h+='<div class="det-block"><span class="kicker">Факты за и против</span><p>'+esc(e.facts)+'</p></div>';
+  if(e.year) h+='<div class="det-block"><span class="kicker">Через год</span><p>'+esc(e.year)+'</p></div>';
+  if(e.newThought) h+='<div class="det-block"><span class="kicker">Бережная мысль</span><div class="quote" style="border-color:var(--leaf);background:rgba(127,174,122,.08)">'+esc(e.newThought)+'</div></div>';
+  $('#detail').innerHTML=h;show('detail');
+}
+$('#detBack').addEventListener('click',function(){show('home')});
+$('#delBtn').addEventListener('click',function(){
+  if(!confirm('Удалить эту запись? Вернуть её не получится.'))return;
+  save(KEY_E,entries().filter(function(x){return x.id!==curId}));show('home');toast('Запись удалена');
+});
+
+/* ---------- export ---------- */
+function entryText(e){
+  var t=[fmtDate(e.ts),'Что случилось: '+e.situation,'Мысль: '+e.thought];
+  if(e.emotions.length)t.push('Чувства: '+e.emotions.join(', '));
+  t.push('Сила чувства: было '+e.before+', стало '+e.after);
+  if(e.distortions.length)t.push('Кривые зеркала: '+e.distortions.map(distName).join(', '));
+  if(e.friend)t.push('Подруге я бы сказала: '+e.friend);
+  if(e.facts)t.push('Факты за и против: '+e.facts);
+  if(e.year)t.push('Через год: '+e.year);
+  if(e.newThought)t.push('Бережная мысль: '+e.newThought);
+  return t.join('\n');
+}
+function exportAll(){
+  var list=entries().sort(function(a,b){return a.ts-b.ts});
+  if(!list.length){toast('Пока нечего сохранять');return null}
+  var txt='Перевернуть мысль — мои записи\n\n'+list.map(entryText).join('\n\n— — —\n\n')+'\n';
+  if(navigator.share && /iPhone|iPad|Android/i.test(navigator.userAgent)){
+    navigator.share({title:'Мои записи',text:txt}).catch(function(){});
+  }else{
+    var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));
+    a.download='мои-мысли.txt';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
+    toast('Файл с записями сохранён');
+  }
+  return txt;
+}
+$('#exportBtn').addEventListener('click',exportAll);
+window.__thought={exportText:function(){var l=entries();return l.map(entryText).join('\n\n')}};
+
+/* ---------- grounding 5-4-3-2-1 ---------- */
+var G=[
+ {n:5,t:'Найди глазами пять вещей, которые ты видишь',h:'Не торопись. Цвет чашки, узор на шторе, свет из окна. Отмечай каждую.'},
+ {n:4,t:'Четыре вещи, которых можешь коснуться',h:'Ткань рукава, прохладный стол, свои ладони. Почувствуй, какие они.'},
+ {n:3,t:'Три звука вокруг',h:'Шум за окном, тиканье, своё дыхание. Даже тишина звучит.'},
+ {n:2,t:'Два запаха',h:'Если ничего не чувствуется — вспомни два любимых запаха.'},
+ {n:1,t:'Один вкус',h:'Глоток воды или просто вкус во рту. Побудь с ним секунду.'}
+];
+var gi=0,gTimer=0;
+var leaf='<svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 20C7 18 4 13 6 6c3 3 6 6 6 14zm0 0c5-2 8-7 6-14-3 3-6 6-6 14z" fill="#f0b6c4"/></svg>';
+function startGround(){gi=0;renderGround();show('ground')}
+function stopGround(){clearTimeout(gTimer)}
+function renderGround(){
+  stopGround();
+  var b=$('#gBody');
+  if(gi>=G.length){
+    b.innerHTML='<div class="kicker" style="margin-top:12px">Ты здесь</div><h2>Теперь просто подыши</h2><p class="lead">Вдох — пока круг растёт, выдох — пока он тает. Пять-шесть раз.</p><div class="breath" aria-hidden="true"></div><div class="breath-word" id="bw">вдох</div><div class="nav" style="flex-direction:column"><button class="btn" id="gThought" type="button">Разобрать мысль, которая накрыла</button><button class="btn ghost" id="gHome" type="button" style="flex:none">Мне чуть легче</button></div><p class="small" style="margin-top:16px">Если совсем тяжело — позвони: <a href="tel:+74959895050" style="color:var(--ink)">8 (495) 989-50-50</a> (психологи МЧС), при угрозе жизни — <a href="tel:112" style="color:var(--ink)">112</a>.</p>';
+    var w=true;(function cyc(){var el=$('#bw');if(!el||!$('#s-ground').classList.contains('on'))return;el.textContent=w?'вдох':'выдох';w=!w;gTimer=setTimeout(cyc,5000)})();
+    $('#gThought').addEventListener('click',function(){stopGround();D=(D&&(D.situation||D.thought))?D:blank();persist();startFlow()});
+    $('#gHome').addEventListener('click',function(){stopGround();show('home')});
+    return;
+  }
+  var s=G[gi],dots='';
+  for(var i=0;i<s.n;i++)dots+='<button type="button" class="dot" aria-label="Отметить">'+leaf+'</button>';
+  b.innerHTML='<div class="prog">'+G.map(function(_,i){return '<i class="'+(i<=gi?'done':'')+'"></i>'}).join('')+'</div><div class="g-num">'+s.n+'</div><h2>'+s.t+'</h2><div class="dots">'+dots+'</div><p class="g-hint">'+s.h+'</p><div class="nav"><button class="btn ghost" id="gSkip" type="button">Пропустить</button><button class="btn" id="gNext" type="button" disabled>Дальше</button></div>';
+  b.firstChild && b.querySelector('.g-num').animate && !reduce && b.querySelector('.g-num').animate([{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'none'}],{duration:450,easing:'ease-out'});
+  $$('#gBody .dot').forEach(function(d){d.addEventListener('click',function(){
+    d.classList.toggle('on');
+    var done=$$('#gBody .dot.on').length===s.n;$('#gNext').disabled=!done;
+    if(done){gTimer=setTimeout(function(){gi++;renderGround()},900)}else stopGround();
+  })});
+  $('#gNext').addEventListener('click',function(){gi++;renderGround()});
+  $('#gSkip').addEventListener('click',function(){gi++;renderGround()});
+}
+
+renderHome();
+})();
+</script>
+</body>
+</html>
