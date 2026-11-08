@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0e1a1c">
 <title>Тихая заводь</title>
@@ -27,8 +28,24 @@ a.app svg{width:56px;height:56px}
 .t{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;line-height:1.1}
 .d{color:var(--muted);font-size:14px;line-height:1.4;margin-top:3px}
 footer{margin-top:40px;color:var(--muted);font-size:13px;line-height:1.5;opacity:.8}
+
+.install{margin:26px 0 6px;padding:18px 18px 16px;border:1px solid rgba(240,182,196,.35);border-radius:18px;background:linear-gradient(160deg,rgba(240,182,196,.10),rgba(127,174,122,.06))}
+.install h3{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;line-height:1.1}
+.install p{color:var(--muted);font-size:15px;line-height:1.5;margin-top:6px}
+.ibtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;margin-top:14px;border:0;border-radius:14px;background:var(--pink);color:#2a1620;font:600 17px Manrope,system-ui,sans-serif;cursor:pointer}
+.ibtn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500;font-size:15px;min-height:46px}
+.steps{list-style:none;margin-top:14px;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:16px;line-height:1.45}
+.steps li::before{content:counter(s);width:30px;height:30px;border-radius:50%;background:rgba(233,196,106,.16);color:var(--gold);display:grid;place-items:center;font-weight:600;font-size:15px}
+.steps b{color:var(--ink)}
+.kbd{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 6px;border-radius:8px;background:#f6efe4;color:#0e1a1c;font-weight:800;font-size:20px;line-height:1;vertical-align:-6px}
+.note{margin-top:12px;font-size:15px!important;color:#d9e2dc!important;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid var(--line)}
+.done{display:none}
+.installed .install-box{display:none}.installed .done{display:block}
+.tabsw{display:flex;gap:6px;margin-top:14px}.tabsw button{flex:1;min-height:46px;border-radius:12px;border:1px solid rgba(246,239,228,.25);background:rgba(246,239,228,.04);color:#d9e2dc;font:500 16px Manrope,sans-serif}.tabsw button.on{color:#fff;border-color:var(--gold);background:rgba(233,196,106,.12)}
 @media (prefers-reduced-motion:reduce){#sky{display:none}}
 </style>
+
 
 
 
@@ -41,10 +58,35 @@ footer{margin-top:40px;color:var(--muted);font-size:13px;line-height:1.5;opacity
   <h1>Тихая <i>заводь</i></h1>
   <p class="sub">Десять маленьких приложений: поиграть, подышать, порисовать и поговорить с собой. Всё хранится только в этом телефоне.</p>
 </header>
+<section class="install" id="inst">
+ <div class="install-box">
+  <h3>Поставить на телефон</h3>
+  <p>Один раз — и на рабочем столе появится кувшинка «Заводь». Внутри все 10 приложений, работают даже без интернета.</p>
+  <button class="ibtn" id="ibtn" hidden>Установить «Заводь»</button>
+  <div id="manual">
+   <div class="note" id="inapp" hidden><b>Сначала открой эту страницу в Chrome.</b> Сейчас она открыта внутри мессенджера — там установить нельзя. Нажми <span class="kbd">⋮</span> вверху справа → «Открыть в Chrome» (или «Открыть в браузере»).</div>
+   <div class="tabsw"><button data-os="android" class="on">Android / Honor</button><button data-os="ios">iPhone</button></div>
+   <ol class="steps" data-os="android">
+    <li><span>Нажми <span class="kbd">⋮</span> — три точки <b>вверху справа</b> в Chrome.</span></li>
+    <li><span>Выбери <b>«Добавить на главный экран»</b> (на некоторых телефонах — <b>«Установить приложение»</b>).</span></li>
+    <li><span>Нажми <b>«Установить»</b>.</span></li>
+    <li><span>Выйди на рабочий стол — там розовая кувшинка <b>«Заводь»</b>.</span></li>
+   </ol>
+   <ol class="steps" data-os="ios" hidden>
+    <li><span>Открой страницу в <b>Safari</b>.</span></li>
+    <li><span>Нажми кнопку <b>«Поделиться»</b> — квадрат со стрелкой внизу.</span></li>
+    <li><span>Пролистай и выбери <b>«На экран Домой»</b>, потом <b>«Добавить»</b>.</span></li>
+   </ol>
+   <p class="note"><b>Иконка не появилась?</b> Открой <b>Настройки</b> телефона → <b>Приложения</b> → найди <b>Chrome</b> → <b>Права</b> и включи <b>«Ярлыки на рабочем столе»</b>. Потом повтори шаги.</p>
+  </div>
+ </div>
+ <div class="done"><h3>Заводь установлена</h3><p>Открывай её с рабочего стола. Ниже — все приложения.</p></div>
+</section>
+
 
 <section class="group"><h2>Для души</h2>
 <a class="app" href="apps/pond/index.html"><svg viewBox="0 0 56 56"><ellipse cx="28" cy="36" rx="22" ry="8" fill="#5f8f63"/><path d="M28 34c-6-2-10-8-8-14 3 3 6 6 8 14zm0 0c6-2 10-8 8-14-3 3-6 6-8 14zm0 0c-2-6 0-14 0-18 0 4 2 12 0 18z" fill="#f0b6c4"/></svg><div><div class="t">Пруд настроений</div><div class="d">Каждый день — одна кувшинка. За месяц вырастает пруд твоего настроения.</div></div></a>
-<a class="app" href="apps/jar/index.html"><svg viewBox="0 0 56 56"><rect x="16" y="14" width="24" height="34" rx="8" fill="none" stroke="#f6efe4" stroke-width="2"/><rect x="18" y="9" width="20" height="5" rx="2" fill="#7fae7a"/><circle cx="24" cy="32" r="3" fill="#e9c46a"/><circle cx="32" cy="38" r="2" fill="#e9c46a"/><circle cx="30" cy="26" r="2.5" fill="#e9c46a"/></svg><div><div class="t">Банка светлячков</div><div class="d">Записывай хорошее — оно светится. В плохой день достань одного светлячка.</div></div></a>
+<a class="app" href="apps/jar/index.html"><svg viewBox="0 0 56 56"><rect x="16" y="14" width="24" height="34" rx="8" fill="none" stroke="#f6efe4" stroke-width="2"/><rect x="18" y="9" width="20" height="5" rx="2" fill="#7fae7a"/><circle cx="24" cy="32" r="3" fill="#e9c46a"/><circle cx="32" cy="38" r="2" fill="#e9c46a"/><circle cx="30" cy="26" r="2.5" fill="#e9c46a"/></svg><div><div class="t">Банка светлячков</div><div class="d">Записывай хорошее — оно светится. В&nbsp;плохой день достань одного светлячка.</div></div></a>
 <a class="app" href="apps/breathe/index.html"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="22" fill="none" stroke="#7fae7a" stroke-width="1.5" opacity=".5"/><circle cx="28" cy="28" r="14" fill="none" stroke="#7fae7a" stroke-width="1.5"/><path d="M28 36c-5-3-7-9-4-14 2 4 4 9 4 14zm0 0c5-3 7-9 4-14-2 4-4 9-4 14z" fill="#f0b6c4"/></svg><div><div class="t">Дыши с кувшинкой</div><div class="d">Цветок раскрывается на вдохе и закрывается на выдохе. Пара минут — и спокойнее.</div></div></a>
 </section>
 
@@ -64,13 +106,29 @@ footer{margin-top:40px;color:var(--muted);font-size:13px;line-height:1.5;opacity
 <a class="app" href="apps/music/index.html"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="6" fill="none" stroke="#f6efe4" stroke-width="1.5"/><circle cx="28" cy="28" r="13" fill="none" stroke="#f6efe4" stroke-width="1.2" opacity=".6"/><circle cx="28" cy="28" r="21" fill="none" stroke="#f6efe4" stroke-width="1" opacity=".3"/><circle cx="28" cy="28" r="2.5" fill="#e9c46a"/></svg><div><div class="t">Поющий пруд</div><div class="d">Касайся воды — она звучит. Посади кувшинки, и пруд сыграет мелодию сам.</div></div></a>
 </section>
 
-<footer>Чтобы заводь была как обычное приложение: в браузере нажми меню (три точки или полоски) и выбери «Добавить на главный экран» или «Установить». После этого всё работает даже без интернета.</footer>
+<footer>Всё, что ты записываешь, хранится только в этом телефоне и никуда не отправляется.</footer>
 </main>
 <script>
 (()=>{const c=document.getElementById('sky'),x=c.getContext('2d');let w,h,d=devicePixelRatio||1,f=[];
 function r(){w=innerWidth;h=innerHeight;c.width=w*d;c.height=h*d;x.setTransform(d,0,0,d,0,0)}r();addEventListener('resize',r);
 for(let i=0;i<18;i++)f.push({x:Math.random(),y:Math.random(),p:Math.random()*6,s:.3+Math.random()*.7});
 (function t(ms){x.clearRect(0,0,w,h);for(const o of f){o.x+=Math.sin(ms/3000+o.p)*.0003*o.s;o.y+=Math.cos(ms/4000+o.p)*.0002;const a=(Math.sin(ms/700*o.s+o.p)+1)/2;const X=((o.x%1)+1)%1*w,Y=((o.y%1)+1)%1*h;const g=x.createRadialGradient(X,Y,0,X,Y,10);g.addColorStop(0,`rgba(233,196,106,${.55*a})`);g.addColorStop(1,'rgba(233,196,106,0)');x.fillStyle=g;x.fillRect(X-10,Y-10,20,20)}requestAnimationFrame(t)})(0)})();
+</script>
+
+<script>
+(()=>{const ua=navigator.userAgent,root=document.documentElement;
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+if(standalone)root.classList.add('installed');
+const inapp=/Telegram|WhatsApp|Instagram|FBAN|FBAV|VK|; wv\)/i.test(ua);
+if(inapp)document.getElementById('inapp').hidden=false;
+const ios=/iPhone|iPad|iPod/.test(ua);
+const sw=os=>{document.querySelectorAll('.tabsw button').forEach(b=>b.classList.toggle('on',b.dataset.os===os));document.querySelectorAll('.steps').forEach(o=>o.hidden=o.dataset.os!==os)};
+document.querySelectorAll('.tabsw button').forEach(b=>b.onclick=()=>sw(b.dataset.os));if(ios)sw('ios');
+let dp;const btn=document.getElementById('ibtn');
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;btn.hidden=false});
+btn.onclick=async()=>{if(!dp)return;dp.prompt();const r=await dp.userChoice;dp=null;btn.hidden=true;if(r.outcome==='accepted')root.classList.add('installed')};
+addEventListener('appinstalled',()=>root.classList.add('installed'));
+})();
 </script>
 </body>
 </html>
