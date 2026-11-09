@@ -4,130 +4,183 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0e1a1c">
 <title>Тихая заводь</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="assets/ui.css">
 <style>
-:root{--bg:#0e1a1c;--bg2:#13262a;--ink:#f6efe4;--muted:#b7c4bd;--pink:#f0b6c4;--leaf:#7fae7a;--gold:#e9c46a;--line:rgba(246,239,228,.12)}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
-body{min-height:100vh;padding:calc(env(safe-area-inset-top) + 28px) 20px calc(env(safe-area-inset-bottom) + 40px);overflow-x:hidden}
 #sky{position:fixed;inset:0;z-index:0;pointer-events:none}
-main{position:relative;z-index:1;max-width:560px;margin:0 auto}
-header{margin-bottom:28px}
-h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:46px;line-height:1;letter-spacing:.01em}
-h1 i{color:var(--pink);font-style:italic}
-.sub{margin-top:12px;color:var(--muted);font-size:15px;line-height:1.5;max-width:30em}
-.group{margin-top:30px}
-.group h2{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:22px;color:var(--gold);margin-bottom:10px;padding-left:2px}
-a.app{display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:center;padding:14px 4px;border-top:1px solid var(--line);color:inherit;text-decoration:none;min-height:76px;transition:background .2s}
-a.app:last-child{border-bottom:1px solid var(--line)}
-a.app:active,a.app:hover{background:rgba(246,239,228,.04)}
-a.app svg{width:56px;height:56px}
-.t{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;line-height:1.1}
-.d{color:var(--muted);font-size:14px;line-height:1.4;margin-top:3px}
-footer{margin-top:40px;color:var(--muted);font-size:13px;line-height:1.5;opacity:.8}
+.z-app{position:relative;z-index:1;max-width:560px}
+.hello{margin:22px 2px 0}
+.hello .z-cap{display:block;margin-bottom:10px;color:var(--glow);opacity:.85}
+.hello h1{font:400 52px/.95 var(--display);margin:0;letter-spacing:-.015em}
+.hello h1 i{color:var(--accent);font-style:italic}
+.hello p{margin:12px 0 0;color:var(--ink-2);font-size:15px;max-width:30em}
 
-.install{margin:26px 0 6px;padding:18px 18px 16px;border:1px solid rgba(240,182,196,.35);border-radius:18px;background:linear-gradient(160deg,rgba(240,182,196,.10),rgba(127,174,122,.06))}
-.install h3{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;line-height:1.1}
-.install p{color:var(--muted);font-size:15px;line-height:1.5;margin-top:6px}
-.ibtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;margin-top:14px;border:0;border-radius:14px;background:var(--pink);color:#2a1620;font:600 17px Manrope,system-ui,sans-serif;cursor:pointer}
-.ibtn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500;font-size:15px;min-height:46px}
-.steps{list-style:none;margin-top:14px;counter-reset:s}
-.steps li{counter-increment:s;display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:16px;line-height:1.45}
-.steps li::before{content:counter(s);width:30px;height:30px;border-radius:50%;background:rgba(233,196,106,.16);color:var(--gold);display:grid;place-items:center;font-weight:600;font-size:15px}
-.steps b{color:var(--ink)}
-.kbd{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 6px;border-radius:8px;background:#f6efe4;color:#0e1a1c;font-weight:800;font-size:20px;line-height:1;vertical-align:-6px}
-.note{margin-top:12px;font-size:15px!important;color:#d9e2dc!important;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid var(--line)}
-.done{display:none}
-.installed .install-box{display:none}.installed .done{display:block}
-.tabsw{display:flex;gap:6px;margin-top:14px}.tabsw button{flex:1;min-height:46px;border-radius:12px;border:1px solid rgba(246,239,228,.25);background:rgba(246,239,228,.04);color:#d9e2dc;font:500 16px Manrope,sans-serif}.tabsw button.on{color:#fff;border-color:var(--gold);background:rgba(233,196,106,.12)}
-@media (prefers-reduced-motion:reduce){#sky{display:none}}
+.cont{display:none;align-items:center;gap:14px;margin:24px 0 0;padding:12px 16px 12px 12px;border-radius:var(--r-l);
+ background:linear-gradient(120deg,rgba(239,179,193,.13),rgba(232,199,122,.06));box-shadow:inset 0 0 0 1px rgba(239,179,193,.18);
+ color:inherit;text-decoration:none;transition:transform .2s var(--ease)}
+.cont.on{display:flex}
+.cont:active{transform:scale(.98)}
+.cont .ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:rgba(10,20,22,.45)}
+.cont .ic img{width:34px;height:34px}
+.cont .tx{flex:1;min-width:0}
+.cont .tx b{display:block;font:500 22px/1.1 var(--display)}
+.cont svg.ar{width:20px;height:20px;fill:none;stroke:var(--ink-2);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+.grp{margin-top:34px}
+.grp h2{display:flex;align-items:baseline;gap:10px;margin:0 2px 12px;font:400 italic 25px/1 var(--display);color:var(--glow)}
+.grp h2 span{font:600 12px/1 var(--text);letter-spacing:.14em;color:var(--ink-2);font-style:normal;opacity:.7}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{position:relative;display:flex;flex-direction:column;gap:12px;min-height:150px;padding:16px 15px 15px;border-radius:22px;
+ background:linear-gradient(165deg,rgba(243,236,224,.065),rgba(243,236,224,.022));box-shadow:inset 0 1px 0 rgba(255,255,255,.05),inset 0 0 0 1px var(--line);
+ color:inherit;text-decoration:none;overflow:hidden;transition:transform .18s var(--ease),background .25s;
+ opacity:0;animation:z-in .7s var(--ease) both}
+.tile:active{transform:scale(.97);background:rgba(243,236,224,.08)}
+.tile .ic{width:46px;height:46px}
+.tile .ic img{width:46px;height:46px;display:block}
+.tile b{display:block;font:500 21px/1.08 var(--display);letter-spacing:.005em;text-wrap:balance}
+.tile small{display:block;margin-top:5px;color:var(--ink-2);font-size:13px;line-height:1.35;text-wrap:pretty}
+.tile .new{position:absolute;top:18px;right:18px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft),0 0 14px var(--accent)}
+.tile.wide{grid-column:span 2;flex-direction:row;align-items:center;min-height:96px}
+.tile.wide .ic{flex:none}
+.tile.wide small{max-width:none}
+#instBtn{box-shadow:inset 0 0 0 1px var(--line-2);min-height:40px;padding:0 14px;margin-right:6px;color:var(--ink)}
+.tile::after{content:"";position:absolute;inset:-40% -40% auto auto;width:120px;height:120px;border-radius:50%;
+ background:radial-gradient(circle,var(--halo,rgba(239,179,193,.10)),transparent 70%);pointer-events:none}
+
+footer{margin:44px 2px 0;color:var(--ink-3);font-size:13px;line-height:1.5}
+
+/* установка */
+.sheet-h{font:400 30px/1.1 var(--display);margin:4px 0 6px}
+.sheet p{color:var(--ink-2);font-size:15px;margin:6px 0 0}
+.steps{list-style:none;margin:16px 0 0;padding:0;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:16px;line-height:1.45}
+.steps li::before{content:counter(s);width:30px;height:30px;border-radius:50%;background:rgba(232,199,122,.14);color:var(--glow);display:grid;place-items:center;font-weight:600;font-size:14px}
+.kbd{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 6px;border-radius:8px;background:var(--ink);color:var(--bg);font-weight:800;font-size:18px;line-height:1;vertical-align:-5px}
+.note{margin-top:14px;font-size:14px;color:var(--ink-2);padding:12px 14px;border-radius:14px;background:rgba(0,0,0,.25)}
+.z-seg{margin-top:16px}
+.installed .inst-only{display:none!important}
 </style>
-
-
-
-
 <!--pwa--><link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="./icons/icon-192.png"><link rel="apple-touch-icon" href="./icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'))</script><!--/pwa-->
 </head>
 <body>
 <canvas id="sky"></canvas>
-<main>
-<header>
-  <h1>Тихая <i>заводь</i></h1>
-  <p class="sub">Десять маленьких приложений: поиграть, подышать, порисовать и поговорить с собой. Всё хранится только в этом телефоне.</p>
-</header>
-<section class="install" id="inst">
- <div class="install-box">
-  <h3>Поставить на телефон</h3>
-  <p>Один раз — и на рабочем столе появится кувшинка «Заводь». Внутри все 10 приложений, работают даже без интернета.</p>
-  <button class="ibtn" id="ibtn" hidden>Установить «Заводь»</button>
-  <div id="manual">
-   <div class="note" id="inapp" hidden><b>Сначала открой эту страницу в Chrome.</b> Сейчас она открыта внутри мессенджера — там установить нельзя. Нажми <span class="kbd">⋮</span> вверху справа → «Открыть в Chrome» (или «Открыть в браузере»).</div>
-   <div class="tabsw"><button data-os="android" class="on">Android / Honor</button><button data-os="ios">iPhone</button></div>
-   <ol class="steps" data-os="android">
-    <li><span>Нажми <span class="kbd">⋮</span> — три точки <b>вверху справа</b> в Chrome.</span></li>
-    <li><span>Выбери <b>«Добавить на главный экран»</b> (на некоторых телефонах — <b>«Установить приложение»</b>).</span></li>
-    <li><span>Нажми <b>«Установить»</b>.</span></li>
-    <li><span>Выйди на рабочий стол — там розовая кувшинка <b>«Заводь»</b>.</span></li>
-   </ol>
-   <ol class="steps" data-os="ios" hidden>
-    <li><span>Открой страницу в <b>Safari</b>.</span></li>
-    <li><span>Нажми кнопку <b>«Поделиться»</b> — квадрат со стрелкой внизу.</span></li>
-    <li><span>Пролистай и выбери <b>«На экран Домой»</b>, потом <b>«Добавить»</b>.</span></li>
-   </ol>
-   <p class="note"><b>Иконка не появилась?</b> Открой <b>Настройки</b> телефона → <b>Приложения</b> → найди <b>Chrome</b> → <b>Права</b> и включи <b>«Ярлыки на рабочем столе»</b>. Потом повтори шаги.</p>
-  </div>
+<div class="z-app">
+ <div class="z-top">
+  <div class="z-title"></div>
+  <button class="z-btn quiet inst-only" id="instBtn" aria-label="Поставить на телефон" style="gap:6px;font-size:14px"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>На телефон</button>
  </div>
- <div class="done"><h3>Заводь установлена</h3><p>Открывай её с рабочего стола. Ниже — все приложения.</p></div>
-</section>
 
+ <header class="hello z-in">
+  <span class="z-cap" id="greet">Добрый день</span>
+  <h1>Тихая <i>заводь</i></h1>
+  <p>Двадцать тихих приложений: поиграть, подышать, порисовать и побыть с собой.</p>
+ </header>
 
-<section class="group"><h2>Для души</h2>
-<a class="app" href="apps/pond/index.html"><svg viewBox="0 0 56 56"><ellipse cx="28" cy="36" rx="22" ry="8" fill="#5f8f63"/><path d="M28 34c-6-2-10-8-8-14 3 3 6 6 8 14zm0 0c6-2 10-8 8-14-3 3-6 6-8 14zm0 0c-2-6 0-14 0-18 0 4 2 12 0 18z" fill="#f0b6c4"/></svg><div><div class="t">Пруд настроений</div><div class="d">Каждый день — одна кувшинка. За месяц вырастает пруд твоего настроения.</div></div></a>
-<a class="app" href="apps/jar/index.html"><svg viewBox="0 0 56 56"><rect x="16" y="14" width="24" height="34" rx="8" fill="none" stroke="#f6efe4" stroke-width="2"/><rect x="18" y="9" width="20" height="5" rx="2" fill="#7fae7a"/><circle cx="24" cy="32" r="3" fill="#e9c46a"/><circle cx="32" cy="38" r="2" fill="#e9c46a"/><circle cx="30" cy="26" r="2.5" fill="#e9c46a"/></svg><div><div class="t">Банка светлячков</div><div class="d">Записывай хорошее — оно светится. В&nbsp;плохой день достань одного светлячка.</div></div></a>
-<a class="app" href="apps/breathe/index.html"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="22" fill="none" stroke="#7fae7a" stroke-width="1.5" opacity=".5"/><circle cx="28" cy="28" r="14" fill="none" stroke="#7fae7a" stroke-width="1.5"/><path d="M28 36c-5-3-7-9-4-14 2 4 4 9 4 14zm0 0c5-3 7-9 4-14-2 4-4 9-4 14z" fill="#f0b6c4"/></svg><div><div class="t">Дыши с кувшинкой</div><div class="d">Цветок раскрывается на вдохе и закрывается на выдохе. Пара минут — и спокойнее.</div></div></a>
-</section>
+ <a class="cont" id="cont" href="#"><span class="ic"><img alt="" id="contIc"></span><span class="tx"><span class="z-cap">Продолжить</span><b id="contT"></b></span><svg class="ar" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></a>
 
-<section class="group"><h2>Поговорить с собой</h2>
-<a class="app" href="apps/mirror/index.html"><svg viewBox="0 0 56 56"><rect x="14" y="8" width="28" height="40" rx="3" fill="#2a1838" stroke="#e9c46a" stroke-width="1.5"/><path d="M18 28c4-6 16-6 20 0-4 6-16 6-20 0z" fill="none" stroke="#e9c46a" stroke-width="1.5"/><circle cx="28" cy="28" r="3" fill="#e9c46a"/></svg><div><div class="t">Зазеркалье</div><div class="d">Метафорические карты, как у психологов. Не гадание — способ услышать себя.</div></div></a>
-<a class="app" href="apps/thought/index.html"><svg viewBox="0 0 56 56"><ellipse cx="28" cy="40" rx="20" ry="5" fill="#13262a" stroke="#7fae7a"/><circle cx="20" cy="34" r="6" fill="#5a5a66"/><path d="M36 36c-4-2-6-7-3-11 2 3 3 7 3 11zm0 0c4-2 6-7 3-11-2 3-3 7-3 11z" fill="#f0b6c4"/><path d="M26 32h4" stroke="#e9c46a" stroke-width="1.5"/></svg><div><div class="t">Перевернуть мысль</div><div class="d">Дневник мыслей: когда накрутила себя — разобрать по полочкам и выдохнуть.</div></div></a>
-</section>
+ <div id="groups"></div>
 
-<section class="group"><h2>Поиграть</h2>
-<a class="app" href="apps/frogs/index.html"><svg viewBox="0 0 56 56"><ellipse cx="28" cy="38" rx="18" ry="7" fill="#5f8f63"/><ellipse cx="28" cy="30" rx="11" ry="8" fill="#7fae7a"/><circle cx="23" cy="23" r="4" fill="#7fae7a"/><circle cx="33" cy="23" r="4" fill="#7fae7a"/><circle cx="23" cy="23" r="1.6" fill="#0e1a1c"/><circle cx="33" cy="23" r="1.6" fill="#0e1a1c"/></svg><div><div class="t">Лягушачий пасьянс</div><div class="d">Головоломка: лягушки прыгают друг через друга, пока не останется одна.</div></div></a>
-<a class="app" href="apps/mahjong/index.html"><svg viewBox="0 0 56 56"><rect x="10" y="14" width="22" height="28" rx="3" fill="#cdbfa6"/><rect x="8" y="12" width="22" height="28" rx="3" fill="#f6efe4"/><rect x="26" y="18" width="22" height="28" rx="3" fill="#cdbfa6"/><rect x="24" y="16" width="22" height="28" rx="3" fill="#f6efe4"/><path d="M35 36c-3-2-5-6-3-9 2 2 3 5 3 9zm0 0c3-2 5-6 3-9-2 2-3 5-3 9z" fill="#d97a93"/></svg><div><div class="t">Маджонг «Тихая заводь»</div><div class="d">Классический маджонг, только на костяшках — кувшинки, стрекозы и луна.</div></div></a>
-<a class="app" href="apps/sniper/index.html"><svg viewBox="0 0 56 56"><circle cx="40" cy="14" r="6" fill="#f6efe4"/><path d="M8 46L26 20 46 40" fill="none" stroke="#e9c46a" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="8" cy="46" r="3" fill="#e9c46a"/><rect x="42" y="38" width="8" height="10" rx="3" fill="#e9c46a" opacity=".8"/></svg><div><div class="t">Ночной снайпер</div><div class="d">Один выстрел светом: отрази его от зеркал и зажги все фонарики.</div></div></a>
-</section>
+ <footer>Всё, что ты записываешь и рисуешь, хранится только в этом телефоне и никуда не отправляется.</footer>
+</div>
 
-<section class="group"><h2>Творить</h2>
-<a class="app" href="apps/monet/index.html"><svg viewBox="0 0 56 56"><rect x="8" y="10" width="40" height="34" fill="#3b6b78"/><g fill="#7fae7a"><circle cx="18" cy="32" r="5"/><circle cx="36" cy="24" r="4"/></g><g fill="#f0b6c4"><circle cx="18" cy="30" r="2"/><circle cx="36" cy="22" r="1.6"/></g><path d="M12 16h8M26 18h10M14 38h12" stroke="#9cc4cf" stroke-width="2" stroke-linecap="round"/></svg><div><div class="t">Мой Моне</div><div class="d">Рисуй пальцем — кисти сами делают мазки как на картинах с кувшинками.</div></div></a>
-<a class="app" href="apps/music/index.html"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="6" fill="none" stroke="#f6efe4" stroke-width="1.5"/><circle cx="28" cy="28" r="13" fill="none" stroke="#f6efe4" stroke-width="1.2" opacity=".6"/><circle cx="28" cy="28" r="21" fill="none" stroke="#f6efe4" stroke-width="1" opacity=".3"/><circle cx="28" cy="28" r="2.5" fill="#e9c46a"/></svg><div><div class="t">Поющий пруд</div><div class="d">Касайся воды — она звучит. Посади кувшинки, и пруд сыграет мелодию сам.</div></div></a>
-</section>
+<div class="z-scrim" id="scrim"></div>
+<div class="z-sheet sheet" id="sheet" role="dialog" aria-label="Поставить на телефон">
+ <div class="sheet-h">Поставить на телефон</div>
+ <p>Один раз — и на рабочем столе появится кувшинка «Заводь». Все приложения работают даже без интернета.</p>
+ <button class="z-btn wide" id="ibtn" hidden style="margin-top:16px">Установить «Заводь»</button>
+ <div class="note" id="inapp" hidden><b>Сначала открой страницу в Chrome.</b> Сейчас она внутри мессенджера — там установить нельзя. Нажми <span class="kbd">⋮</span> вверху справа → «Открыть в Chrome».</div>
+ <div class="z-seg"><button data-os="android" class="on">Android</button><button data-os="ios">iPhone</button></div>
+ <ol class="steps" data-os="android">
+  <li><span>Нажми <span class="kbd">⋮</span> — три точки <b>вверху справа</b> в Chrome.</span></li>
+  <li><span>Выбери <b>«Добавить на главный экран»</b> или <b>«Установить приложение»</b>.</span></li>
+  <li><span>Нажми <b>«Установить»</b> — на рабочем столе появится кувшинка.</span></li>
+ </ol>
+ <ol class="steps" data-os="ios" hidden>
+  <li><span>Открой страницу в <b>Safari</b>.</span></li>
+  <li><span>Нажми <b>«Поделиться»</b> — квадрат со стрелкой внизу.</span></li>
+  <li><span>Выбери <b>«На экран Домой»</b>, потом <b>«Добавить»</b>.</span></li>
+ </ol>
+ <p class="note"><b>Иконка не появилась?</b> Настройки → Приложения → Chrome → Права → включи «Ярлыки на рабочем столе». Потом повтори.</p>
+</div>
 
-<footer>Всё, что ты записываешь, хранится только в этом телефоне и никуда не отправляется.</footer>
-</main>
 <script>
-(()=>{const c=document.getElementById('sky'),x=c.getContext('2d');let w,h,d=devicePixelRatio||1,f=[];
+const APPS={
+ pond:['Пруд настроений','Одна кувшинка в день — пруд твоего настроения'],
+ jar:['Банка светлячков','Хорошее светится. В трудный день — достань одного'],
+ lanterns:['Фонарики','Вечером отпусти в небо то, за что благодарна'],
+ breathe:['Дыши с кувшинкой','Цветок раскрывается на вдохе'],
+ night:['Звуки ночи','Дождь, сверчки, костёр — собери свою тишину'],
+ zen:['Сад камней','Граблями по песку — и мысли ложатся ровно'],
+ mirror:['Зазеркалье','Метафорические карты, чтобы услышать себя'],
+ thought:['Перевернуть мысль','Разобрать тревожную мысль по полочкам'],
+ kaleido:['Кривые зеркала','Один штрих — и узор отражается в двенадцати зеркалах'],
+ frogs:['Лягушачий пасьянс','Прыгай, пока не останется одна'],
+ mahjong:['Маджонг','Пары костяшек с кувшинками и луной'],
+ sniper:['Ночной снайпер','Один луч, зеркала и фонарики'],
+ stars:['Созвездия','Соедини звёзды — и в небе проступит рисунок'],
+ words:['Слова на воде','Собирай слова из букв на кувшинках'],
+ nonogram:['Японские рисунки','Логика по клеточкам — в конце картинка'],
+ shadows:['Театр теней','Поверни странную фигуру, чтобы тень ожила'],
+ monet:['Мой Моне','Рисуй пальцем мазками импрессионистов'],
+ glass:['Витраж','Раскрась витраж — и солнце пройдёт сквозь него'],
+ music:['Поющий пруд','Касайся воды — она звучит'],
+ cartouche:['Картуш','Твоё имя египетскими иероглифами'],
+};
+const NEW=new Set(['lanterns','night','zen','kaleido','stars','words','nonogram','shadows','glass','cartouche']);
+const GROUPS=[
+ ['Для души','6',['pond','jar','lanterns','breathe','night','zen'],'rgba(239,179,193,.10)'],
+ ['Заглянуть в себя','3',['mirror','thought','kaleido'],'rgba(160,120,220,.12)'],
+ ['Головоломки','7',['frogs','mahjong','sniper','stars','words','nonogram','shadows'],'rgba(232,199,122,.10)'],
+ ['Творить','4',['monet','glass','music','cartouche'],'rgba(127,169,122,.12)'],
+];
+const ic=s=>`apps/${s}/icon.svg`;
+const nb=t=>{for(let i=0;i<2;i++)t=t.replace(/(^|[\s\u00a0])([а-яёА-ЯЁ]{1,2}) /g,'$1$2\u00a0');return t.replace(/ —/g,'\u00a0—')};
+let seen={};try{seen=JSON.parse(localStorage.getItem('kuv_home_seen')||'{}')}catch(e){}
+const g=document.getElementById('groups');let k=0;
+for(const [t,n,list,halo] of GROUPS){
+ const sec=document.createElement('section');sec.className='grp';
+ sec.innerHTML=`<h2>${t}<span>${list.length}</span></h2><div class="grid"></div>`;
+ const grid=sec.querySelector('.grid');
+ list.forEach((s,i)=>{const [title,desc]=APPS[s];const a=document.createElement('a');a.className='tile'+(list.length%2&&i===list.length-1?' wide':'');a.href=`apps/${s}/index.html`;
+  a.style.setProperty('--halo',halo);a.style.animationDelay=(80+k++*35)+'ms';
+  a.innerHTML=`<span class="ic"><img src="${ic(s)}" alt="" onerror="this.style.visibility='hidden'"></span><span><b>${nb(title)}</b><small>${nb(desc)}</small></span>${NEW.has(s)&&!seen[s]?'<span class="new" aria-label="новое"></span>':''}`;
+  a.addEventListener('click',()=>{try{seen[s]=1;localStorage.setItem('kuv_home_seen',JSON.stringify(seen));localStorage.setItem('kuv_home_last',s)}catch(e){}});
+  grid.appendChild(a)})
+ g.appendChild(sec)}
+const last=localStorage.getItem('kuv_home_last');
+if(last&&APPS[last]){const c=document.getElementById('cont');c.href=`apps/${last}/index.html`;document.getElementById('contT').textContent=APPS[last][0];document.getElementById('contIc').src=ic(last);c.classList.add('on')}
+const hr=new Date().getHours();
+document.getElementById('greet').textContent=hr<5?'Доброй ночи':hr<12?'Доброе утро':hr<18?'Добрый день':hr<23?'Добрый вечер':'Доброй ночи';
+</script>
+
+<script>
+(()=>{const c=document.getElementById('sky'),x=c.getContext('2d');let w,h,d=Math.min(devicePixelRatio||1,2),f=[];
 function r(){w=innerWidth;h=innerHeight;c.width=w*d;c.height=h*d;x.setTransform(d,0,0,d,0,0)}r();addEventListener('resize',r);
-for(let i=0;i<18;i++)f.push({x:Math.random(),y:Math.random(),p:Math.random()*6,s:.3+Math.random()*.7});
-(function t(ms){x.clearRect(0,0,w,h);for(const o of f){o.x+=Math.sin(ms/3000+o.p)*.0003*o.s;o.y+=Math.cos(ms/4000+o.p)*.0002;const a=(Math.sin(ms/700*o.s+o.p)+1)/2;const X=((o.x%1)+1)%1*w,Y=((o.y%1)+1)%1*h;const g=x.createRadialGradient(X,Y,0,X,Y,10);g.addColorStop(0,`rgba(233,196,106,${.55*a})`);g.addColorStop(1,'rgba(233,196,106,0)');x.fillStyle=g;x.fillRect(X-10,Y-10,20,20)}requestAnimationFrame(t)})(0)})();
+for(let i=0;i<22;i++)f.push({x:Math.random(),y:Math.random(),p:Math.random()*6,s:.3+Math.random()*.7,z:.5+Math.random()});
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+(function t(ms){x.clearRect(0,0,w,h);
+ for(const o of f){o.x+=Math.sin(ms/3200+o.p)*.00028*o.s;o.y+=Math.cos(ms/4100+o.p)*.0002-.00004;
+  const a=Math.pow((Math.sin(ms/800*o.s+o.p)+1)/2,2);const X=((o.x%1)+1)%1*w,Y=((o.y%1)+1)%1*h,R=14*o.z;
+  const gr=x.createRadialGradient(X,Y,0,X,Y,R);gr.addColorStop(0,`rgba(255,226,150,${.6*a})`);gr.addColorStop(.25,`rgba(232,199,122,${.22*a})`);gr.addColorStop(1,'rgba(232,199,122,0)');
+  x.fillStyle=gr;x.fillRect(X-R,Y-R,R*2,R*2)}
+ requestAnimationFrame(t)})(0)})();
 </script>
 
 <script>
 (()=>{const ua=navigator.userAgent,root=document.documentElement;
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 if(standalone)root.classList.add('installed');
-const inapp=/Telegram|WhatsApp|Instagram|FBAN|FBAV|VK|; wv\)/i.test(ua);
-if(inapp)document.getElementById('inapp').hidden=false;
-const ios=/iPhone|iPad|iPod/.test(ua);
-const sw=os=>{document.querySelectorAll('.tabsw button').forEach(b=>b.classList.toggle('on',b.dataset.os===os));document.querySelectorAll('.steps').forEach(o=>o.hidden=o.dataset.os!==os)};
-document.querySelectorAll('.tabsw button').forEach(b=>b.onclick=()=>sw(b.dataset.os));if(ios)sw('ios');
+const sheet=document.getElementById('sheet'),scrim=document.getElementById('scrim');
+const open=v=>{sheet.classList.toggle('on',v);scrim.classList.toggle('on',v)};
+document.getElementById('instBtn').onclick=()=>open(true);scrim.onclick=()=>open(false);
+if(/Telegram|WhatsApp|Instagram|FBAN|FBAV|VK|; wv\)/i.test(ua))document.getElementById('inapp').hidden=false;
+const sw=os=>{document.querySelectorAll('.z-seg button').forEach(b=>b.classList.toggle('on',b.dataset.os===os));document.querySelectorAll('.steps').forEach(o=>o.hidden=o.dataset.os!==os)};
+document.querySelectorAll('.z-seg button').forEach(b=>b.onclick=()=>sw(b.dataset.os));if(/iPhone|iPad|iPod/.test(ua))sw('ios');
 let dp;const btn=document.getElementById('ibtn');
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;btn.hidden=false});
-btn.onclick=async()=>{if(!dp)return;dp.prompt();const r=await dp.userChoice;dp=null;btn.hidden=true;if(r.outcome==='accepted')root.classList.add('installed')};
-addEventListener('appinstalled',()=>root.classList.add('installed'));
+btn.onclick=async()=>{if(!dp)return;dp.prompt();const r=await dp.userChoice;dp=null;btn.hidden=true;if(r.outcome==='accepted'){root.classList.add('installed');open(false)}};
+addEventListener('appinstalled',()=>{root.classList.add('installed');open(false)});
 })();
 </script>
 </body>

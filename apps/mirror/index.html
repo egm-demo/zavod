@@ -6,192 +6,234 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#120a1a">
 <title>Зазеркалье — метафорические карты</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Manrope:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/fonts/fonts.css"><link rel="stylesheet" href="../../assets/ui.css">
 <style>
-:root{--bg:#120a1a;--ink:#f3e9d8;--muted:#b8a8c6;--gold:#e2bd72;--gold2:#b8924e;--violet:#5b3f7a;--line:rgba(226,189,114,.22);--cw:min(74vw,330px)}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--ink);-webkit-tap-highlight-color:transparent}
-body{font-family:Manrope,system-ui,sans-serif;min-height:100vh;overflow-x:hidden;
-  background:radial-gradient(120% 55% at 50% -8%,#3a2152 0%,rgba(58,33,82,0) 62%),linear-gradient(#150c20,#0b0611 70%);background-attachment:fixed;
-  padding:calc(env(safe-area-inset-top) + 12px) 20px calc(env(safe-area-inset-bottom) + 40px)}
-#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-main{position:relative;z-index:1;max-width:520px;margin:0 auto}
-.back{display:inline-flex;align-items:center;min-height:44px;color:var(--muted);text-decoration:none;font-size:14px;letter-spacing:.02em}
-.back:hover{color:var(--gold)}
-header{margin-top:2px;text-align:center}
-.orn{display:block;margin:0 auto 4px;width:120px;height:22px}
-h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:46px;line-height:1;letter-spacing:.02em;color:var(--ink)}
-.kicker{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:21px;color:var(--gold);margin-top:4px}
-.about{margin:12px auto 0;max-width:30em;color:var(--muted);font-size:14.5px;line-height:1.55}
-details.how{margin:8px auto 0;max-width:30em;color:var(--muted);font-size:14.5px;line-height:1.55}
-details.how summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;min-height:44px;color:var(--gold);font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:19px}
-details.how summary::-webkit-details-marker{display:none}
-details.how summary::after{content:'';width:7px;height:7px;border-right:1px solid var(--gold);border-bottom:1px solid var(--gold);transform:rotate(45deg);margin:-4px 0 0 10px;transition:transform .3s}
-details.how[open] summary::after{transform:rotate(-135deg);margin-top:4px}
-details.how ol{text-align:left;padding:4px 0 6px 22px}
-details.how li{margin:4px 0}
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);margin:14px 0 22px;border-bottom:1px solid var(--line)}
-.tabs button{background:none;border:0;color:var(--muted);font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;font-weight:600;min-height:48px;cursor:pointer;position:relative;padding:0 4px;line-height:1.1}
-.tabs button[aria-selected="true"]{color:var(--ink)}
-.tabs button[aria-selected="true"]::after{content:'';position:absolute;left:22%;right:22%;bottom:-1px;height:2px;background:var(--gold);border-radius:2px}
+:root{--gold:#e2bd72;--gold-2:#b8924e;--cw:min(70vw,320px,calc((100dvh - 360px) / 1.5));--mist:rgba(184,168,198,.82)}
+body{background:radial-gradient(120% 58% at 50% -8%,#3a2152 0%,rgba(58,33,82,0) 62%),radial-gradient(90% 40% at 50% 108%,#2a1440 0%,rgba(42,20,64,0) 70%),linear-gradient(#150c20,#0b0611 72%);background-attachment:fixed}
+body.lock{overflow:hidden}
+#sky,#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+#sky{z-index:0}#fx{z-index:45}
+html,body{overflow-x:clip}.z-app{z-index:1;padding-bottom:0;overflow-x:clip}
+.z-title{font:500 15px/1.2 var(--text);letter-spacing:.22em;text-transform:uppercase}
+main{flex:1;display:flex;flex-direction:column;padding-bottom:30px}
+.view{display:flex;flex-direction:column;flex:1}
 .view[hidden]{display:none}
-.stage{position:relative;width:var(--cw);margin:6px auto 0}
-.ghost{position:absolute;inset:0;border-radius:14px;background:var(--backimg) center/100% 100% no-repeat;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:.85}
-.g1{transform:rotate(-5deg) translate(-8px,6px)}
-.g2{transform:rotate(3.5deg) translate(8px,3px)}
-.card{position:relative;width:100%;aspect-ratio:2/3;perspective:1400px;cursor:pointer;outline:none}
-.card .inner{position:absolute;inset:0;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform 1s cubic-bezier(.3,.7,.2,1)}
+.center{text-align:center}
+.dim{color:var(--mist)}.z-cap{color:var(--ink-2)}.item{background:rgba(255,255,255,.06)}
+
+/* нижняя навигация */
+.nav{position:sticky;bottom:0;z-index:5;margin:0 -20px;padding:14px 14px calc(var(--safe-b) + 8px);background:linear-gradient(180deg,rgba(12,7,18,0),rgba(12,7,18,.94) 38%)}
+.nav .z-tool{position:relative;font-size:12px}
+.nav .z-tool.on{color:var(--ink)}
+.nav .z-tool.on svg{color:var(--accent)}
+.nav .z-tool.on::after{content:"";position:absolute;bottom:2px;width:4px;height:4px;border-radius:50%;background:var(--accent)}
+.badge{position:absolute;top:7px;left:calc(50% + 6px);min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--accent);color:var(--accent-ink);font:700 10px/16px var(--text);text-align:center}
+
+/* сцена с колодой */
+.date{text-align:center;margin-top:6px}
+.stage{position:relative;width:var(--cw);margin:20px auto 0;flex:none}
+.stage::before{content:"";position:absolute;left:50%;top:50%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(closest-side,rgba(226,189,114,.20),rgba(139,107,181,.12) 55%,transparent 100%);opacity:.5;transition:opacity 1.2s;animation:breath 7s ease-in-out infinite;pointer-events:none}
+.stage.lit{width:min(44vw,176px);margin-top:12px}.stage{transition:width .8s var(--ease),margin .8s var(--ease)}.stage.lit::before{opacity:1}
+.stage::after{content:"";position:absolute;left:10%;right:10%;bottom:-20px;height:24px;background:radial-gradient(closest-side,rgba(0,0,0,.6),transparent);filter:blur(5px);animation:floorbreath 6s ease-in-out infinite}
+@keyframes breath{50%{transform:translate(-50%,-50%) scale(1.08)}}
+@keyframes floorbreath{50%{transform:scale(.9);opacity:.75}}
+.float{position:relative;animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-6px)}}
+.gh{position:absolute;inset:0;border-radius:14px;background:var(--backimg) center/100% 100% no-repeat;box-shadow:0 14px 30px rgba(0,0,0,.55);transition:transform .9s var(--ease),opacity .9s}
+.g1{transform:rotate(-7deg) translate(-14px,7px);opacity:.95;filter:brightness(.8)}
+.g2{transform:rotate(5.5deg) translate(14px,5px);opacity:.95;filter:brightness(.8)}
+.stage.lit .g1{transform:rotate(-9deg) translate(-16px,8px);opacity:.5}
+.stage.lit .g2{transform:rotate(8deg) translate(16px,6px);opacity:.5}
+.bloom::after{content:"";position:absolute;left:50%;top:50%;width:140%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.3);background:radial-gradient(closest-side,rgba(255,236,190,.65),rgba(226,189,114,.18) 60%,transparent);opacity:0;pointer-events:none;animation:bloom 1.3s .35s ease-out}
+@keyframes bloom{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.3)}}
+
+/* карта */
+.card{position:relative;width:100%;aspect-ratio:2/3;perspective:1400px;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent;touch-action:pan-y}
+.tilt{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .7s var(--ease)}
+.card.tilting .tilt{transition:transform .08s linear}
+.inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.3,.7,.2,1)}
 .card.open .inner{transform:rotateY(180deg)}
-.face{position:absolute;inset:0;border-radius:14px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 1px rgba(226,189,114,.25)}
+.face{position:absolute;inset:0;border-radius:14px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 18px 40px -8px rgba(0,0,0,.7),0 0 0 1px rgba(226,189,114,.3)}
 .face.back{background:var(--backimg) center/100% 100% no-repeat}
+.face.back::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,235,190,.16) 46%,transparent 58%);background-size:260% 100%;animation:sheen 7s ease-in-out infinite}
+@keyframes sheen{0%{background-position:130% 0}60%,100%{background-position:-60% 0}}
 .face.front{transform:rotateY(180deg);background:#0d0614}
 .face canvas{display:block;width:100%;height:100%}
-.card.open .face.front{box-shadow:0 14px 40px rgba(0,0,0,.6),0 0 34px rgba(226,189,114,.16),0 0 0 1px rgba(226,189,114,.35)}
-.card.lift{animation:lift 1s cubic-bezier(.3,.7,.2,1)}
-@keyframes lift{50%{transform:translateY(-16px) scale(1.035)}}
+.card.open .face.front{box-shadow:0 22px 50px -8px rgba(0,0,0,.75),0 0 46px rgba(226,189,114,.2),0 0 0 1px rgba(226,189,114,.4)}
+.glare{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s;mix-blend-mode:soft-light;background:radial-gradient(circle at var(--gx,50%) var(--gy,30%),rgba(255,244,214,.55),transparent 55%)}
+.card.tilting .glare{opacity:1}
+.card.lift{animation:lift 1.1s cubic-bezier(.3,.7,.2,1)}
+@keyframes lift{45%{transform:translateY(-22px) scale(1.05)}}
 .card.shuffle{animation:shuf .7s ease}
 @keyframes shuf{25%{transform:translateX(-14px) rotate(-3deg)}55%{transform:translateX(12px) rotate(2deg)}80%{transform:translateX(-4px)}}
-.card:focus-visible .face{box-shadow:0 0 0 2px var(--gold)}
-.hint{text-align:center;margin-top:22px;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:20px;color:var(--muted);min-height:28px;transition:opacity .4s}
-.reflect{text-align:center;margin-top:20px;animation:fadeUp .8s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.num{font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
-.q{font-family:'Cormorant Garamond',Georgia,serif;font-size:27px;line-height:1.2;font-weight:500;margin:10px auto 0;max-width:16em;transition:opacity .3s}
+.card:focus-visible .face{box-shadow:0 0 0 2px var(--accent)}
+.pulse::before{content:"";position:absolute;inset:-6px;border-radius:20px;box-shadow:0 0 0 1.5px rgba(239,179,193,.55);animation:ring 2.4s ease-out infinite;pointer-events:none}
+@keyframes ring{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.12)}}
+
+.hint{text-align:center;margin-top:44px;font:italic 400 24px/1.2 var(--display);color:var(--ink-2);min-height:30px;transition:opacity .5s;text-wrap:balance}
+.reflect{text-align:center;margin-top:26px;animation:z-in .8s var(--ease) both}
+.q{font:500 26px/1.18 var(--display);margin:12px auto 0;max-width:15em;text-wrap:balance;transition:opacity .3s}
 .q.fade{opacity:0}
-.soft{color:var(--muted);font-size:14px;line-height:1.5;margin:12px auto 0;max-width:24em}
-.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
-.btn{appearance:none;background:transparent;color:var(--ink);border:1px solid rgba(226,189,114,.55);border-radius:999px;min-height:46px;padding:0 20px;font:500 15px/1 Manrope,system-ui,sans-serif;cursor:pointer;transition:background .2s,border-color .2s}
-.btn:hover{background:rgba(226,189,114,.08)}
-.btn.solid{background:var(--gold);color:#1b0f24;border-color:var(--gold);font-weight:600}
-.btn.solid:hover{background:#ecca86}
-.btn:disabled{background:transparent;color:var(--gold);border-color:rgba(226,189,114,.35);opacity:1;cursor:default}
-.link{appearance:none;background:none;border:0;color:var(--gold);font:italic 500 19px 'Cormorant Garamond',Georgia,serif;min-height:44px;padding:0 10px;cursor:pointer;margin-top:12px;text-decoration:underline;text-decoration-color:rgba(226,189,114,.4);text-underline-offset:4px}
-.link.small{font-size:16px;margin-top:2px}
-textarea{width:100%;min-height:96px;resize:vertical;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;color:var(--ink);font:16px/1.5 Manrope,system-ui,sans-serif;padding:12px 14px;outline:none}
-textarea:focus{border-color:rgba(226,189,114,.6);background:rgba(255,255,255,.06)}
-textarea::placeholder{color:rgba(184,168,198,.7)}
-.notebox{margin:16px auto 0;max-width:420px;text-align:left}
-.notebox .btn{margin-top:10px;width:100%}
-.lead{text-align:center;color:var(--muted);font-size:14.5px;line-height:1.55;max-width:26em;margin:0 auto 18px}
-.spread{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:420px;margin:0 auto}
-.slot{display:flex;flex-direction:column;align-items:center;min-width:0}
-.slot .lbl{font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;font-weight:600;color:var(--gold);margin-bottom:8px;text-align:center;line-height:1.1;min-height:20px;white-space:nowrap}
-.slot .face{border-radius:10px}
-.pos{margin:26px auto 0;max-width:440px;padding-top:20px;border-top:1px solid var(--line);animation:fadeUp .7s ease both}
-.pos h3{font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;font-weight:600;color:var(--gold)}
-.pos .sub{color:var(--muted);font-size:13.5px;margin-top:2px}
-.pos .q{font-size:23px;margin:10px 0 4px;max-width:none;text-align:left}
-.pos textarea{margin-top:8px;min-height:80px}
-.center{text-align:center}
-.list{display:flex;flex-direction:column;gap:12px}
-.item{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;text-align:left;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:14px;padding:12px;color:inherit;cursor:pointer;font:inherit;width:100%}
-.item:hover{background:rgba(255,255,255,.05)}
-.thumbs{display:flex;gap:4px}
-.thumbs canvas{width:64px;height:96px;border-radius:6px;display:block;box-shadow:0 0 0 1px rgba(226,189,114,.25)}
-.thumbs.three canvas{width:40px;height:60px;border-radius:4px}
-.item .d{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2)}
-.item .t{font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;line-height:1.2;margin-top:4px}
-.item .n{color:var(--muted);font-size:13.5px;line-height:1.4;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.empty{text-align:center;color:var(--muted);line-height:1.6;padding:30px 10px}
-.empty svg{width:90px;height:110px;margin-bottom:10px;opacity:.85}
-.viewer{position:fixed;inset:0;z-index:20;background:rgba(9,4,14,.94);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 56px) 20px calc(env(safe-area-inset-bottom) + 40px);animation:fadeIn .3s ease}
+.soft{color:var(--ink-2);font-size:14px;line-height:1.5;margin:12px auto 0;max-width:24em}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.row .z-btn{flex:1;min-width:132px;padding:0 14px;white-space:nowrap}
+textarea.z-field{display:block;min-height:88px;margin-top:20px;background:rgba(255,255,255,.04)}
+textarea.z-field:disabled{opacity:.7}
+.linkbtn{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;margin-top:6px;color:var(--ink-2);font:500 14px/1 var(--text);border-radius:999px}
+.linkbtn:active{background:var(--surface-2)}
+
+/* расклад */
+.sp-head{text-align:center;margin-top:6px}
+.sp-head .z-h2{font-size:34px}
+.spread{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px auto 0;width:100%;max-width:400px}
+.slot{display:flex;flex-direction:column;align-items:center;min-width:0;opacity:.62;transition:opacity .4s,transform .4s var(--ease)}
+.slot.on{opacity:1;transform:translateY(-4px)}
+.slot .lbl{font:600 11px/1.1 var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin-bottom:10px;white-space:nowrap;transition:color .3s}
+.slot.on .lbl{color:var(--gold)}
+.slot .card{perspective:900px}
+.slot .face{border-radius:9px;box-shadow:0 10px 24px -6px rgba(0,0,0,.7),0 0 0 1px rgba(226,189,114,.28)}
+.slot.on .card.open .face.front{box-shadow:0 14px 30px -6px rgba(0,0,0,.75),0 0 28px rgba(226,189,114,.28),0 0 0 1px rgba(226,189,114,.55)}
+.panel{margin:34px auto 0;max-width:440px;width:100%;text-align:center;animation:z-in .6s var(--ease) both}
+.panel h3{font:500 32px/1 var(--display);color:var(--ink)}
+.panel h3 i{font-style:italic;color:var(--gold)}
+.panel .q{font-size:25px;margin-top:14px}
+.panel .z-field{text-align:left}
+.placeholder{margin:34px auto 0;text-align:center;font:italic 400 22px/1.3 var(--display);color:var(--ink-2);max-width:14em;text-wrap:balance}
+
+/* мои карты */
+.mh{display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px}
+.mh .z-h2{font-size:38px}
+.group{margin:26px 0 10px}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;text-align:left;background:var(--surface);border-radius:20px;padding:12px;width:100%;transition:background .2s,transform .15s var(--ease);animation:z-in .5s var(--ease) both}
+.item:active{background:var(--surface-2);transform:scale(.985)}
+.thumbs{display:flex;width:112px;justify-content:center}
+.thumbs canvas{width:58px;height:87px;border-radius:7px;display:block;box-shadow:0 6px 16px -4px rgba(0,0,0,.7),0 0 0 1px rgba(226,189,114,.3);background:#0d0614}
+.thumbs.three canvas{width:38px;height:57px;border-radius:5px}
+.thumbs.three canvas+canvas{margin-left:-8px}
+.item .d{font:600 11px/1.2 var(--text);letter-spacing:.14em;text-transform:uppercase;color:var(--gold-2)}
+.item .t{font:500 21px/1.15 var(--display);margin-top:6px;text-wrap:balance}
+.item .n{color:var(--ink-2);font-size:13.5px;line-height:1.4;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.empty{text-align:center;padding:56px 12px 20px;margin:auto 0}
+.empty .mini{width:76px;aspect-ratio:2/3;margin:0 auto 24px;border-radius:9px;background:var(--backimg) center/100% 100% no-repeat;box-shadow:0 14px 30px -6px rgba(0,0,0,.7),0 0 0 1px rgba(226,189,114,.3);transform:rotate(-6deg)}
+.empty .z-h2{font-size:30px}
+.empty .z-btn{margin-top:26px}
+
+/* просмотр */
+.viewer{position:fixed;inset:0;z-index:40;background:radial-gradient(100% 60% at 50% 0%,rgba(58,33,82,.85),rgba(9,4,14,.97) 70%),rgba(9,4,14,.96);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--safe-t) + 64px) 20px calc(var(--safe-b) + 36px);animation:fadeIn .3s ease}
 .viewer[hidden]{display:none}
 @keyframes fadeIn{from{opacity:0}}
-.vclose{position:fixed;top:calc(env(safe-area-inset-top) + 6px);right:12px;width:44px;height:44px;border-radius:50%;background:rgba(20,10,28,.8);border:1px solid var(--line);color:var(--ink);cursor:pointer;z-index:21;display:grid;place-items:center}
-.vclose svg{width:18px;height:18px}
+.vclose{position:fixed;top:calc(var(--safe-t) + 8px);right:12px;z-index:41;background:rgba(20,10,28,.7)}
 .vbody{max-width:480px;margin:0 auto}
-.vcard{width:min(84vw,380px);aspect-ratio:2/3;margin:0 auto;border-radius:14px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.6),0 0 0 1px rgba(226,189,114,.3)}
-.vcard canvas{width:100%;height:100%;display:block}
+.vcard{width:min(76vw,340px);aspect-ratio:2/3;margin:0 auto}
 .vrow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.vrow .vcard{width:100%;border-radius:10px}
-.vtext{text-align:center;margin-top:18px}
-.danger{color:#e6a3b4;border-color:rgba(230,163,180,.5)}
-.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translate(-50%,20px);background:#2a1838;color:var(--ink);border:1px solid rgba(226,189,114,.45);padding:12px 20px;border-radius:999px;font-size:14.5px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:30;white-space:nowrap}
-.toast.on{opacity:1;transform:translate(-50%,0)}
-footer{margin-top:44px;text-align:center;color:rgba(184,168,198,.8);font-size:13px;line-height:1.5}
-@media (min-width:700px){:root{--cw:330px}}
-@media (prefers-reduced-motion:reduce){
-  .card .inner{transition:none}
-  .card.lift,.card.shuffle,.reflect,.pos,.viewer{animation:none}
-  .q{transition:none}
-}
+.vrow .vcard{width:100%}
+.vcard .card{border-radius:14px}
+.vtext{text-align:center;margin-top:30px}
+.vpos{margin-top:30px;text-align:center}
+.vpos h3{font:500 26px/1 var(--display);color:var(--gold)}
+.vpos .q{font-size:23px;margin-top:10px}
+.vactions{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:26px}
+.vactions .z-btn{width:100%}
+.danger{color:#e9a9b9}
+
+/* шторка */
+.sheet-h{font:400 34px/1.05 var(--display);margin:6px 0 6px}
+.sheet-h i{font-style:italic;color:var(--accent)}
+.steps{list-style:none;margin:16px 0 0;padding:0;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:30px 1fr;gap:6px;padding:8px 0;color:var(--ink);font-size:15px;line-height:1.5}
+.steps li::before{content:counter(s);font:italic 500 24px/1.1 var(--display);color:var(--gold)}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:56px;width:100%;margin-top:14px;padding:0 4px;border-top:1px solid var(--line);font-size:15px;text-align:left}
+.sw{width:46px;height:28px;border-radius:14px;background:var(--surface-2);position:relative;transition:background .25s;flex:none}
+.sw::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:var(--ink-2);transition:transform .25s var(--ease),background .25s}
+.setrow[aria-pressed="true"] .sw{background:var(--accent-soft)}
+.setrow[aria-pressed="true"] .sw::after{transform:translateX(18px);background:var(--accent)}
+.foot{color:var(--ink-3);font-size:13px;line-height:1.5;margin-top:14px;text-wrap:pretty}
+.z-toast{border-radius:20px;white-space:normal;max-width:calc(100% - 40px);text-align:center;bottom:calc(var(--safe-b) + 92px)}
+.z-dialog p{color:var(--ink-2);font-size:15px;line-height:1.5;margin:10px 0 0}
+.z-dialog .btns{display:flex;gap:10px;margin-top:22px}
+.z-dialog .btns .z-btn{flex:1;padding:0 12px}
+@media (min-width:700px){:root{--cw:310px}}
+@media (max-height:700px){.hint{margin-top:32px}.stage{margin-top:12px}}
+@media (prefers-reduced-motion:reduce){.float,.stage::before,.stage::after,.face.back::after,.pulse::before{animation:none!important}.inner{transition:none}.card.lift,.card.shuffle,.bloom::after{animation:none}}
 </style>
-
-
-
-
 <!--pwa--><link rel="manifest" href="../../manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="../../icons/icon-192.png"><link rel="apple-touch-icon" href="../../icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('../../sw.js'))</script><!--/pwa-->
 </head>
 <body>
-<canvas id="sky" aria-hidden="true"></canvas>
-<main>
-  <a class="back" href="../../index.html">‹ все приложения</a>
-  <header>
-    <svg class="orn" viewBox="0 0 120 22" aria-hidden="true"><path d="M2 11h34M84 11h34" stroke="#e2bd72" stroke-width=".8" opacity=".6"/><path d="M44 11c6-8 26-8 32 0-6 8-26 8-32 0z" fill="none" stroke="#e2bd72" stroke-width="1"/><circle cx="60" cy="11" r="3.4" fill="#e2bd72"/><circle cx="38" cy="11" r="1.4" fill="#e2bd72"/><circle cx="82" cy="11" r="1.4" fill="#e2bd72"/></svg>
-    <h1>Зазеркалье</h1>
-    <p class="kicker">метафорические карты</p>
-    <p class="about">Такими картами работают психологи. Это не гадание: картинка ничего не предсказывает — она помогает поговорить с собой.</p>
-    <details class="how">
-      <summary>Как с ними работать</summary>
-      <ol>
-        <li>Подумай о себе или о том, что сейчас занимает.</li>
-        <li>Открой карту и просто посмотри, не торопясь.</li>
-        <li>Ответь на вопрос — вслух, про себя или в заметке. Правильных ответов нет: первое, что пришло в голову, и есть самое ценное.</li>
-      </ol>
-    </details>
+<canvas id="sky" aria-hidden="true"></canvas><canvas id="fx" aria-hidden="true"></canvas>
+<div class="z-app">
+  <header class="z-top">
+    <a class="z-icon" href="../../index.html" aria-label="Все приложения"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <span style="width:44px;flex:none"></span><div class="z-title">Зазеркалье</div>
+    <button class="z-icon" id="bSound" aria-label="Звук"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path class="w" d="M15.5 9a4.2 4.2 0 010 6M18 6.5a7.5 7.5 0 010 11"/></svg></button>
+    <button class="z-icon" id="bMenu" aria-label="О Зазеркалье"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.2"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></svg></button>
   </header>
 
-  <nav class="tabs" role="tablist">
-    <button role="tab" data-tab="day" aria-selected="true">Карта дня</button>
-    <button role="tab" data-tab="spread" aria-selected="false">Расклад</button>
-    <button role="tab" data-tab="mine" aria-selected="false">Мои карты</button>
+  <main>
+    <section class="view" id="v-day">
+      <p class="z-cap date" id="dayDate"></p>
+      <div class="stage" id="dayStage"><div class="gh g1"></div><div class="gh g2"></div><div class="float" id="dayFloat"></div></div>
+      <p class="hint" id="dayHint">Сделай вдох и коснись карты</p>
+      <div class="reflect" id="dayReflect" hidden>
+        <p class="z-cap" id="dayNum"></p>
+        <p class="q" id="dayQ"></p>
+        <p class="soft">Не ищи правильного ответа. Что заметила первым,&nbsp;— то и&nbsp;важно.</p>
+        <textarea class="z-field" id="dayNote" maxlength="600" placeholder="Пара слов о том, что увидела и почувствовала…" aria-label="Заметка"></textarea>
+        <div class="row">
+          <button class="z-btn ghost" id="dayOther">Другой вопрос</button>
+          <button class="z-btn" id="dayKeep">Сохранить</button>
+        </div>
+        <button class="linkbtn" id="dayNew">Вытянуть другую карту</button>
+      </div>
+    </section>
+
+    <section class="view" id="v-spread" hidden>
+      <div class="sp-head"><h2 class="z-h2">Расклад <i>на ситуацию</i></h2>
+        <p class="z-lead" style="margin-inline:auto">Подумай о том, что тебя занимает. Называть вслух не нужно. Открывай карты по очереди.</p></div>
+      <div class="spread" id="spreadRow"></div>
+      <div id="spreadPos"></div>
+      <div class="center" id="spreadActions"></div>
+    </section>
+
+    <section class="view" id="v-mine" hidden>
+      <div class="mh"><h2 class="z-h2">Мои <i>карты</i></h2><span class="z-cap z-num" id="mineCount"></span></div>
+      <div id="mineList"></div>
+    </section>
+  </main>
+
+  <nav class="z-bar nav" aria-label="Разделы">
+    <button class="z-tool on" data-tab="day"><svg viewBox="0 0 24 24"><rect x="6.5" y="3.5" width="11" height="17" rx="2"/><path d="M9.5 12c1.4-2 3.6-2 5 0-1.4 2-3.6 2-5 0z"/></svg>Карта дня</button>
+    <button class="z-tool" data-tab="spread"><svg viewBox="0 0 24 24"><rect x="2.8" y="7" width="6.6" height="10.5" rx="1.4"/><rect x="14.6" y="7" width="6.6" height="10.5" rx="1.4"/><rect x="8.7" y="5" width="6.6" height="12.5" rx="1.4"/></svg>Расклад</button>
+    <button class="z-tool" data-tab="mine"><svg viewBox="0 0 24 24"><path d="M5 5.5h11a2 2 0 012 2V20H7a2 2 0 01-2-2z"/><path d="M8.5 3.5H19v13"/></svg>Мои карты<span class="badge" id="badge" hidden></span></button>
   </nav>
+</div>
 
-  <section class="view" id="v-day">
-    <div class="stage">
-      <div class="ghost g1"></div><div class="ghost g2"></div>
-      <div class="card" id="dayCard" tabindex="0" role="button" aria-label="Открыть карту">
-        <div class="inner"><div class="face back"></div><div class="face front"><canvas></canvas></div></div>
-      </div>
-    </div>
-    <p class="hint" id="dayHint">Сделай вдох и коснись карты</p>
-    <div class="reflect" id="dayReflect" hidden>
-      <p class="num" id="dayNum"></p>
-      <p class="q" id="dayQ"></p>
-      <p class="soft">Не ищи правильного ответа. Что заметила первым — то и важно.</p>
-      <div class="row">
-        <button class="btn" id="dayOther">Другой вопрос</button>
-        <button class="btn solid" id="dayKeep">Сохранить</button>
-      </div>
-      <div class="notebox" id="dayNoteBox" hidden>
-        <textarea id="dayNote" maxlength="600" placeholder="Пара слов о том, что увидела и почувствовала…"></textarea>
-        <button class="btn solid" id="daySave">Положить в «Мои карты»</button>
-      </div>
-      <button class="link" id="dayNew">Вытянуть другую карту</button>
-    </div>
-  </section>
-
-  <section class="view" id="v-spread" hidden>
-    <p class="lead">Подумай о ситуации, которая тебя занимает. Называть её не обязательно — достаточно держать в мыслях. Открывай карты по очереди.</p>
-    <div class="spread" id="spreadRow"></div>
-    <div id="spreadPos"></div>
-    <div class="center" id="spreadActions"></div>
-  </section>
-
-  <section class="view" id="v-mine" hidden>
-    <div id="mineList"></div>
-  </section>
-
-  <footer>Карты рисуются заново каждый раз — двух одинаковых почти не бывает.<br>Всё хранится только в этом телефоне.</footer>
-</main>
-
-<div class="viewer" id="viewer" hidden role="dialog" aria-modal="true">
-  <button class="vclose" id="vclose" aria-label="Закрыть"><svg viewBox="0 0 18 18"><path d="M3 3l12 12M15 3L3 15" stroke="#f3e9d8" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+<div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Карта">
+  <button class="z-icon vclose" id="vclose" aria-label="Закрыть"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <div class="vbody" id="vbody"></div>
 </div>
-<div class="toast" id="toast"></div>
+
+<div class="z-scrim" id="scrim"></div>
+<div class="z-sheet" id="sheet" role="dialog" aria-modal="true" aria-label="О Зазеркалье">
+  <h2 class="sheet-h">Как <i>работать</i> с картами</h2>
+  <p class="z-lead" style="margin-top:6px">Такими картами работают психологи. Это не гадание: картинка ничего не предсказывает — она помогает поговорить с собой.</p>
+  <ol class="steps">
+    <li>Подумай о себе или о том, что сейчас занимает.</li>
+    <li>Открой карту и просто посмотри, не торопясь.</li>
+    <li>Ответь на вопрос — вслух, про себя или в заметке. Первое, что пришло в голову, и есть самое ценное.</li>
+  </ol>
+  <button class="setrow" id="setSound" aria-pressed="true"><span>Звук и вибрация</span><span class="sw"></span></button>
+  <p class="foot">Карты рисуются заново каждый раз — двух одинаковых почти не бывает. Всё хранится только в этом телефоне.</p>
+</div>
+
+<div class="z-scrim" id="scrim2" style="z-index:52"></div>
+<div class="z-dialog" id="dlg" style="z-index:53" role="alertdialog" aria-modal="true">
+  <h3 class="z-h3" style="font-size:26px">Убрать карту?</h3>
+  <p>Она исчезнет из «Моих карт» вместе с заметкой.</p>
+  <div class="btns"><button class="z-btn ghost" id="dlgNo">Оставить</button><button class="z-btn" id="dlgYes">Убрать</button></div>
+</div>
+<div class="z-toast" id="toast" role="status"></div>
 
 <script>
 'use strict';
@@ -576,129 +618,228 @@ function renderCard(cv,seed,W,H){
   }
 }
 const cardNo=seed=>'№ '+(seed%9000+1000);
+</script>
+<script>
+/* ===== Зазеркалье v2: интерфейс. Движок карт выше — без изменений, карты по seed рисуются так же, как раньше. ===== */
+const hadV1=!!(localStorage.getItem(LS+'salt')||localStorage.getItem(LS+'day')||localStorage.getItem(LS+'saved'));
+const LS2='kuv_mirror_v2_';
+const lget=(k,d)=>{try{const v=localStorage.getItem(LS2+k);return v==null?d:JSON.parse(v)}catch(e){return d}};
+const lset=(k,v)=>{try{localStorage.setItem(LS2+k,JSON.stringify(v))}catch(e){}};
 
+/* --- звук --- */
+let AC=null,muted=!!lget('mute',false);
+function ac(){if(AC===null){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=false}}if(AC&&AC.state==='suspended')AC.resume();return AC||null}
+function tone(a,f,t0,dur,vol,type){const o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+.015);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.connect(g).connect(a.destination);o.start(t0);o.stop(t0+dur+.05)}
+function sfx(n){if(muted)return;const a=ac();if(!a)return;const t=a.currentTime;
+  if(n==='flip'){const len=Math.floor(a.sampleRate*.28),b=a.createBuffer(1,len,a.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+    const s=a.createBufferSource();s.buffer=b;const f=a.createBiquadFilter();f.type='bandpass';f.Q.value=.9;f.frequency.setValueAtTime(700,t);f.frequency.exponentialRampToValueAtTime(3200,t+.26);const g=a.createGain();g.gain.value=.05;s.connect(f).connect(g).connect(a.destination);s.start(t);
+    tone(a,523.25,t+.3,1.6,.04);tone(a,783.99,t+.38,1.6,.03);tone(a,1174.7,t+.46,1.8,.02)}
+  else if(n==='save'){tone(a,659.25,t,1.1,.04);tone(a,987.77,t+.12,1.4,.035)}
+  else if(n==='soft'){tone(a,440,t,.5,.025)}}
+const buzz=ms=>{if(!muted&&navigator.vibrate)try{navigator.vibrate(ms)}catch(e){}};
+function syncSound(){$('#bSound').classList.toggle('on',!muted);$('#bSound').setAttribute('aria-label',muted?'Включить звук':'Выключить звук');
+  $('#bSound .w').style.display=muted?'none':'';$('#setSound').setAttribute('aria-pressed',String(!muted))}
+function setMuted(m){muted=m;lset('mute',m);syncSound();if(!m){ac();sfx('soft')}}
+$('#bSound').onclick=()=>setMuted(!muted);$('#setSound').onclick=()=>setMuted(!muted);syncSound();
+
+/* --- фон: звёзды и золотая пыль --- */
+const sky=$('#sky'),sx=sky.getContext('2d'),fxc=$('#fx'),fc=fxc.getContext('2d');let SW=0,SH=0,stars=[],motes=[];
+function sizeSky(){const d=Math.min(2,devicePixelRatio||1);SW=innerWidth;SH=innerHeight;sky.width=fxc.width=Math.round(SW*d);sky.height=fxc.height=Math.round(SH*d);sx.setTransform(d,0,0,d,0,0);fc.setTransform(d,0,0,d,0,0);
+  const r=mulberry32(42);stars=[];for(let i=0;i<70;i++)stars.push({x:r()*SW,y:r()*SH,r:.4+r()*1.1,a:.1+r()*.34,p:r()*TAU,s:.5+r()*1.4});
+  motes=[];for(let i=0;i<22;i++)motes.push({x:r()*SW,y:r()*SH,r:.7+r()*1.5,v:.12+r()*.3,p:r()*TAU});drawSky(0)}
+function drawSky(t){sx.clearRect(0,0,SW,SH);
+  for(const s of stars){const a=reduced?s.a:s.a*(.6+.4*Math.sin(t*.001*s.s+s.p));sx.fillStyle=`rgba(242,220,166,${a.toFixed(3)})`;sx.beginPath();sx.arc(s.x,s.y,s.r,0,TAU);sx.fill()}
+  if(!reduced)for(const m of motes){m.y-=m.v;if(m.y<-4){m.y=SH+4;m.x=Math.random()*SW}const x=m.x+Math.sin(t*.0004+m.p)*14,a=.12+.14*Math.sin(t*.001+m.p);sx.fillStyle=`rgba(232,199,122,${a.toFixed(3)})`;sx.beginPath();sx.arc(x,m.y,m.r,0,TAU);sx.fill()}}
+let skyRun=false,skyLast=0;
+function skyLoop(t){if(document.hidden||reduced){skyRun=false;return}requestAnimationFrame(skyLoop);if(t-skyLast<33)return;skyLast=t;drawSky(t)}
+function skyStart(){if(!skyRun&&!reduced){skyRun=true;requestAnimationFrame(skyLoop)}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)skyStart()});
+sizeSky();addEventListener('resize',sizeSky);skyStart();
+
+/* --- частицы --- */
+let parts=[],fxOn=false;
+function burst(x,y,n){if(reduced)return;for(let i=0;i<(n||48);i++){const a=Math.random()*TAU,v=1.2+Math.random()*4.2;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1.4,l:1,d:.011+Math.random()*.014,r:.7+Math.random()*2,c:Math.random()<.25?'239,179,193':'240,214,140'})}
+  if(!fxOn){fxOn=true;requestAnimationFrame(fxLoop)}}
+function fxLoop(){fc.clearRect(0,0,SW,SH);parts=parts.filter(p=>p.l>0);
+  for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vx*=.985;p.vy=p.vy*.985+.055;p.l-=p.d;fc.fillStyle=`rgba(${p.c},${Math.max(0,p.l).toFixed(3)})`;fc.beginPath();fc.arc(p.x,p.y,p.r,0,TAU);fc.fill()}
+  if(parts.length&&!document.hidden)requestAnimationFrame(fxLoop);else{fxOn=false;fc.clearRect(0,0,SW,SH)}}
+function burstAt(el,n){const r=el.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,n)}
+
+/* --- мелочи --- */
+const toastEl=$('#toast');let toastT;
+function toast(t,ms){toastEl.textContent=t;toastEl.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove('on'),ms||2400)}
+const BIG=760,SMALL=360;
+const pad=n=>String(n).padStart(2,'0');
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+function randQ(arr,not){if(arr.length<2)return 0;let i;do{i=Math.floor(Math.random()*arr.length)}while(i===not);return i}
+let salt=load('salt',null);if(!salt){salt=newSeed();store('salt',salt)}
+const saved=()=>{const a=load('saved',[]);return Array.isArray(a)?a:[]};
+const setSaved=a=>{store('saved',a);syncBadge()};
+function syncBadge(){const n=saved().length,b=$('#badge');b.hidden=!n;b.textContent=n>99?'99+':n}
+const fmtDate=d=>{try{return new Date(d+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}).replace(/\s*г\.?$/,'')}catch(e){return d||''}};
+const fmtMonth=d=>{try{return new Date(d+'T12:00:00').toLocaleDateString('ru-RU',{month:'long',year:'numeric'}).replace(/\s*г\.?$/,'')}catch(e){return ''}};
+function onTap(el,fn){el.addEventListener('click',fn);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fn()}})}
+const restart=(el,cls)=>{el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls)};
+
+function attachTilt(el){const t=el.querySelector('.tilt');
+  const set=(rx,ry,gx,gy)=>{t.style.setProperty('--rx',rx+'deg');t.style.setProperty('--ry',ry+'deg');t.style.setProperty('--gx',gx+'%');t.style.setProperty('--gy',gy+'%')};
+  const mv=e=>{if(!el.classList.contains('open')||reduced)return;const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+    el.classList.add('tilting');set(((.5-y)*14).toFixed(2),((x-.5)*16).toFixed(2),(x*100).toFixed(0),(y*100).toFixed(0))};
+  const rs=()=>{el.classList.remove('tilting');set(0,0,50,30)};
+  el.addEventListener('pointermove',mv);el.addEventListener('pointerdown',mv);el.addEventListener('pointerleave',rs);el.addEventListener('pointercancel',rs);el.addEventListener('pointerup',()=>setTimeout(rs,420))}
+function makeCard(seed,open,label,W){const el=document.createElement('div');el.className='card'+(open?' open':'');el.tabIndex=0;el.setAttribute('role','button');el.setAttribute('aria-label',label||'Карта');
+  el.innerHTML='<div class="tilt"><div class="inner"><div class="face back"></div><div class="face front"><canvas></canvas><i class="glare"></i></div></div></div>';
+  renderCard(el.querySelector('canvas'),seed,W||SMALL,(W||SMALL)*1.5);attachTilt(el);return el}
+function flip(card,open){card.classList.toggle('open',open);if(!reduced)restart(card,'lift')}
+
+/* рубашка карты */
 (function(){
-  const rays=[];for(let i=0;i<24;i++){const a=i/24*Math.PI*2,c=Math.cos(a),s=Math.sin(a);rays.push(`M${(100+c*50).toFixed(1)} ${(150+s*50).toFixed(1)}L${(100+c*(i%2?56:62)).toFixed(1)} ${(150+s*(i%2?56:62)).toFixed(1)}`)}
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" preserveAspectRatio="none"><defs><radialGradient id="b" cx="50%" cy="50%" r="65%"><stop offset="0" stop-color="#3a2152"/><stop offset="1" stop-color="#120a1c"/></radialGradient><pattern id="p" width="14" height="14" patternUnits="userSpaceOnUse"><path d="M7 0L14 7L7 14L0 7Z" fill="none" stroke="#e2bd72" stroke-width=".4" opacity=".14"/></pattern></defs><rect width="200" height="300" fill="url(#b)"/><rect x="14" y="14" width="172" height="272" fill="url(#p)"/><rect x="7" y="7" width="186" height="286" rx="6" fill="none" stroke="#e2bd72" stroke-width="1.1" opacity=".85"/><rect x="12" y="12" width="176" height="276" rx="4" fill="none" stroke="#e2bd72" stroke-width=".5" opacity=".5"/><circle cx="100" cy="150" r="70" fill="#140a1e" opacity=".75"/><circle cx="100" cy="150" r="46" fill="none" stroke="#e2bd72" stroke-width=".8"/><circle cx="100" cy="150" r="70" fill="none" stroke="#e2bd72" stroke-width=".5" opacity=".6"/><path d="${rays.join('')}" stroke="#e2bd72" stroke-width=".8" opacity=".75"/><path d="M100 116L132 172H68Z" fill="none" stroke="#e2bd72" stroke-width="1"/><path d="M80 157Q100 142 120 157Q100 170 80 157Z" fill="#2a1838" stroke="#e2bd72" stroke-width=".9"/><circle cx="100" cy="157" r="5.5" fill="#e2bd72"/><circle cx="100" cy="157" r="2" fill="#140a1e"/><path d="M93 44a12 12 0 1 0 14 0a9.5 9.5 0 1 1 -14 0z" fill="#e2bd72" opacity=".85"/><path d="M93 256a12 12 0 1 1 14 0a9.5 9.5 0 1 0 -14 0z" fill="#e2bd72" opacity=".85"/><g fill="#e2bd72"><circle cx="30" cy="30" r="1.6"/><circle cx="170" cy="30" r="1.6"/><circle cx="30" cy="270" r="1.6"/><circle cx="170" cy="270" r="1.6"/></g></svg>`;
+  const rays=[];for(let i=0;i<24;i++){const a=i/24*TAU,c=Math.cos(a),s=Math.sin(a);rays.push(`M${(100+c*50).toFixed(1)} ${(150+s*50).toFixed(1)}L${(100+c*(i%2?57:63)).toFixed(1)} ${(150+s*(i%2?57:63)).toFixed(1)}`)}
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" preserveAspectRatio="none"><defs><radialGradient id="b" cx="50%" cy="46%" r="70%"><stop offset="0" stop-color="#4a2a68"/><stop offset=".6" stop-color="#241238"/><stop offset="1" stop-color="#0f0818"/></radialGradient><radialGradient id="m" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#e2bd72" stop-opacity=".28"/><stop offset="1" stop-color="#e2bd72" stop-opacity="0"/></radialGradient><pattern id="p" width="14" height="14" patternUnits="userSpaceOnUse"><path d="M7 0L14 7L7 14L0 7Z" fill="none" stroke="#e2bd72" stroke-width=".4" opacity=".16"/></pattern></defs><rect width="200" height="300" fill="url(#b)"/><rect x="14" y="14" width="172" height="272" fill="url(#p)"/><circle cx="100" cy="150" r="84" fill="url(#m)"/><rect x="7" y="7" width="186" height="286" rx="6" fill="none" stroke="#e2bd72" stroke-width="1.1" opacity=".9"/><rect x="12" y="12" width="176" height="276" rx="4" fill="none" stroke="#e2bd72" stroke-width=".5" opacity=".5"/><circle cx="100" cy="150" r="70" fill="#140a1e" opacity=".7"/><circle cx="100" cy="150" r="46" fill="none" stroke="#e2bd72" stroke-width=".8"/><circle cx="100" cy="150" r="70" fill="none" stroke="#e2bd72" stroke-width=".5" opacity=".6"/><circle cx="100" cy="150" r="66" fill="none" stroke="#e2bd72" stroke-width=".3" stroke-dasharray="1.2 3" opacity=".7"/><path d="${rays.join('')}" stroke="#e2bd72" stroke-width=".8" opacity=".78"/><path d="M100 116L132 172H68Z" fill="none" stroke="#e2bd72" stroke-width="1"/><path d="M80 157Q100 142 120 157Q100 170 80 157Z" fill="#2a1838" stroke="#e2bd72" stroke-width=".9"/><circle cx="100" cy="157" r="5.5" fill="#e2bd72"/><circle cx="100" cy="157" r="2" fill="#140a1e"/><path d="M93 44a12 12 0 1 0 14 0a9.5 9.5 0 1 1 -14 0z" fill="#e2bd72" opacity=".9"/><path d="M93 256a12 12 0 1 1 14 0a9.5 9.5 0 1 0 -14 0z" fill="#e2bd72" opacity=".9"/><g fill="#e2bd72"><circle cx="30" cy="30" r="1.6"/><circle cx="170" cy="30" r="1.6"/><circle cx="30" cy="270" r="1.6"/><circle cx="170" cy="270" r="1.6"/><path d="M100 20l2.6 5-2.6 5-2.6-5zM100 270l2.6 5-2.6 5-2.6-5z"/></g></svg>`;
   document.documentElement.style.setProperty('--backimg',`url("data:image/svg+xml,${encodeURIComponent(svg)}")`);
 })();
 
-function paintSky(){const cv=$('#sky'),d=Math.min(2,devicePixelRatio||1),w=innerWidth,h=innerHeight;cv.width=w*d;cv.height=h*d;const c=cv.getContext('2d');c.scale(d,d);const r=mulberry32(42);
-  for(let i=0;i<90;i++){c.fillStyle=`rgba(242,220,166,${(.12+r()*.45).toFixed(2)})`;c.beginPath();c.arc(r()*w,r()*h,.4+r()*1.1,0,TAU);c.fill()}}
-paintSky();addEventListener('resize',paintSky);
+/* --- вкладки --- */
+const TABS=['day','spread','mine'];
+function showTab(t,noScroll){if(!TABS.includes(t))t='day';
+  document.querySelectorAll('.nav .z-tool').forEach(b=>{const on=b.dataset.tab===t;b.classList.toggle('on',on);b.setAttribute('aria-current',on?'page':'false')});
+  TABS.forEach(v=>{const el=$('#v-'+v);const was=el.hidden;el.hidden=v!==t;if(v===t&&was){el.classList.remove('z-in');void el.offsetWidth;el.classList.add('z-in')}});
+  store('tab',t);if(t==='mine')renderMine();if(!noScroll)window.scrollTo({top:0})}
+document.querySelectorAll('.nav .z-tool').forEach(b=>b.addEventListener('click',()=>{showTab(b.dataset.tab);sfx('soft')}));
 
-const BIG=640,SMALL=360;
-const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
-let salt=load('salt',null);if(!salt){salt=newSeed();store('salt',salt)}
-const toastEl=$('#toast');let toastT;
-function toast(t){toastEl.textContent=t;toastEl.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove('on'),2200)}
-function randQ(arr,not){if(arr.length<2)return 0;let i;do{i=Math.floor(Math.random()*arr.length)}while(i===not);return i}
-const saved=()=>load('saved',[]);
-const setSaved=a=>store('saved',a);
-function flip(card,open){card.classList.toggle('open',open);if(!reduced){card.classList.remove('lift');void card.offsetWidth;card.classList.add('lift')}}
-function makeCard(seed,open,label){const el=document.createElement('div');el.className='card'+(open?' open':'');el.tabIndex=0;el.setAttribute('role','button');el.setAttribute('aria-label',label||'Карта');
-  el.innerHTML='<div class="inner"><div class="face back"></div><div class="face front"><canvas></canvas></div></div>';renderCard(el.querySelector('canvas'),seed,SMALL,SMALL*1.5);return el}
-function onTap(el,fn){el.addEventListener('click',fn);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fn()}})}
-
-const tabs=[...document.querySelectorAll('.tabs button')];
-function showTab(t){tabs.forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));['day','spread','mine'].forEach(v=>$('#v-'+v).hidden=v!==t);store('tab',t);if(t==='mine')renderMine()}
-tabs.forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
-
+/* --- карта дня (формат kuv_mirror_day: {date,seed,open,qi,saved}) --- */
 let day=load('day',null);
-if(!day||day.date!==today()){day={date:today(),seed:hashStr('mirror'+today()+salt),open:false,qi:Math.floor(Math.random()*Q.length),saved:false};store('day',day)}
-const dayCard=$('#dayCard'),dayCv=dayCard.querySelector('canvas');
-function paintDay(){renderCard(dayCv,day.seed,BIG,BIG*1.5);$('#dayNum').textContent='Карта '+cardNo(day.seed);$('#dayQ').textContent=Q[day.qi]}
-function dayUI(){dayCard.classList.toggle('open',day.open);$('#dayReflect').hidden=!day.open;$('#dayHint').style.display=day.open?'none':'';dayCard.setAttribute('aria-label',day.open?'Рассмотреть карту ближе':'Открыть карту');
-  $('#dayKeep').textContent=day.saved?'Сохранено':'Сохранить';$('#dayKeep').disabled=!!day.saved}
-paintDay();dayUI();
-onTap(dayCard,()=>{
-  if(!day.open){day.open=true;store('day',day);flip(dayCard,true);$('#dayHint').style.opacity=0;
-    setTimeout(()=>{$('#dayHint').style.opacity=1;dayUI()},reduced?0:700)}
-  else openViewer({kind:'card',seed:day.seed,q:Q[day.qi]},true);
-});
-$('#dayOther').onclick=()=>{const q=$('#dayQ');q.classList.add('fade');setTimeout(()=>{day.qi=randQ(Q,day.qi);store('day',day);q.textContent=Q[day.qi];q.classList.remove('fade')},reduced?0:280)};
-$('#dayKeep').onclick=()=>{const b=$('#dayNoteBox');b.hidden=!b.hidden;if(!b.hidden)setTimeout(()=>$('#dayNote').focus(),50)};
-$('#daySave').onclick=()=>{const a=saved();a.unshift({id:Date.now(),kind:'card',seed:day.seed,q:Q[day.qi],note:$('#dayNote').value.trim(),date:today()});setSaved(a);
-  day.saved=true;store('day',day);$('#dayNote').value='';$('#dayNoteBox').hidden=true;dayUI();toast('Карта лежит в «Моих картах»')};
+if(!day||typeof day!=='object'||day.date!==today()||typeof day.seed!=='number'){day={date:today(),seed:hashStr('mirror'+today()+salt),open:false,qi:Math.floor(Math.random()*Q.length),saved:false};store('day',day)}
+if(!(day.qi>=0&&day.qi<Q.length)){day.qi=Math.floor(Math.random()*Q.length);store('day',day)}
+let dayCard=null;
+function buildDayCard(){const f=$('#dayFloat');f.innerHTML='';dayCard=makeCard(day.seed,day.open,'Открыть карту',BIG);f.appendChild(dayCard);
+  onTap(dayCard,()=>{
+    if(!day.open){day.open=true;store('day',day);flip(dayCard,true);sfx('flip');buzz(10);firstSeen();
+      $('#dayStage').classList.add('lit');restart($('#dayStage'),'bloom');dayCard.classList.remove('pulse');$('#dayHint').style.opacity=0;
+      setTimeout(()=>burstAt(dayCard,56),reduced?0:520);
+      setTimeout(()=>{$('#dayHint').style.opacity=1;dayUI();$('#dayReflect').scrollIntoView({behavior:reduced?'auto':'smooth',block:'nearest'})},reduced?0:900)}
+    else openViewer({kind:'card',seed:day.seed,q:Q[day.qi]},true)})}
+function dayUI(){dayCard.classList.toggle('open',day.open);$('#dayStage').classList.toggle('lit',day.open);
+  $('#dayReflect').hidden=!day.open;$('#dayHint').style.display=day.open?'none':'';
+  dayCard.setAttribute('aria-label',day.open?'Рассмотреть карту ближе':'Открыть карту');
+  $('#dayNum').textContent='Карта '+cardNo(day.seed);$('#dayQ').textContent=Q[day.qi];
+  const kp=$('#dayKeep');kp.textContent=day.saved?'Сохранено':'Сохранить';kp.disabled=!!day.saved;$('#dayNote').disabled=!!day.saved;
+  $('#dayDate').textContent=new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long'})+' · карта дня'}
+buildDayCard();
+(function(){const n=lget('daynote',null);if(n&&n.seed===day.seed&&!day.saved)$('#dayNote').value=n.text||''})();
+dayUI();
+$('#dayNote').addEventListener('input',()=>lset('daynote',{seed:day.seed,text:$('#dayNote').value}));
+$('#dayOther').onclick=()=>{const q=$('#dayQ');q.classList.add('fade');sfx('soft');setTimeout(()=>{day.qi=randQ(Q,day.qi);store('day',day);q.textContent=Q[day.qi];q.classList.remove('fade')},reduced?0:280)};
+$('#dayKeep').onclick=()=>{const a=saved();a.unshift({id:Date.now(),kind:'card',seed:day.seed,q:Q[day.qi],note:$('#dayNote').value.trim(),date:today()});setSaved(a);
+  day.saved=true;store('day',day);dayUI();sfx('save');buzz(12);burstAt($('#dayKeep'),30);toast('Карта лежит в «Моих картах»')};
 $('#dayNew').onclick=()=>{
-  day.open=false;day.saved=false;store('day',day);flip(dayCard,false);$('#dayReflect').hidden=true;$('#dayNoteBox').hidden=true;$('#dayHint').style.display='';
-  setTimeout(()=>{day.seed=newSeed();day.qi=randQ(Q,day.qi);store('day',day);paintDay();dayUI();if(!reduced){dayCard.classList.remove('lift','shuffle');void dayCard.offsetWidth;dayCard.classList.add('shuffle')}},reduced?0:900);
-  window.scrollTo({top:Math.max(0,$('#v-day').offsetTop-80),behavior:reduced?'auto':'smooth'});
-};
+  day.open=false;day.saved=false;store('day',day);flip(dayCard,false);sfx('soft');$('#dayReflect').hidden=true;$('#dayHint').style.display='';$('#dayStage').classList.remove('lit');
+  setTimeout(()=>{day.seed=newSeed();day.qi=randQ(Q,day.qi);store('day',day);lset('daynote',null);$('#dayNote').value='';buildDayCard();dayUI();if(!reduced)restart(dayCard,'shuffle')},reduced?0:950);
+  window.scrollTo({top:0,behavior:reduced?'auto':'smooth'})};
 
+/* --- расклад (формат kuv_mirror_spread: {seeds,open,qi,notes,saved}) --- */
 let sp=load('spread',null);
 const newSpread=()=>({seeds:[newSeed(),newSeed(),newSeed()],open:[false,false,false],qi:POS.map(p=>Math.floor(Math.random()*p.q.length)),notes:['','',''],saved:false});
-if(!sp||!Array.isArray(sp.seeds)){sp=newSpread();store('spread',sp)}
-let spCards=[];
+if(!sp||!Array.isArray(sp.seeds)||sp.seeds.length!==3){sp=newSpread();store('spread',sp)}
+sp.open=Array.isArray(sp.open)?sp.open:[false,false,false];sp.notes=Array.isArray(sp.notes)?sp.notes:['','',''];sp.qi=Array.isArray(sp.qi)?sp.qi:POS.map(()=>0);
+sp.qi=sp.qi.map((v,i)=>v>=0&&v<POS[i].q.length?v:0);
+let spCards=[],spActive=-1;
 function buildSpread(){
   const row=$('#spreadRow');row.innerHTML='';spCards=[];
-  POS.forEach((p,i)=>{const slot=document.createElement('div');slot.className='slot';slot.innerHTML=`<div class="lbl">${p.t}</div>`;
-    const cd=makeCard(sp.seeds[i],sp.open[i],p.t);slot.appendChild(cd);row.appendChild(slot);spCards.push(cd);
-    onTap(cd,()=>{if(!sp.open[i]){sp.open[i]=true;store('spread',sp);flip(cd,true);setTimeout(spreadText,reduced?0:650)}else openViewer({kind:'card',seed:sp.seeds[i],q:POS[i].q[sp.qi[i]],label:POS[i].t},true)})});
-  spreadText();
-}
+  if(spActive<0)spActive=sp.open.findIndex(Boolean);
+  POS.forEach((p,i)=>{const slot=document.createElement('div');slot.className='slot'+(i===spActive?' on':'');slot.innerHTML=`<div class="lbl">${p.t}</div>`;
+    const cd=makeCard(sp.seeds[i],sp.open[i],p.t,SMALL);slot.appendChild(cd);row.appendChild(slot);spCards.push(cd);
+    onTap(cd,()=>{
+      if(!sp.open[i]){sp.open[i]=true;store('spread',sp);flip(cd,true);sfx('flip');buzz(10);firstSeen();burstAt(cd,34);spActive=i;setTimeout(spreadText,reduced?0:650)}
+      else if(spActive!==i){spActive=i;sfx('soft');spreadText()}
+      else openViewer({kind:'card',seed:sp.seeds[i],q:POS[i].q[sp.qi[i]],label:POS[i].t},true)})});
+  spreadText()}
 function spreadText(){
   const box=$('#spreadPos');
-  POS.forEach((p,i)=>{let el=box.querySelector(`[data-i="${i}"]`);
-    if(!sp.open[i]){if(el)el.remove();return}
-    if(!el){el=document.createElement('div');el.className='pos';el.dataset.i=i;
-      el.innerHTML=`<h3>${p.t}</h3><p class="sub">${p.sub}</p><p class="q"></p><button class="link small">другой вопрос</button><textarea maxlength="600" placeholder="Что откликается…"></textarea>`;
-      const kids=[...box.children];const after=kids.find(k=>+k.dataset.i>i);box.insertBefore(el,after||null);
-      el.querySelector('button').onclick=()=>{sp.qi[i]=randQ(p.q,sp.qi[i]);store('spread',sp);el.querySelector('.q').textContent=p.q[sp.qi[i]]};
-      const ta=el.querySelector('textarea');ta.value=sp.notes[i]||'';ta.addEventListener('input',()=>{sp.notes[i]=ta.value;store('spread',sp)})}
+  [...$('#spreadRow').children].forEach((s,i)=>s.classList.toggle('on',i===spActive));
+  box.innerHTML='';
+  if(spActive<0||!sp.open[spActive]){box.innerHTML='<p class="placeholder">Открой первую карту — она покажет, как всё есть сейчас.</p>'}
+  else{const i=spActive,p=POS[i],el=document.createElement('div');el.className='panel';
+    const words=p.t.split(' ');const h=words.length>1?words[0]+' <i>'+words.slice(1).join(' ')+'</i>':'<i>'+p.t+'</i>';
+    el.innerHTML=`<h3>${h}</h3><p class="z-cap" style="margin-top:8px">${p.sub}</p><p class="q"></p><button class="linkbtn">Другой вопрос</button><textarea class="z-field" maxlength="600" placeholder="Что откликается…" aria-label="Заметка"></textarea>`;
     el.querySelector('.q').textContent=p.q[sp.qi[i]];
-  });
+    el.querySelector('button').onclick=()=>{sp.qi[i]=randQ(p.q,sp.qi[i]);store('spread',sp);const q=el.querySelector('.q');q.classList.add('fade');sfx('soft');setTimeout(()=>{q.textContent=p.q[sp.qi[i]];q.classList.remove('fade')},reduced?0:250)};
+    const ta=el.querySelector('textarea');ta.value=sp.notes[i]||'';ta.addEventListener('input',()=>{sp.notes[i]=ta.value;store('spread',sp)});box.appendChild(el)}
   const act=$('#spreadActions'),all=sp.open.every(Boolean),any=sp.open.some(Boolean);
-  act.innerHTML=(all?`<div class="row" style="margin-top:24px"><button class="btn solid" id="spSave" ${sp.saved?'disabled':''}>${sp.saved?'Расклад сохранён':'Сохранить расклад'}</button></div>`:'')+(any?'<button class="link" id="spNew">Новый расклад</button>':'');
-  const sv=$('#spSave');if(sv)sv.onclick=()=>{const a=saved();a.unshift({id:Date.now(),kind:'spread',seeds:sp.seeds.slice(),qs:POS.map((p,i)=>p.q[sp.qi[i]]),notes:sp.notes.slice(),date:today()});setSaved(a);sp.saved=true;store('spread',sp);spreadText();toast('Расклад лежит в «Моих картах»')};
-  const nw=$('#spNew');if(nw)nw.onclick=()=>{spCards.forEach(cd=>flip(cd,false));sp.open=[false,false,false];$('#spreadPos').innerHTML='';$('#spreadActions').innerHTML='';
-    setTimeout(()=>{sp=newSpread();store('spread',sp);buildSpread();if(!reduced)spCards.forEach(cd=>cd.classList.add('shuffle'))},reduced?0:900);
-    window.scrollTo({top:Math.max(0,$('#v-spread').offsetTop-80),behavior:reduced?'auto':'smooth'})};
-}
+  act.innerHTML=(all?`<div class="row" style="margin-top:26px"><button class="z-btn wide" id="spSave" ${sp.saved?'disabled':''}>${sp.saved?'Расклад сохранён':'Сохранить расклад'}</button></div>`:'')+(any?'<button class="linkbtn" id="spNew" style="margin-top:12px">Новый расклад</button>':'');
+  const sv=$('#spSave');if(sv)sv.onclick=()=>{const a=saved();a.unshift({id:Date.now(),kind:'spread',seeds:sp.seeds.slice(),qs:POS.map((p,i)=>p.q[sp.qi[i]]),notes:sp.notes.slice(),date:today()});setSaved(a);sp.saved=true;store('spread',sp);spreadText();sfx('save');buzz(12);toast('Расклад лежит в «Моих картах»')};
+  const nw=$('#spNew');if(nw)nw.onclick=()=>{spCards.forEach(cd=>flip(cd,false));sp.open=[false,false,false];spActive=-1;sfx('soft');box.innerHTML='';act.innerHTML='';
+    setTimeout(()=>{sp=newSpread();store('spread',sp);buildSpread();if(!reduced)spCards.forEach(cd=>restart(cd,'shuffle'))},reduced?0:950);window.scrollTo({top:0,behavior:reduced?'auto':'smooth'})}}
 buildSpread();
 
-const fmtDate=d=>{try{return new Date(d+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}).replace(/\s*г\.?$/,'')}catch(e){return d}};
+/* --- мои карты (kuv_mirror_saved: [{id,kind:'card',seed,q,note,date}|{id,kind:'spread',seeds,qs,notes,date}]) --- */
+let thumbQ=[],thumbBusy=false;
+function thumbPump(){if(thumbBusy)return;thumbBusy=true;(function step(){const j=thumbQ.shift();if(!j){thumbBusy=false;return}try{renderCard(j[0],j[1],j[2],j[3])}catch(e){}setTimeout(step,0)})()}
 function renderMine(){
-  const box=$('#mineList'),a=saved();
-  if(!a.length){box.innerHTML=`<div class="empty"><svg viewBox="0 0 90 110"><rect x="18" y="8" width="54" height="84" rx="6" fill="#2a1838" stroke="#e2bd72" stroke-width="1.2"/><rect x="23" y="13" width="44" height="74" rx="3" fill="none" stroke="#e2bd72" stroke-width=".5" opacity=".6"/><path d="M31 50q14-12 28 0q-14 12-28 0z" fill="none" stroke="#e2bd72" stroke-width="1.1"/><circle cx="45" cy="50" r="3.6" fill="#e2bd72"/></svg><p>Пока здесь пусто.<br>Сохрани карту дня или расклад — и они будут ждать тебя здесь вместе с твоими заметками.</p></div>`;return}
-  box.innerHTML='<div class="list"></div>';const list=box.firstChild;
-  a.forEach(it=>{const b=document.createElement('button');b.className='item';const seeds=it.kind==='spread'?it.seeds:[it.seed];
+  const box=$('#mineList'),a=saved();thumbQ=[];$('#mineCount').textContent=a.length?a.length+' '+(a.length%10===1&&a.length%100!==11?'карта':(a.length%10>=2&&a.length%10<=4&&(a.length%100<10||a.length%100>=20))?'карты':'карт'):'';
+  if(!a.length){box.innerHTML='<div class="empty"><div class="mini"></div><h3 class="z-h2">Здесь пока <i>тихо</i></h3><p class="z-lead" style="margin-inline:auto">Сохрани карту дня или расклад — они будут ждать здесь вместе с твоими заметками.</p><button class="z-btn" id="goDay">Вытянуть карту дня</button></div>';
+    $('#goDay').onclick=()=>showTab('day');return}
+  box.innerHTML='';let lastM='',list=null;
+  a.forEach((it,idx)=>{const m=fmtMonth(it.date);if(m!==lastM||!list){lastM=m;const h=document.createElement('p');h.className='z-cap group';h.textContent=m||'Без даты';box.appendChild(h);list=document.createElement('div');list.className='list';box.appendChild(list)}
+    const b=document.createElement('button');b.className='item';b.style.animationDelay=Math.min(idx,8)*40+'ms';
+    const seeds=it.kind==='spread'?(it.seeds||[]):[it.seed];
     const th=document.createElement('div');th.className='thumbs'+(seeds.length>1?' three':'');
-    seeds.forEach(s=>{const cv=document.createElement('canvas');renderCard(cv,s,seeds.length>1?120:192,seeds.length>1?180:288);th.appendChild(cv)});
-    const note=it.kind==='spread'?it.notes.filter(Boolean).join(' · '):it.note;
-    const tx=document.createElement('div');tx.innerHTML=`<div class="d">${fmtDate(it.date)}</div><div class="t">${it.kind==='spread'?'Расклад на ситуацию':esc(it.q)}</div><div class="n">${note?esc(note):'<i>без заметки</i>'}</div>`;
+    seeds.forEach(s=>{const cv=document.createElement('canvas');cv.width=seeds.length>1?120:176;cv.height=cv.width*1.5;th.appendChild(cv);thumbQ.push([cv,s,cv.width,cv.height])});
+    const note=it.kind==='spread'?(it.notes||[]).filter(Boolean).join(' · '):it.note;
+    const tx=document.createElement('div');tx.innerHTML=`<div class="d">${fmtDate(it.date)}</div><div class="t">${it.kind==='spread'?'Расклад на ситуацию':esc(it.q||'')}</div><div class="n">${note?esc(note):'<i>без заметки</i>'}</div>`;
     b.append(th,tx);b.onclick=()=>openViewer(it,false);list.appendChild(b)});
-}
+  thumbPump()}
 
-const viewer=$('#viewer'),vbody=$('#vbody');let lastFocus=null;
+/* --- просмотр --- */
+const viewer=$('#viewer'),vbody=$('#vbody');let lastFocus=null,viewerHist=false;
 function openViewer(it,readonly){
   lastFocus=document.activeElement;vbody.innerHTML='';
-  const bigCard=(seed,w)=>{const d=document.createElement('div');d.className='vcard';const cv=document.createElement('canvas');renderCard(cv,seed,w,w*1.5);d.appendChild(cv);return d};
+  const bigCard=(seed,w,open)=>{const d=document.createElement('div');d.className='vcard';const c=makeCard(seed,false,'Карта',w);d.appendChild(c);setTimeout(()=>c.classList.add('open'),60);c.tabIndex=-1;return d};
   if(it.kind==='spread'){
-    const row=document.createElement('div');row.className='vrow';it.seeds.forEach(s=>row.appendChild(bigCard(s,360)));vbody.appendChild(row);
-    POS.forEach((p,i)=>{const d=document.createElement('div');d.className='pos';d.style.animation='none';
-      d.innerHTML=`<h3>${p.t}</h3><p class="q">${esc(it.qs[i])}</p><textarea maxlength="600" placeholder="Что откликается…"></textarea>`;
-      const ta=d.querySelector('textarea');ta.value=it.notes[i]||'';ta.addEventListener('input',()=>{const a=saved(),x=a.find(z=>z.id===it.id);if(x){x.notes[i]=ta.value;it.notes[i]=ta.value;setSaved(a)}});vbody.appendChild(d)});
+    const row=document.createElement('div');row.className='vrow';(it.seeds||[]).forEach(s=>row.appendChild(bigCard(s,360)));vbody.appendChild(row);
+    POS.forEach((p,i)=>{const d=document.createElement('div');d.className='vpos';
+      d.innerHTML=`<h3>${p.t}</h3><p class="q">${esc((it.qs||[])[i]||'')}</p><textarea class="z-field" maxlength="600" placeholder="Что откликается…" aria-label="Заметка: ${p.t}"></textarea>`;
+      const ta=d.querySelector('textarea');ta.value=(it.notes||[])[i]||'';ta.addEventListener('input',()=>{const a=saved(),x=a.find(z=>z.id===it.id);if(x){x.notes=x.notes||['','',''];x.notes[i]=ta.value;it.notes=x.notes;store('saved',a)}});vbody.appendChild(d)});
   } else {
     vbody.appendChild(bigCard(it.seed,BIG));
     const t=document.createElement('div');t.className='vtext';
-    t.innerHTML=`<p class="num">${it.label?esc(it.label)+' · ':''}Карта ${cardNo(it.seed)}${it.date?' · '+fmtDate(it.date):''}</p><p class="q">${esc(it.q||'')}</p>`;
-    if(!readonly){t.innerHTML+=`<div class="notebox"><textarea maxlength="600" placeholder="Заметка к карте…"></textarea></div>`;
-      const ta=t.querySelector('textarea');ta.value=it.note||'';ta.addEventListener('input',()=>{const a=saved(),x=a.find(z=>z.id===it.id);if(x){x.note=ta.value;it.note=ta.value;setSaved(a)}})}
+    t.innerHTML=`<p class="z-cap">${it.label?esc(it.label)+' · ':''}Карта ${cardNo(it.seed)}${it.date?' · '+fmtDate(it.date):''}</p><p class="q">${esc(it.q||'')}</p>`;
+    if(!readonly){t.innerHTML+=`<textarea class="z-field" maxlength="600" placeholder="Заметка к карте…" aria-label="Заметка"></textarea>`;
+      const ta=t.querySelector('textarea');ta.value=it.note||'';ta.addEventListener('input',()=>{const a=saved(),x=a.find(z=>z.id===it.id);if(x){x.note=ta.value;it.note=ta.value;store('saved',a)}})}
     vbody.appendChild(t);
   }
-  const act=document.createElement('div');act.className='row';act.style.marginTop='22px';
-  if(!readonly){const del=document.createElement('button');del.className='btn danger';del.textContent='Убрать из моих карт';let armed=false;
-    del.onclick=()=>{if(!armed){armed=true;del.textContent='Точно убрать?';setTimeout(()=>{armed=false;del.textContent='Убрать из моих карт'},3000);return}
-      setSaved(saved().filter(z=>z.id!==it.id));closeViewer();renderMine();toast('Карта убрана')};act.appendChild(del)}
-  const cl=document.createElement('button');cl.className='btn';cl.textContent=readonly?'Вернуться':'Готово';cl.onclick=closeViewer;act.appendChild(cl);vbody.appendChild(act);
-  viewer.hidden=false;viewer.scrollTop=0;document.body.style.overflow='hidden';$('#vclose').focus();
-}
-function closeViewer(){viewer.hidden=true;document.body.style.overflow='';if(!$('#v-mine').hidden)renderMine();if(lastFocus&&lastFocus.focus)lastFocus.focus()}
-$('#vclose').onclick=closeViewer;
-addEventListener('keydown',e=>{if(e.key==='Escape'&&!viewer.hidden)closeViewer()});
+  const act=document.createElement('div');act.className='vactions';
+  const cl=document.createElement('button');cl.className='z-btn'+(readonly?'':' ghost');cl.textContent=readonly?'Вернуться':'Готово';cl.onclick=()=>closeViewer();act.appendChild(cl);
+  if(!readonly){const del=document.createElement('button');del.className='linkbtn danger';del.textContent='Убрать из моих карт';del.onclick=()=>confirmDel(it);act.appendChild(del)}
+  vbody.appendChild(act);
+  viewer.hidden=false;viewer.scrollTop=0;document.body.classList.add('lock');$('#vclose').focus({preventScroll:true});sfx('soft');
+  try{history.pushState({mv:1},'');viewerHist=true}catch(e){viewerHist=false}}
+function closeViewer(fromPop){if(viewer.hidden)return;viewer.hidden=true;document.body.classList.remove('lock');
+  if(viewerHist&&!fromPop){viewerHist=false;try{history.back()}catch(e){}}else viewerHist=false;
+  if(!$('#v-mine').hidden)renderMine();if(lastFocus&&lastFocus.focus)try{lastFocus.focus({preventScroll:true})}catch(e){}}
+$('#vclose').onclick=()=>closeViewer();
+addEventListener('popstate',()=>{if(!viewer.hidden){viewerHist=false;closeViewer(true)}else closeSheet(true)});
+addEventListener('keydown',e=>{if(e.key==='Escape'){if($('#dlg').classList.contains('on'))closeDlg();else if(!viewer.hidden)closeViewer();else closeSheet()}});
+let delTarget=null;
+function confirmDel(it){delTarget=it;$('#dlg').classList.add('on');$('#scrim2').classList.add('on');$('#dlgNo').focus()}
+function closeDlg(){$('#dlg').classList.remove('on');$('#scrim2').classList.remove('on');delTarget=null}
+$('#dlgNo').onclick=closeDlg;$('#scrim2').onclick=closeDlg;
+$('#dlgYes').onclick=()=>{if(delTarget){setSaved(saved().filter(z=>z.id!==delTarget.id))}closeDlg();closeViewer();renderMine();toast('Карта убрана')};
 
-showTab(load('tab','day'));
+/* --- шторка --- */
+let sheetOpen=false;
+function openSheet(){sheetOpen=true;$('#sheet').classList.add('on');$('#scrim').classList.add('on')}
+function closeSheet(){if(!sheetOpen)return;sheetOpen=false;$('#sheet').classList.remove('on');$('#scrim').classList.remove('on')}
+$('#bMenu').onclick=openSheet;$('#scrim').onclick=()=>closeSheet();
+
+/* --- «что нового» / первый вход: один раз --- */
+let seenDone=!!lget('seen',false);
+function firstSeen(){if(seenDone)return;seenDone=true;lset('seen',true)}
+if(!seenDone){
+  if(hadV1){setTimeout(()=>{toast('Зазеркалье стало просторнее. Все твои карты и записи на месте.',4200);seenDone=true;lset('seen',true)},900)}
+  else if(!day.open&&dayCard)dayCard.classList.add('pulse')}
+syncBadge();
+showTab(load('tab','day'),true);
 </script>
 </body>
 </html>

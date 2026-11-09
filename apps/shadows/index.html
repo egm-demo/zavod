@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14060f">
+<title>Театр теней</title>
+<link rel="stylesheet" href="../../assets/fonts/fonts.css"><link rel="stylesheet" href="../../assets/ui.css">
+<style>
+html,body{height:100%;overflow:hidden;background:#12060e;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+body{background:#12060e}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#c:active{cursor:grabbing}
+.ui{position:fixed;inset:0;max-width:520px;margin:0 auto;display:flex;flex-direction:column;
+  padding:calc(var(--safe-t) + 6px) 20px calc(var(--safe-b) + 14px);pointer-events:none;z-index:3}
+.ui>*{pointer-events:auto}
+.ui .z-top .z-icon{background:rgba(20,6,15,.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.ui .z-top .z-title{pointer-events:none;color:#e9dcc8;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.bar{margin-top:auto;display:flex;justify-content:center;gap:10px;padding:0;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.bar .z-tool{flex:0 1 150px;min-height:56px;border-radius:var(--r-l);background:rgba(20,6,15,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.bar.off{opacity:0;transform:translateY(10px);pointer-events:none}
+.tut{position:fixed;left:0;right:0;text-align:center;pointer-events:none;z-index:2;padding:0 36px;transition:opacity .8s var(--ease)}
+.tut.gone{opacity:0}
+.tut .in{display:inline-block;padding:10px 18px 12px;border-radius:20px;background:rgba(14,4,12,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.tut p{margin:0;max-width:19em;font-size:18px !important;font:400 22px/1.25 var(--display);color:#f3ece0;text-shadow:0 2px 16px rgba(0,0,0,.8);text-wrap:balance}
+.tut .hand{width:30px;height:30px;margin:0 auto 8px;border-radius:50%;box-shadow:0 0 0 1.5px rgba(243,236,224,.7),0 0 24px rgba(232,199,122,.35);animation:swipe 2.6s var(--ease) infinite}
+@keyframes swipe{0%,100%{transform:translateX(-46px) scale(.9);opacity:.2}20%{opacity:1}50%{transform:translateX(46px) scale(1)}80%{opacity:1}}
+.res{position:absolute;left:0;right:0;bottom:0;padding:70px 24px calc(var(--safe-b) + 22px);text-align:center;
+  background:linear-gradient(180deg,rgba(12,4,10,0),rgba(12,4,10,.82) 46%,rgba(12,4,10,.94));
+  opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.res.on{opacity:1;transform:none;pointer-events:auto}
+.res .z-h2{font-size:38px;margin-top:8px}
+.res .z-lead{margin:10px auto 20px;color:var(--ink)}
+.res .z-btn{min-width:180px}
+.z-toast{white-space:normal;text-align:center;width:max-content;max-width:calc(100% - 40px);border-radius:20px;line-height:1.45;bottom:calc(var(--safe-b) + 92px)}
+.how{margin:6px 0 0;padding:0;list-style:none;color:var(--ink-2);font-size:15px;line-height:1.5}
+.how li{padding:8px 0 8px 18px;position:relative;text-wrap:pretty}
+.how li::before{content:"";position:absolute;left:2px;top:16px;width:6px;height:6px;border-radius:50%;background:var(--glow);box-shadow:0 0 8px var(--glow)}
+.lv{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:12px 0 4px}
+.lv button{aspect-ratio:1;min-height:44px;border-radius:14px;background:var(--surface);color:var(--ink-2);font:500 15px/1 var(--text);
+  display:grid;place-items:center;position:relative;transition:background .2s,transform .15s var(--ease)}
+.lv button:active{transform:scale(.94)}
+.lv button canvas{width:72%;height:72%;display:block}
+.lv button.done{background:var(--surface-2)}
+.lv button.cur{box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--ink)}
+.lv button[disabled]{opacity:.3;pointer-events:none}
+.stat{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.stat b{font:500 30px/1 var(--display);color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.tut .hand{animation:none;opacity:.7}}
+</style>
+<!--pwa--><link rel="manifest" href="../../manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="../../icons/icon-192.png"><link rel="apple-touch-icon" href="../../icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('../../sw.js'))</script><!--/pwa-->
+</head>
+<body>
+<canvas id="c" aria-label="Театр теней: вращай предмет, чтобы тень стала силуэтом"></canvas>
+
+<div class="ui">
+  <div class="z-top">
+    <a class="z-icon" href="../../index.html" aria-label="Все приложения"><svg viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></a>
+    <div class="z-title" id="ttl">Тень 1 из 24</div>
+    <button class="z-icon" id="mute" aria-label="Выключить звук" aria-pressed="false"></button>
+    <button class="z-icon" id="menu" aria-label="Все тени и подсказки"><svg viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="6" height="6" rx="1.5"/><rect x="13.5" y="4.5" width="6" height="6" rx="1.5"/><rect x="4.5" y="13.5" width="6" height="6" rx="1.5"/><rect x="13.5" y="13.5" width="6" height="6" rx="1.5"/></svg></button>
+  </div>
+  <div class="bar" id="bar">
+    <button class="z-tool" id="hint"><svg viewBox="0 0 24 24"><path d="M9.5 17.5h5M10 20.5h4M12 3.5a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3.5z"/></svg><span>Подсказка</span></button>
+    <button class="z-tool" id="redo"><svg viewBox="0 0 24 24"><path d="M19 12a7 7 0 1 1-2.2-5.1M19 4.5v4h-4"/></svg><span>Сначала</span></button>
+  </div>
+  <div class="res" id="res">
+    <div class="z-cap" id="rCap">Тень 1 из 24</div>
+    <h2 class="z-h2" id="rName"></h2>
+    <p class="z-lead" id="rLine"></p>
+    <button class="z-btn" id="next">Дальше</button>
+  </div>
+</div>
+
+<div class="tut" id="tut"><div class="in"><div class="hand"></div><p>Вращай предмет пальцем. Когда тень повторит силуэт, она оживёт.</p></div></div>
+
+<div class="z-scrim" id="scrim"></div>
+<div class="z-sheet" id="sheet" role="dialog" aria-label="Все тени">
+  <div class="z-cap">Тени</div>
+  <div class="lv" id="lv"></div>
+  <div class="z-cap" style="margin-top:14px">Как играть</div>
+  <ul class="how">
+    <li>Проведи по предмету пальцем — он повернётся. Тень на стене меняется вместе с ним.</li>
+    <li>Ищи положение, где тень повторяет контур на стене. Контур теплеет, когда ты рядом.</li>
+    <li>Подсказка сначала назовёт, что это, а потом чуть повернёт предмет.</li>
+  </ul>
+  <div class="stat"><span class="z-cap">Разгадано теней</span><b class="z-num" id="cnt">0</b></div>
+</div>
+<div class="z-toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+'use strict';
+const LS = 'kuv_shadows_';
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(LS+k); return v===null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(LS+k, JSON.stringify(v)); }catch(e){} }
+};
+const $ = id => document.getElementById(id);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TAU = Math.PI*2, SIN = Math.sin;
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const ease = t => t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+function rng(a){ return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a>>>15, 1|a); t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14)>>>0)/4294967296; }; }
+
+/* ---------- Силуэты: рисуем в квадрате 100x100, t — время оживления (при t=0 — без движения) ---------- */
+function E(g,x,y,rx,ry,r){ g.beginPath(); g.ellipse(x,y,rx,ry,r||0,0,TAU); g.fill(); }
+function SM(g,p){ const n=p.length/2; g.beginPath(); const mx=i=>(p[(i%n)*2]+p[((i+1)%n)*2])/2, my=i=>(p[(i%n)*2+1]+p[((i+1)%n)*2+1])/2;
+  g.moveTo(mx(n-1),my(n-1)); for(let i=0;i<n;i++) g.quadraticCurveTo(p[i*2],p[i*2+1],mx(i),my(i)); g.closePath(); g.fill(); }
+function PL(g,p){ g.beginPath(); g.moveTo(p[0],p[1]); for(let i=2;i<p.length;i+=2) g.lineTo(p[i],p[i+1]); g.closePath(); g.fill(); }
+function LN(g,w,p){ g.lineWidth=w; g.beginPath(); g.moveTo(p[0],p[1]); for(let i=2;i<p.length;i+=2) g.lineTo(p[i],p[i+1]); g.stroke(); }
+function RT(g,a,x,y,fn){ g.save(); g.translate(x,y); g.rotate(a); g.translate(-x,-y); fn(); g.restore(); }
+function CUT(g,fn){ g.save(); g.globalCompositeOperation='destination-out'; fn(); g.restore(); }
+function STAR(g,x,y,r){ PL(g,[x,y-r,x+r*.28,y-r*.28,x+r,y,x+r*.28,y+r*.28,x,y+r,x-r*.28,y+r*.28,x-r,y,x-r*.28,y-r*.28]); }
+function PUFF(g,x,y,t,n,rise){ if(t<=0) return; g.save(); const a0=g.globalAlpha; for(let k=0;k<n;k++){ const u=((t*.22+k/n)%1); g.globalAlpha=a0*.5*Math.sin(u*Math.PI); E(g,x+SIN(t*1.3+k*2)*3+u*4,y-u*rise,2+u*4,2+u*4); } g.restore(); }
+
+const LEVELS = [
+ {n:'Луна', line:'Ночь стала светлее.', hint:'Серп, который висит над водой.', amp:4, f:(g,t)=>{
+   g.save(); g.beginPath(); g.arc(50,50,41,0,TAU); g.clip(); g.beginPath(); g.rect(0,0,100,100); g.arc(65,41,33,0,TAU,true); g.fill('evenodd'); g.restore();
+   const k=1+.12*SIN(t*2.4); STAR(g,70,72,10*k); }},
+ {n:'Лист', line:'Тихо дрогнул на ветру.', hint:'Лёгкий, с тонким черешком.', amp:6, f:(g,t)=>{
+   RT(g,SIN(t*1.4)*.05,50,96,()=>{ RT(g,.45,50,50,()=>{ g.beginPath(); g.moveTo(50,6); g.bezierCurveTo(98,26,88,76,50,90); g.bezierCurveTo(12,76,2,26,50,6); g.fill(); LN(g,5,[50,88,50,104]); }); }); }},
+ {n:'Рыба', line:'Хвост плеснул, и она ушла в глубину.', hint:'Живёт там, где растут кувшинки.', amp:8, f:(g,t)=>{
+   g.beginPath(); g.moveTo(8,50); g.bezierCurveTo(20,26,54,22,74,46); g.lineTo(74,54); g.bezierCurveTo(54,78,20,74,8,50); g.fill();
+   PL(g,[34,34,46,14,64,36]); PL(g,[44,64,52,84,64,64]);
+   RT(g,SIN(t*5)*.18,72,50,()=>PL(g,[68,46,96,26,88,50,96,74,68,54]));
+   CUT(g,()=>E(g,21,46,3.4,3.4)); }},
+ {n:'Кувшинка', line:'Распустилась прямо в тени.', hint:'Цветок, который лежит на воде.', amp:9, f:(g,t)=>{
+   const o=1+.07*SIN(t*1.6); [[-68,40],[-36,48],[0,54],[36,48],[68,40]].forEach(([a,l])=>RT(g,a*Math.PI/180*o,50,76,()=>{ g.beginPath(); g.moveTo(50,76); g.quadraticCurveTo(66,76-l*.55,50,76-l); g.quadraticCurveTo(34,76-l*.55,50,76); g.fill(); }));
+   E(g,50,83,44,9); }},
+ {n:'Чайник', line:'Пахнет вечером и мятой.', hint:'Ручка слева, носик справа.', amp:10, f:(g,t)=>{
+   E(g,48,60,28,24); E(g,48,36,13,5); E(g,48,30,4.5,4.5); E(g,48,86,22,5);
+   g.lineCap='round'; LN(g,9,[70,64,80,56,88,38]); g.lineWidth=7; g.beginPath(); g.ellipse(24,60,11,15,0,Math.PI*.55,Math.PI*1.45); g.stroke();
+   PUFF(g,90,34,t,3,26); }},
+ {n:'Птица', line:'Села на ветку и запела.', hint:'Сидит на тонкой ветке.', amp:11, G:30, f:(g,t)=>{
+   RT(g,SIN(t*3)*.03,50,60,()=>{ E(g,46,52,26,17,-.25); E(g,72,38,10.5,10.5); PL(g,[80,35,95,40,80,45]); PL(g,[26,54,3,66,6,52,2,44]);
+     RT(g,SIN(t*4)*.12,48,48,()=>SM(g,[28,46,50,38,60,52,42,70]));
+     LN(g,3.6,[48,66,48,84]); LN(g,3.6,[56,64,58,84]); });
+   LN(g,4.2,[14,84,86,82]); }},
+ {n:'Кошка', line:'Хвост выдал: она всё видела.', hint:'Сидит и смотрит прямо на тебя.', amp:12, f:(g,t)=>{
+   E(g,50,32,16,14); PL(g,[35,26,36,6,48,19]); PL(g,[65,26,64,6,52,19]);
+   SM(g,[36,42,64,42,74,62,72,88,28,88,26,62]); g.lineWidth=7;
+   RT(g,SIN(t*2)*.14,70,86,()=>{ g.beginPath(); g.moveTo(70,86); g.bezierCurveTo(94,90,98,62,86,52); g.stroke(); }); }},
+ {n:'Заяц', line:'Уши дрогнули, но он не убежал.', hint:'Длинные уши и короткий хвост.', amp:13, G:24, f:(g,t)=>{
+   E(g,42,68,27,22,-.1); E(g,36,78,18,14); E(g,70,50,13,11); E(g,16,70,7.5,7.5); E(g,62,84,6,11);
+   RT(g,SIN(t*3)*.07,66,38,()=>E(g,64,22,4.8,17,.2)); RT(g,-SIN(t*3+1)*.07,72,38,()=>E(g,76,24,4.6,15,.5)); }},
+ {n:'Скарабей', line:'Катит солнце через пустыню.', hint:'Священный жук Египта.', amp:14, G:30, f:(g,t)=>{
+   const s=1+.06*SIN(t*2); E(g,50,12,9*s,9*s); E(g,50,29,12,8); E(g,50,60,26,28);
+   [[-1,0],[1,0]].forEach(([d])=>{ const w=SIN(t*6)*.12; RT(g,d*w,50+d*24,50,()=>LN(g,5,[50+d*24,48,50+d*40,40,50+d*44,34])); RT(g,-d*w,50+d*26,62,()=>LN(g,5,[50+d*26,62,50+d*44,64])); RT(g,d*w,50+d*24,76,()=>LN(g,5,[50+d*24,76,50+d*38,88,50+d*44,92])); }); }},
+ {n:'Лебедь', line:'Плывёт и не оставляет следа.', hint:'Длинная шея, как знак вопроса.', amp:15, G:30, f:(g,t)=>{
+   E(g,56,72,32,15,-.04); PL(g,[82,66,98,52,92,74]); g.lineWidth=9;
+   RT(g,SIN(t*1.4)*.04,32,70,()=>{ g.beginPath(); g.moveTo(34,70); g.bezierCurveTo(18,66,30,50,22,36); g.bezierCurveTo(18,26,24,18,34,22); g.stroke(); E(g,32,21,8,6.2,.5); PL(g,[26,20,12,25,26,28]); }); }},
+ {n:'Бабочка', line:'Крылья дышат вместе с ней.', hint:'Два симметричных крыла.', amp:16, G:30, f:(g,t)=>{
+   const sx=1-.22*Math.abs(SIN(t*5));
+   [-1,1].forEach(d=>{ g.save(); g.translate(50,0); g.scale(d*sx,1); g.translate(-50,0);
+     SM(g,[54,46,66,14,92,12,94,42,68,56]); SM(g,[54,54,70,60,84,88,62,92,52,68]); g.restore(); });
+   E(g,50,52,4,24); LN(g,3,[49,30,40,12]); LN(g,3,[51,30,60,12]); }},
+ {n:'Лягушка', line:'Квакнула, и пруд ответил.', hint:'Сидит на листе кувшинки.', amp:17, f:(g,t)=>{
+   const sac=1+.1*SIN(t*4); E(g,50,66,28,21); E(g,50,46,21*sac,15*sac); E(g,35,31,8,8); E(g,65,31,8,8);
+   E(g,22,82,13,8,-.3); E(g,78,82,13,8,.3); LN(g,8,[28,66,16,80]); LN(g,8,[72,66,84,80]);
+   E(g,50,90,42,6); CUT(g,()=>{ E(g,35,31,3,3); E(g,65,31,3,3); }); }},
+ {n:'Профиль', line:'Знакомая линия: не спутаешь.', hint:'Лицо в профиль, подбородок чуть вверх.', amp:18, G:24, f:(g,t)=>{
+   RT(g,SIN(t*1.2)*.025,50,98,()=>{
+     SM(g,[26,98,20,70,14,44,22,18,44,6,66,10,76,26]); PL(g,[70,16,76,28,77,40,83,50,90,57,82,61,82,66,84,70,78,74,76,80,70,88,64,92,66,98,26,98,28,60,40,30]);
+     E(g,22,34,13,17,.2); }); }},
+ {n:'Анх', line:'Ключ жизни, открывает тишину.', hint:'Египетский крест с петлёй.', amp:19, G:30, f:(g,t)=>{
+   const k=1+.04*SIN(t*2); g.save(); g.translate(50,50); g.scale(k,k); g.translate(-50,-50);
+   g.lineWidth=10; g.beginPath(); g.ellipse(50,27,16,20,0,0,TAU); g.stroke(); LN(g,10,[50,46,50,95]); LN(g,10,[22,58,78,58]); g.restore(); }},
+ {n:'Сова', line:'Не спит, пока не спят другие.', hint:'Большие глаза и ушки-кисточки.', amp:20, f:(g,t)=>{
+   RT(g,SIN(t*1.5)*.05,50,90,()=>{ SM(g,[50,24,70,32,82,56,78,86,50,92,22,86,18,56,30,32]); PL(g,[28,36,24,10,44,26]); PL(g,[72,36,76,10,56,26]);
+     E(g,34,92,8,4); E(g,66,92,8,4);
+     CUT(g,()=>{ E(g,37,46,10,10); E(g,63,46,10,10); });
+     E(g,37+SIN(t*2)*2,46,4.2,4.2); E(g,63+SIN(t*2)*2,46,4.2,4.2); PL(g,[50,52,45,63,55,63]); }); }},
+ {n:'Парусник', line:'Ветер тихий, а путь далёк.', hint:'Мачта и два паруса.', amp:21, G:30, f:(g,t)=>{
+   RT(g,SIN(t*1.2)*.03,50,90,()=>{ PL(g,[12,74,88,74,76,90,26,90]); LN(g,5,[50,8,50,74]); const sk=SIN(t*2)*2; PL(g,[54,12,86+sk,68,54,68]); PL(g,[46,22,46,68,18-sk,68]); }); }},
+ {n:'Ключ', line:'Подошёл. Дверь так и не нашлась.', hint:'Кольцо и бородка.', amp:22, G:30, f:(g,t)=>{
+   RT(g,-.55+SIN(t*1.6)*.05,50,50,()=>{ g.lineWidth=10; g.beginPath(); g.arc(22,50,15,0,TAU); g.stroke(); LN(g,9,[37,50,92,50]); LN(g,8,[72,50,72,68]); LN(g,8,[85,50,85,64]); }); }},
+ {n:'Кувшин', line:'В нём вода, которую не расплескали.', hint:'Узкое горло, одна ручка.', amp:23, f:(g,t)=>{
+   SM(g,[40,30,60,30,64,40,78,58,74,84,58,92,42,92,26,84,22,58,36,40]); PL(g,[41,12,59,12,62,32,38,32]); E(g,50,11,14,4.5);
+   g.lineWidth=8; g.beginPath(); g.ellipse(76,50,12,15,0,-1.35,1.35); g.stroke(); PUFF(g,50,8,t,2,12); }},
+ {n:'Дерево', line:'Корни глубже, чем кажется.', hint:'Пышная крона на крепком стволе.', amp:24, f:(g,t)=>{
+   PL(g,[43,94,46,56,54,56,57,94]); LN(g,6,[50,70,30,52]); LN(g,6,[50,66,72,48]);
+   RT(g,SIN(t*1.3)*.03,50,60,()=>{ E(g,50,30,25,21); E(g,28,44,19,15); E(g,72,44,19,15); E(g,50,50,25,13); }); }},
+ {n:'Глаз', line:'Глаз Гора. Он видит и в темноте.', hint:'Миндалевидный глаз с бровью.', amp:25, G:30, f:(g,t)=>{
+   g.beginPath(); g.moveTo(6,50); g.bezierCurveTo(28,22,72,22,94,50); g.bezierCurveTo(72,76,28,76,6,50); g.fill();
+   g.lineWidth=7; g.beginPath(); g.moveTo(10,28); g.quadraticCurveTo(50,2,90,28); g.stroke(); LN(g,7,[56,70,60,86]); g.beginPath(); g.moveTo(60,86); g.quadraticCurveTo(72,94,88,86); g.stroke();
+   const px=50+SIN(t*1.6)*6; CUT(g,()=>E(g,px,48,13,13)); E(g,px,48,6,6); }},
+ {n:'Свеча', line:'Огонёк жив, пока ты рядом.', hint:'Тонкий огонёк на столбике воска.', amp:26, f:(g,t)=>{
+   SM(g,[36,52,64,52,64,90,36,90]); PL(g,[36,52,64,52,64,90,36,90]); E(g,50,93,30,4.5); E(g,40,60,4,8);
+   const fl=SIN(t*9)*1.6; g.beginPath(); g.moveTo(50+fl*.4,8); g.bezierCurveTo(66,26,62,42,50,44); g.bezierCurveTo(38,42,34,26,50+fl*.4,8); g.fill(); LN(g,4,[50,44,50,54]); }},
+ {n:'Лиса', line:'Хитрая улыбка в рыжих тенях.', hint:'Острые уши и узкая мордочка.', amp:27, f:(g,t)=>{
+   RT(g,SIN(t*1.8)*.05,50,96,()=>{ PL(g,[10,6,36,28,64,28,90,6,93,52,50,95,7,52]); PL(g,[6,52,24,62,12,72]); PL(g,[94,52,76,62,88,72]);
+     const b=Math.max(0,SIN(t*2.2))>.97?.2:1; CUT(g,()=>{ E(g,34,52,7,3.2*b,.5); E(g,66,52,7,3.2*b,-.5); }); }); }},
+ {n:'Колокольчик', line:'Звенит, даже когда его не слышно.', hint:'Колокол с язычком.', amp:28, f:(g,t)=>{
+   RT(g,SIN(t*3.2)*.2,50,8,()=>{ SM(g,[50,12,68,24,74,50,84,74,94,80,92,86,8,86,6,80,16,74,26,50,32,24]); E(g,50,91,7.5,6.5); E(g,50,9,6,6); }); }},
+ {n:'Лампа', line:'Свет вернулся туда, откуда пришёл.', hint:'Лампа, подарившая нам все эти тени.', amp:29, G:30, f:(g,t)=>{
+   SM(g,[22,62,70,62,80,76,62,88,36,88,26,78]); PL(g,[38,86,62,86,67,95,33,95]); E(g,50,56,16,7); E(g,50,46,5.5,6.5);
+   g.lineCap='round'; LN(g,7,[26,68,12,62,8,46]); g.lineWidth=6; g.beginPath(); g.ellipse(80,70,13,12,0,-1.4,1.6); g.stroke();
+   if(t>0){ const fl=SIN(t*8)*1.2; g.beginPath(); g.moveTo(8+fl,28); g.bezierCurveTo(14,36,12,42,8,44); g.bezierCurveTo(4,42,2,36,8+fl,28); g.fill(); PUFF(g,8,26,t,3,22); } }}
+];
+const N = LEVELS.length;
+
+/* ---------- Матрицы ---------- */
+const matR = (y,p) => { const cy=Math.cos(y), sy=SIN(y), cp=Math.cos(p), sp=SIN(p); return [cy,0,sy, sp*sy,cp,-sp*cy, -cp*sy,sp,cp*cy]; };
+const mul = (a,b) => { const r=new Array(9); for(let i=0;i<3;i++) for(let j=0;j<3;j++) r[i*3+j]=a[i*3]*b[j]+a[i*3+1]*b[3+j]+a[i*3+2]*b[6+j]; return r; };
+const tr = a => [a[0],a[3],a[6],a[1],a[4],a[7],a[2],a[5],a[8]];
+const VIEW = mul(matR(0,-.5), matR(.62,0)); // фиксированный взгляд на предмет сверху и сбоку
+const wrap = a => ((a+Math.PI)%TAU+TAU)%TAU-Math.PI;
+function angDist(y1,p1,y2,p2){ const A=matR(y1,p1), B=matR(y2,p2); const t=A[0]*B[0]+A[1]*B[1]+A[2]*B[2]+A[3]*B[3]+A[4]*B[4]+A[5]*B[5]+A[6]*B[6]+A[7]*B[7]+A[8]*B[8]; return Math.acos(clamp((t-1)/2,-1,1)); }
+
+/* ---------- Построение уровня: предмет гарантированно даёт силуэт при повороте (yaw*, pitch*) ---------- */
+const MS = 128, THR = .85;
+const shc = document.createElement('canvas'); shc.width = shc.height = MS; const shg = shc.getContext('2d',{willReadFrequently:true});
+const shd = document.createElement('canvas'); shd.width = shd.height = MS; const shdg = shd.getContext('2d');
+const levelCache = {};
+function buildLevel(i){
+  if (levelCache[i]) return levelCache[i];
+  const L = LEVELS[i], rnd = rng(777+i*131), G = L.G||22, c = 100/G, sz = 220;
+  const cv = document.createElement('canvas'); cv.width = cv.height = sz; const g = cv.getContext('2d',{willReadFrequently:true});
+  g.scale(sz/100,sz/100); g.fillStyle = g.strokeStyle = '#000'; g.lineCap = g.lineJoin = 'round'; L.f(g,0);
+  const d = g.getImageData(0,0,sz,sz).data, cubes = [];
+  const amp = L.amp||8, p1 = rnd()*6, p2 = rnd()*6, p3 = rnd()*6, pe = .1+i*.007;
+  for (let j=0;j<G;j++) for (let k=0;k<G;k++){
+    let hit = 0;
+    for (let a=0;a<4;a++) for (let b=0;b<4;b++){ const px = Math.floor((k+(a+.5)/4)*sz/G), py = Math.floor((j+(b+.5)/4)*sz/G); if (d[(py*sz+px)*4+3]>127) hit++; }
+    if (hit<8) continue;
+    const x = (k+.5)*c-50, y = (j+.5)*c-50;
+    const z = amp*(.6*SIN(x*.07+p1)+.4*Math.cos(y*.09+p2)) + amp*.25*SIN((x+y)*.12+p3) + (rnd()-.5)*c*.6;
+    cubes.push({x,y,z,v:rnd(),det:false});
+    if (rnd()<pe){ const dz = (rnd()<.5?-1:1)*(c*(2+rnd()*3)); cubes.push({x,y,z:z+dz,v:rnd(),det:true}); }
+  }
+  // целевая маска (гладкий силуэт)
+  const tc = document.createElement('canvas'); tc.width = tc.height = MS; const tg = tc.getContext('2d',{willReadFrequently:true});
+  tg.scale(MS/100,MS/100); tg.fillStyle = tg.strokeStyle = '#000'; tg.lineCap = tg.lineJoin = 'round'; L.f(tg,0);
+  const td = tg.getImageData(0,0,MS,MS).data, target = new Uint8Array(MS*MS); let area = 0;
+  for (let q=0;q<MS*MS;q++){ if (td[q*4+3]>127){ target[q]=1; area++; } }
+  const sgn = i%2?1:-1, ys = sgn*(.7+rnd()*.9)*(i<3?.8:1), ps = (rnd()<.5?-1:1)*(.4+rnd()*.5)*(i<3?.8:1);
+  const lv = {i, L, G, c, h:c*.54, cubes, target, area, ys, ps, B:tr(matR(ys,ps)), thr:THR};
+  lv.ref = shadowIoU(lv, ys, ps); lv.thr = Math.min(THR, lv.ref-.05);
+  return levelCache[i] = lv;
+}
+function shadowPath(g, lv, yaw, pitch){
+  const M = mul(matR(yaw,pitch), lv.B); g.beginPath();
+  const h = lv.h, cs = lv.cubes;
+  let gs = [[M[0]*h,M[3]*h],[M[1]*h,M[4]*h],[M[2]*h,M[5]*h]];
+  gs.forEach(v => { if (v[1]<0 || (v[1]===0 && v[0]<0)){ v[0]=-v[0]; v[1]=-v[1]; } });
+  gs.sort((p,q) => Math.atan2(p[1],p[0]) - Math.atan2(q[1],q[0]));
+  const [g1,g2,g3] = gs, sx = g1[0]+g2[0]+g3[0], sy = g1[1]+g2[1]+g3[1];
+  for (let n=0;n<cs.length;n++){ const q = cs[n];
+    const X = M[0]*q.x+M[1]*q.y+M[2]*q.z+50, Y = M[3]*q.x+M[4]*q.y+M[5]*q.z+50;
+    let px = X-sx, py = Y-sy; g.moveTo(px,py);
+    px += 2*g1[0]; py += 2*g1[1]; g.lineTo(px,py);
+    px += 2*g2[0]; py += 2*g2[1]; g.lineTo(px,py);
+    px += 2*g3[0]; py += 2*g3[1]; g.lineTo(px,py);
+    px -= 2*g1[0]; py -= 2*g1[1]; g.lineTo(px,py);
+    px -= 2*g2[0]; py -= 2*g2[1]; g.lineTo(px,py); g.closePath();
+  }
+}
+function shadowIoU(lv, yaw, pitch){
+  const g = shg, k = MS/100;
+  g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,MS,MS); g.setTransform(k,0,0,k,0,0); g.fillStyle = '#000';
+  shadowPath(g, lv, yaw, pitch); g.fill();
+  const d = g.getImageData(0,0,MS,MS).data, T = lv.target; let inter = 0, uni = 0;
+  for (let q=0;q<MS*MS;q++){ const a = d[q*4+3]>127, b = T[q]===1; if (a&&b) inter++; if (a||b) uni++; }
+  return uni ? inter/uni : 0;
+}
+
+/* ---------- Состояние ---------- */
+const st = { lvl:0, yaw:0, pitch:0, vy:0, vp:0, drag:null, state:'play', iou:0, iouS:0, hold:0, dirty:true, anim:null, hints:0, hintsLvl:0, t0:performance.now(), aliveT:0, flash:0, fade:1 };
+let done = store.get('done', {}); if (!done || typeof done!=='object' || Array.isArray(done)) done = {};
+let muted = store.get('muted', false), totalHints = store.get('hints', 0);
+const doneCount = () => Object.keys(done).filter(k => +k>=0 && +k<N).length;
+const firstOpen = () => { for (let i=0;i<N;i++) if (!done[i]) return i; return N-1; };
+let cur = null, W=0, H=0, dpr=1, layout = {};
+const cv = $('c'), g2 = cv.getContext('2d');
+const vibe = p => { if (!muted && navigator.vibrate) try{ navigator.vibrate(p); }catch(e){} };
+
+/* ---------- Звук ---------- */
+let A = null;
+function unlock(){
+  if (A){ if (A.ctx.state!=='running') A.ctx.resume(); return; }
+  const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+  const ctx = new AC({latencyHint:'interactive'}), sr = ctx.sampleRate, len = Math.floor(sr*2.6), ir = ctx.createBuffer(2,len,sr);
+  for (let ch=0;ch<2;ch++){ const d = ir.getChannelData(ch); let lp=0; for (let i=0;i<len;i++){ const t=i/len; lp += ((Math.random()*2-1)-lp)*(.6-.45*t); d[i] = lp*Math.pow(1-t,2.8)*1.6*Math.min(1,i/(sr*.015)); } }
+  const bus = ctx.createGain(), conv = ctx.createConvolver(), wet = ctx.createGain(), master = ctx.createGain();
+  conv.buffer = ir; wet.gain.value = .5; master.gain.value = muted?0:.85;
+  const lim = ctx.createDynamicsCompressor(); lim.threshold.value=-8; lim.ratio.value=12;
+  bus.connect(master); bus.connect(conv); conv.connect(wet); wet.connect(master); master.connect(lim); lim.connect(ctx.destination);
+  // тихий тон «тепло–холодно»: поднимается, когда тень близка к силуэту
+  const o = ctx.createOscillator(), o2 = ctx.createOscillator(), lp = ctx.createBiquadFilter(), tg = ctx.createGain();
+  o.type='sine'; o2.type='triangle'; lp.type='lowpass'; lp.frequency.value=900; tg.gain.value=0; o.frequency.value=196; o2.frequency.value=98;
+  o.connect(lp); o2.connect(lp); lp.connect(tg); tg.connect(bus); o.start(); o2.start();
+  A = {ctx, bus, master, o, o2, tg};
+  if (ctx.state!=='running') ctx.resume();
+}
+function chime(f, t, v, dec){
+  if (!A) return; const ctx=A.ctx;
+  [[1,1],[2.76,.22],[5.4,.07]].forEach(([m,a])=>{ const o=ctx.createOscillator(), g=ctx.createGain(); o.type='sine'; o.frequency.value=f*m;
+    g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(v*a,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+dec/(m>1?m*.6:1));
+    o.connect(g); g.connect(A.bus); o.start(t); o.stop(t+dec+.1); });
+}
+function solveSound(){ if(!A) return; const t=A.ctx.currentTime+.02; [392,494,587,784,988].forEach((f,i)=>chime(f,t+i*.16,.16,3)); }
+function nudgeSound(){ if(!A) return; chime(660,A.ctx.currentTime+.01,.08,1.2); }
+function applyMute(){ if(A) A.master.gain.setTargetAtTime(muted?0:.85, A.ctx.currentTime, .05); }
+function toneUpdate(){
+  if (!A) return; const t = A.ctx.currentTime, on = !muted && st.drag && st.state==='play';
+  const prog = clamp((st.iouS-.2)/((cur?cur.thr:THR)-.2),0,1);
+  A.tg.gain.setTargetAtTime(on ? .006+.05*prog*prog : 0, t, .08);
+  A.o.frequency.setTargetAtTime(196*Math.pow(2,prog*1.2), t, .1); A.o2.frequency.setTargetAtTime(98*Math.pow(2,prog*1.2), t, .1);
+}
+
+/* ---------- Раскладка и фон ---------- */
+const bgc = document.createElement('canvas'), bgg = bgc.getContext('2d');
+const glowSprites = {};
+function glowSprite(rgb){ if (glowSprites[rgb]) return glowSprites[rgb]; const c=document.createElement('canvas'); c.width=c.height=128; const x=c.getContext('2d');
+  const g=x.createRadialGradient(64,64,0,64,64,64); g.addColorStop(0,'rgba('+rgb+',1)'); g.addColorStop(.3,'rgba('+rgb+',.4)'); g.addColorStop(1,'rgba('+rgb+',0)'); x.fillStyle=g; x.fillRect(0,0,128,128); return glowSprites[rgb]=c; }
+function resize(){
+  dpr = Math.min(2.5, window.devicePixelRatio||1); W = innerWidth; H = innerHeight;
+  cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+  const tb = document.querySelector('.z-top').getBoundingClientRect().bottom, botH = 96+parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-b')||0);
+  const colW = Math.min(W,520);
+  const S = clamp(Math.min(colW-88, (H-tb-botH)*.52), 200, 420);
+  const wy = tb+4, wx = (W-S)/2, zoneT = wy+S+14, zoneB = H-botH+8, zh = zoneB-zoneT;
+  layout = {S, wx, wy, tb, zoneT, zoneB, ox:W/2, oy:zoneT+zh*.48, su:Math.min(colW*.86, zh*1.0)/118, lampY:zoneB-2};
+  bgc.width = cv.width; bgc.height = cv.height; paintBg();
+  buildOutline(); st.dirty = true;
+}
+function curtain(g, x0, x1, top, bot, flip){
+  const w = x1-x0, folds = Math.max(2, Math.round(w/20));
+  for (let i=0;i<w;i++){ const u = i/w*folds*TAU, s = (SIN(u)+SIN(u*2.3+1)*.4);
+    const l = clamp(.5+.38*s,0,1); g.fillStyle = `rgb(${Math.round(36+78*l)},${Math.round(8+16*l)},${Math.round(26+34*l)})`; g.fillRect(x0+i,top,1.5,bot-top); }
+  const sh = g.createLinearGradient(0,top,0,bot); sh.addColorStop(0,'rgba(0,0,0,.0)'); sh.addColorStop(.7,'rgba(0,0,0,.15)'); sh.addColorStop(1,'rgba(0,0,0,.6)'); g.fillStyle=sh; g.fillRect(x0,top,w,bot-top);
+}
+function paintBg(){
+  const g = bgg, {S,wx,wy,tb} = layout; g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
+  const gr = g.createLinearGradient(0,0,0,H); gr.addColorStop(0,'#1d0a18'); gr.addColorStop(.5,'#120610'); gr.addColorStop(1,'#08030a'); g.fillStyle = gr; g.fillRect(0,0,W,H);
+  // пол сцены: мягкий блик
+  const fl = g.createRadialGradient(W/2,layout.zoneB,10,W/2,layout.zoneB,W*.7); fl.addColorStop(0,'rgba(232,170,100,.18)'); fl.addColorStop(1,'rgba(232,170,100,0)'); g.fillStyle = fl; g.fillRect(0,wy+S,W,H);
+  // боковые портьеры
+  const sw = Math.max(0, (W-S)/2-6);
+  if (sw>6){ curtain(g,0,sw,0,H); curtain(g,W-sw,W,0,H); }
+  // ламбрекен сверху
+  const vh = tb-2, vg = g.createLinearGradient(0,0,0,vh+14); vg.addColorStop(0,'#2a0b1e'); vg.addColorStop(1,'#4a1430'); g.fillStyle = vg;
+  g.beginPath(); g.moveTo(0,0); g.lineTo(W,0); const sc = Math.max(3, Math.round(W/70)), sp = W/sc; g.lineTo(W,vh);
+  for (let i=sc;i>0;i--){ const x1 = i*sp, x0 = (i-1)*sp; g.quadraticCurveTo((x0+x1)/2, vh+16, x0, vh); } g.closePath(); g.fill();
+  g.strokeStyle = 'rgba(232,199,122,.5)'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(W,vh); for (let i=sc;i>0;i--){ const x1=i*sp,x0=(i-1)*sp; g.quadraticCurveTo((x0+x1)/2,vh+16,x0,vh); } g.stroke();
+}
+let outline = null;
+function buildOutline(){
+  if (!cur) return; const sz = Math.round(layout.S*dpr), o = document.createElement('canvas'); o.width = o.height = sz; const g = o.getContext('2d');
+  const t = document.createElement('canvas'); t.width = t.height = sz; const tg = t.getContext('2d'); tg.scale(sz/100,sz/100); tg.fillStyle = tg.strokeStyle = '#000'; tg.lineCap = tg.lineJoin = 'round'; cur.L.f(tg,0);
+  const r = Math.max(2.2, 2.6*dpr); for (let a=0;a<12;a++) g.drawImage(t, Math.cos(a/12*TAU)*r, Math.sin(a/12*TAU)*r);
+  g.globalCompositeOperation = 'destination-out'; g.drawImage(t,0,0);
+  const f = document.createElement('canvas'); f.width = f.height = sz; const fg = f.getContext('2d'); fg.drawImage(t,0,0);
+  outline = {ring:o, fill:f};
+}
+
+/* ---------- Уровни ---------- */
+const ttl = $('ttl'), toastEl = $('toast'); let toastT = 0;
+function toast(msg, ms){ toastEl.textContent = msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(()=>toastEl.classList.remove('on'), ms||3200); }
+function randomStart(lv){ for (let k=0;k<60;k++){ const y = (Math.random()*2-1)*Math.PI, p = (Math.random()*2-1)*1.5; if (angDist(y,p,lv.ys,lv.ps) > 1.15) return [y,p]; } return [lv.ys+2, lv.ps+1]; }
+let parts = [];
+function loadLevel(i){
+  i = clamp(i,0,N-1); cur = buildLevel(i); st.lvl = i; st.state = 'play'; st.hold = 0; st.hintsLvl = 0; st.anim = null; st.vy = st.vp = 0; st.aliveT = 0; st.flash = 0; st.fade = 0; st.t0 = performance.now();
+  const [y,p] = randomStart(cur); st.yaw = y; st.pitch = p; st.dirty = true; st.iou = st.iouS = 0; parts = [];
+  ttl.textContent = 'Тень '+(i+1)+' из '+N; store.set('cur', i);
+  $('res').classList.remove('on'); $('bar').classList.remove('off');
+  if (layout.S) buildOutline();
+  refreshTiles();
+}
+function solveNow(){
+  st.state = 'solving'; const lv = cur;
+  st.anim = {t0:performance.now(), dur:1000, fy:st.yaw, fp:st.pitch, ty:st.yaw+wrap(lv.ys-st.yaw), tp:st.pitch+wrap(lv.ps-st.pitch), end:'alive'};
+  st.vy = st.vp = 0; st.drag = null; st.flash = 1;
+  const secs = Math.round((performance.now()-st.t0)/1000), prev = done[st.lvl];
+  done[st.lvl] = {s: prev ? Math.min(prev.s, secs) : secs, h: prev ? Math.min(prev.h, st.hintsLvl) : st.hintsLvl}; store.set('done', done);
+  $('tut').classList.add('gone'); solveSound(); vibe([14,50,14]); $('bar').classList.add('off'); refreshTiles();
+  $('rCap').textContent = 'Тень '+(st.lvl+1)+' из '+N; $('rName').textContent = lv.L.n; $('rLine').textContent = lv.L.line;
+  $('next').textContent = st.lvl>=N-1 ? 'Все тени' : 'Дальше';
+}
+function giveHint(){
+  if (st.state!=='play') return; unlock();
+  st.hintsLvl++; totalHints++; store.set('hints', totalHints);
+  if (st.hintsLvl===1){ toast(cur.L.hint, 5200); vibe(8); return; }
+  const off = st.hintsLvl===2 ? .3 : .12, sgn = Math.random()<.5?-1:1;
+  st.anim = {t0:performance.now(), dur:1100, fy:st.yaw, fp:st.pitch, ty:st.yaw+wrap(cur.ys+off*sgn-st.yaw), tp:st.pitch+wrap(cur.ps-off*.6*sgn-st.pitch), end:'play'};
+  st.vy = st.vp = 0; nudgeSound(); vibe(8); toast('Предмет повернулся ближе. Дальше — на ощупь.', 3200);
+}
+
+/* ---------- Ввод ---------- */
+cv.addEventListener('pointerdown', e => {
+  e.preventDefault(); unlock(); try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+  if (st.state!=='play') return;
+  st.drag = {id:e.pointerId, x:e.clientX, y:e.clientY, t:performance.now()}; st.vy = st.vp = 0; st.anim = null;
+  $('tut').classList.add('gone'); if (!store.get('seen', false)) store.set('seen', true);
+});
+cv.addEventListener('pointermove', e => {
+  const d = st.drag; if (!d || e.pointerId!==d.id) return;
+  const now = performance.now(), dt = Math.max(1, now-d.t), dx = e.clientX-d.x, dy = e.clientY-d.y, k = .0115;
+  st.yaw += dx*k; st.pitch -= dy*k; const vy = dx*k/dt*1000, vp = -dy*k/dt*1000;
+  st.vy = st.vy*.5+vy*.5; st.vp = st.vp*.5+vp*.5; d.x = e.clientX; d.y = e.clientY; d.t = now; st.dirty = true;
+});
+const endDrag = e => { if (st.drag && (!e.pointerId || e.pointerId===st.drag.id)){ if (performance.now()-st.drag.t>90) st.vy = st.vp = 0; st.drag = null; } };
+cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag); cv.addEventListener('contextmenu', e=>e.preventDefault());
+addEventListener('keydown', e => {
+  if (e.key==='Escape'){ openSheet(false); return; }
+  if (st.state!=='play') return; const k = .12;
+  if (e.key==='ArrowLeft') st.yaw -= k; else if (e.key==='ArrowRight') st.yaw += k; else if (e.key==='ArrowUp') st.pitch += k; else if (e.key==='ArrowDown') st.pitch -= k; else return;
+  e.preventDefault(); st.dirty = true;
+});
+document.querySelectorAll('.ui button').forEach(el => el.addEventListener('pointerdown', unlock, {passive:true}));
+$('hint').addEventListener('click', giveHint);
+$('redo').addEventListener('click', () => { if (st.state!=='play') return; const [y,p] = randomStart(cur); st.anim = {t0:performance.now(), dur:700, fy:st.yaw, fp:st.pitch, ty:st.yaw+wrap(y-st.yaw), tp:st.pitch+wrap(p-st.pitch), end:'play'}; vibe(8); });
+$('next').addEventListener('click', () => { if (st.lvl>=N-1){ openSheet(true); return; } loadLevel(st.lvl+1); });
+const muteBtn = $('mute');
+function drawMute(){
+  muteBtn.innerHTML = muted ? '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>'
+    : '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
+  muteBtn.setAttribute('aria-pressed', muted); muteBtn.setAttribute('aria-label', muted?'Включить звук':'Выключить звук'); muteBtn.classList.toggle('on', muted);
+}
+muteBtn.addEventListener('click', () => { muted = !muted; store.set('muted', muted); drawMute(); applyMute(); });
+const sheet = $('sheet'), scrim = $('scrim');
+function openSheet(on){ $('cnt').textContent = doneCount()+' / '+N; sheet.classList.toggle('on',on); scrim.classList.toggle('on',on); if (on) refreshTiles(); }
+$('menu').addEventListener('click', () => openSheet(!sheet.classList.contains('on'))); scrim.addEventListener('click', () => openSheet(false));
+const lvEl = $('lv'), tiles = [];
+for (let i=0;i<N;i++){ const b = document.createElement('button'); b.dataset.i = i; b.addEventListener('click', () => { openSheet(false); if (i!==st.lvl) loadLevel(i); }); lvEl.appendChild(b); tiles.push(b); }
+function thumb(i){ const c = document.createElement('canvas'); c.width = c.height = 80; const g = c.getContext('2d'); g.scale(.8,.8); g.fillStyle = g.strokeStyle = 'rgba(243,236,224,.92)'; g.lineCap = g.lineJoin = 'round'; LEVELS[i].f(g,0); return c; }
+function refreshTiles(){
+  const open = firstOpen(), all = doneCount()>=N;
+  tiles.forEach((b,i) => { const isDone = !!done[i], ok = isDone || i<=open || all; b.className = (isDone?'done ':'')+(i===st.lvl?'cur':''); b.disabled = !ok;
+    b.setAttribute('aria-label', 'Тень '+(i+1)+(isDone?': '+LEVELS[i].n:ok?'':', закрыта'));
+    if (isDone){ if (!b.firstChild || b.firstChild.nodeName!=='CANVAS'){ b.textContent = ''; b.appendChild(thumb(i)); } } else { b.textContent = i+1; } });
+  $('cnt').textContent = doneCount()+' / '+N;
+}
+
+/* ---------- Отрисовка ---------- */
+function drawWall(now, prog){
+  const {S,wx,wy} = layout, g = g2, t = now/1000, fl = st.flash;
+  g.save(); g.shadowColor = `rgba(232,170,100,${.25+.3*prog+.4*fl})`; g.shadowBlur = 40; g.fillStyle = '#d9b58a'; roundRect(g,wx,wy,S,S,8); g.fill(); g.restore();
+  const lamp = 1+.015*SIN(t*7.3)+.01*SIN(t*3.1), r = S*.95*lamp;
+  const gr = g.createRadialGradient(wx+S/2,wy+S*.62,S*.05,wx+S/2,wy+S*.5,r);
+  gr.addColorStop(0,`rgb(${Math.min(255,250+fl*5)},${Math.min(255,228+fl*20)},${Math.min(255,184+fl*40)})`); gr.addColorStop(.55,'rgb(214,170,130)'); gr.addColorStop(1,'rgb(98,58,64)');
+  g.save(); roundRect(g,wx,wy,S,S,8); g.clip(); g.fillStyle = gr; g.fillRect(wx,wy,S,S);
+  // область цели и контур
+  if (outline){ const ring = outline.ring, a = st.state==='play' ? .75+.25*prog : Math.max(0,1-st.aliveT)*.7;
+    g.globalAlpha = (st.state==='play'? .07+.1*prog : 0); g.drawImage(outline.fill,wx,wy,S,S); g.globalAlpha = a; g.drawImage(ring,wx,wy,S,S);
+    if (prog>.55 && st.state==='play'){ g.globalAlpha = (prog-.55)*1.4; g.globalCompositeOperation = 'lighter'; g.drawImage(ring,wx,wy,S,S); g.globalCompositeOperation = 'source-over'; } g.globalAlpha = 1; }
+  // тень предмета (мягкая)
+  const sa = 1-clamp(st.aliveT*1.4,0,1); g.globalAlpha = (st.state==='alive'||st.state==='solving' ? Math.max(sa,0) : 1)*.9;
+  if (g.globalAlpha>0){ g.save(); g.filter = 'none'; g.drawImage(shdTinted(), wx, wy, S, S); g.restore(); }
+  g.globalAlpha = 1;
+  // оживший силуэт
+  if (st.state==='alive'){ const a = clamp(st.aliveT*1.2,0,1); g.save(); g.translate(wx,wy); g.scale(S/100,S/100); g.globalAlpha = a*.95; g.fillStyle = g.strokeStyle = '#1a0c1c'; g.lineCap = g.lineJoin = 'round'; cur.L.f(g, reduced ? 0 : st.aliveT*1); g.restore(); }
+  // тёплая вспышка света
+  if (fl>0.01){ g.fillStyle = `rgba(255,236,190,${fl*.5})`; g.fillRect(wx,wy,S,S); }
+  g.restore();
+  // рамка светится по мере приближения
+  g.strokeStyle = `rgba(232,199,122,${.18+.7*prog})`; g.lineWidth = 1.5; roundRect(g,wx+.5,wy+.5,S-1,S-1,8); g.stroke();
+}
+let tint = null;
+function shdTinted(){
+  const sz = Math.round(layout.S*dpr);
+  if (!tint || tint.width!==sz){ tint = document.createElement('canvas'); tint.width = tint.height = sz; }
+  const g = tint.getContext('2d'); g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,sz,sz);
+  g.filter = 'blur('+(1.4*dpr)+'px)'; g.setTransform(sz/100,0,0,sz/100,0,0); g.fillStyle = 'rgb(30,12,34)';
+  shadowPath(g, cur, st.yaw, st.pitch); g.fill(); g.filter = 'none'; g.setTransform(1,0,0,1,0,0); return tint;
+}
+function roundRect(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+function drawBeamAndLamp(now){
+  const {ox,oy,lampY,wy,S} = layout, g = g2, t = now/1000, fl = 1+.03*SIN(t*6.1)+.02*SIN(t*2.7)+st.flash*.4;
+  const topY = wy+S, hw = S*.46;
+  g.save(); g.globalCompositeOperation = 'lighter';
+  const bg = g.createLinearGradient(0,lampY,0,topY); bg.addColorStop(0,`rgba(255,200,120,${.2*fl})`); bg.addColorStop(1,'rgba(255,200,120,0.02)');
+  g.fillStyle = bg; g.beginPath(); g.moveTo(ox-16,lampY-12); g.lineTo(ox+16,lampY-12); g.lineTo(ox+hw,topY); g.lineTo(ox-hw,topY); g.closePath(); g.fill();
+  const sp = glowSprite('255,190,110'); const R = 120*fl; g.globalAlpha = .55; g.drawImage(sp, ox-R, lampY-R*.9, R*2, R*1.8); g.restore();
+  // латунный плафон
+  g.save(); g.translate(ox,lampY); const sh = g.createLinearGradient(-26,0,26,0); sh.addColorStop(0,'#5a3c1c'); sh.addColorStop(.5,'#c99a52'); sh.addColorStop(1,'#4a3018');
+  g.fillStyle = sh; g.beginPath(); g.moveTo(-26,2); g.lineTo(-13,-16); g.lineTo(13,-16); g.lineTo(26,2); g.closePath(); g.fill();
+  g.fillStyle = `rgba(255,226,160,${.9*Math.min(1.2,fl)})`; g.beginPath(); g.ellipse(0,2,26,5,0,0,TAU); g.fill(); g.restore();
+}
+function drawObject(now){
+  const {ox,oy,su} = layout, g = g2, lv = cur, h = lv.h, N0 = lv.cubes.length;
+  const M = mul(matR(st.yaw,st.pitch), lv.B), Mv = mul(VIEW, M);
+  const ord = new Array(N0), zs = new Float32Array(N0), xs = new Float32Array(N0), ys = new Float32Array(N0);
+  for (let n=0;n<N0;n++){ const q = lv.cubes[n], x=Mv[0]*q.x+Mv[1]*q.y+Mv[2]*q.z, y=Mv[3]*q.x+Mv[4]*q.y+Mv[5]*q.z, z=Mv[6]*q.x+Mv[7]*q.y+Mv[8]*q.z; xs[n]=x; ys[n]=y; zs[n]=z; ord[n]=n; }
+  ord.sort((a,b) => zs[a]-zs[b]);
+  const fade = st.state==='alive' ? 1-clamp(st.aliveT*.9,0,.78) : 1;
+  g.save(); g.translate(ox,oy); g.globalAlpha = fade*clamp(st.fade,0,1);
+  const L = [.15,.72,.45], dk = [74,38,86], lt = [255,232,184], stroke = N0<260;
+  const hs = [[Mv[0]*h,Mv[3]*h,Mv[6]*h],[Mv[1]*h,Mv[4]*h,Mv[7]*h],[Mv[2]*h,Mv[5]*h,Mv[8]*h]];
+  g.lineJoin = 'round'; g.lineWidth = .8; g.strokeStyle = 'rgba(24,8,28,.45)';
+  for (let m=0;m<N0;m++){ const n = ord[m], q = lv.cubes[n], pf = 520/(520-zs[n]), cx = xs[n], cy = ys[n], cz = zs[n];
+    const fog = clamp(.82+cz/260,.55,1.12);
+    for (let k=0;k<3;k++){ const v = hs[k], s = v[2]>0?1:-1; if (Math.abs(v[2])<1e-4) continue;
+      const u = hs[(k+1)%3], w = hs[(k+2)%3], fx = cx+s*v[0], fy = cy+s*v[1];
+      const nl = (s*v[0]*L[0]+s*v[1]*L[1]+s*v[2]*L[2])/h, d = clamp(.26+.95*Math.max(0,nl)+.1*s*v[2]/h,0,1)*fog*(q.det?.86:1)*(.94+q.v*.12);
+      g.fillStyle = `rgb(${Math.round(dk[0]+(lt[0]-dk[0])*d)},${Math.round(dk[1]+(lt[1]-dk[1])*d)},${Math.round(dk[2]+(lt[2]-dk[2])*d*(q.det?.8:1))})`;
+      g.beginPath(); g.moveTo((fx+u[0]+w[0])*su*pf,(fy+u[1]+w[1])*su*pf); g.lineTo((fx+u[0]-w[0])*su*pf,(fy+u[1]-w[1])*su*pf); g.lineTo((fx-u[0]-w[0])*su*pf,(fy-u[1]-w[1])*su*pf); g.lineTo((fx-u[0]+w[0])*su*pf,(fy-u[1]+w[1])*su*pf); g.closePath(); g.fill(); if (stroke) g.stroke(); }
+  }
+  g.restore();
+}
+function drawParts(now, dt){
+  const {S,wx,wy} = layout, g = g2;
+  if (st.state==='alive' && !reduced && Math.random()<dt*28){ const c = cur.cubes[Math.floor(Math.random()*cur.cubes.length)]; parts.push({x:wx+(c.x+50)/100*S, y:wy+(c.y+50)/100*S, vx:(Math.random()-.5)*8, vy:-14-Math.random()*22, life:0, max:2+Math.random()*2.2, r:1+Math.random()*2.2}); }
+  g.save(); g.globalCompositeOperation = 'lighter'; const sp = glowSprite('255,214,140');
+  for (let i=parts.length-1;i>=0;i--){ const p = parts[i]; p.life += dt; if (p.life>p.max){ parts.splice(i,1); continue; } p.x += p.vx*dt; p.y += p.vy*dt; const a = Math.sin(p.life/p.max*Math.PI), R = p.r*5; g.globalAlpha = a*.8; g.drawImage(sp,p.x-R,p.y-R,R*2,R*2); }
+  g.restore();
+}
+function drawFlies(now){
+  const t = now/1000, g = g2, sp = glowSprite('232,199,122'), {S,wy} = layout; g.save(); g.globalCompositeOperation = 'lighter';
+  for (let i=0;i<9;i++){ const x = W*(.5+.46*SIN(t*.07*(i+1)+i*2.1)), y = layout.zoneT+(H-layout.zoneT)*(.5+.45*SIN(t*.05*(i+2)+i)), a = reduced?.35:.15+.4*Math.pow((1+SIN(t*(.8+i*.13)+i))/2,2);
+    g.globalAlpha = a; g.drawImage(sp,x-9,y-9,18,18); }
+  g.restore();
+}
+let last = performance.now(), raf = 0;
+function frame(now){
+  raf = requestAnimationFrame(frame); now = Math.max(now, performance.now()); const dt = Math.min(.05, (now-last)/1000); last = now;
+  if (!cur) return;
+  if (st.fade<1) st.fade += dt*1.6;
+  // движение
+  if (st.state==='play' && !st.drag && !st.anim && (Math.abs(st.vy)>.01||Math.abs(st.vp)>.01) && !reduced){ st.yaw += st.vy*dt; st.pitch += st.vp*dt; const dmp = Math.exp(-3*dt); st.vy *= dmp; st.vp *= dmp; st.dirty = true; }
+  if (st.anim){ const a = st.anim, u = clamp((now-a.t0)/a.dur,0,1), e = ease(u); st.yaw = a.fy+(a.ty-a.fy)*e; st.pitch = a.fp+(a.tp-a.fp)*e; st.dirty = true;
+    if (u>=1){ st.anim = null; if (a.end==='alive'){ st.state = 'alive'; st.aliveT = 0; setTimeout(()=>{ if (st.state==='alive') $('res').classList.add('on'); }, 1500); } } }
+  if (st.state==='alive') st.aliveT += dt*(reduced?.01:1);
+  if (st.flash>0) st.flash = Math.max(0, st.flash-dt*.7);
+  if (st.dirty){ st.iou = shadowIoU(cur, st.yaw, st.pitch); st.dirty = false;
+    if (st.state==='play'){ } }
+  if (st.state==='play'){ if (st.iou>=cur.thr){ st.hold += dt; if (st.hold>.3) solveNow(); } else st.hold = 0; }
+  st.iouS += (st.iou-st.iouS)*Math.min(1,dt*8);
+  const prog = st.state==='play' ? clamp((st.iouS-.3)/(cur.thr-.3),0,1) : 1;
+  toneUpdate();
+  g2.setTransform(1,0,0,1,0,0); g2.drawImage(bgc,0,0); g2.setTransform(dpr,0,0,dpr,0,0);
+  drawBeamAndLamp(now); drawFlies(now); drawObject(now); drawWall(now, prog); drawParts(now,dt);
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden){ cancelAnimationFrame(raf); raf = 0; } else if (!raf){ last = performance.now(); raf = requestAnimationFrame(frame); } });
+addEventListener('resize', resize);
+
+/* ---------- Запуск ---------- */
+drawMute();
+let start = Number.isInteger(store.get('cur', 0)) ? store.get('cur', 0) : 0; if (start<0 || start>=N) start = 0;
+if (done[start]) start = firstOpen();
+resize(); loadLevel(start); resize();
+const seen = store.get('seen', false);
+function placeTut(){ const t = $('tut'); t.style.top = (layout.zoneT+2)+'px'; }
+placeTut(); if (seen) $('tut').classList.add('gone');
+raf = requestAnimationFrame(frame);
+window.__sh = { st, LEVELS, N, THR, buildLevel, loadLevel, shadowIoU, matR, angDist, solveNow, giveHint, get cur(){ return cur; }, get done(){ return done; }, openSheet, resize, refreshTiles, thumb };
+})();
+</script>
+</body>
+</html>

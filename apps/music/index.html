@@ -6,87 +6,82 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#081a1b">
 <title>Поющий пруд</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600&display=swap&subset=cyrillic" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/fonts/fonts.css"><link rel="stylesheet" href="../../assets/ui.css">
 <style>
-:root{--ink:#f6efe4;--muted:#b7c4bd;--accent:#5fb3a8;--gold:#e9c46a;--chip:rgba(10,20,22,.55);--line:rgba(246,239,228,.16)}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:#081a1b;color:var(--ink);font-family:Manrope,system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-#c{position:fixed;inset:0;width:100%;height:100%;touch-action:none;display:block}
-.top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 6px) 12px 0;display:flex;justify-content:space-between;align-items:center;pointer-events:none;z-index:3}
-.top>*{pointer-events:auto}
-.back{color:#d3ddd7;text-decoration:none;font-size:14px;min-height:44px;display:flex;align-items:center;padding:0 12px 0 6px}
-.icon{width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--chip);color:var(--ink);display:grid;place-items:center;cursor:pointer}
-.icon svg{width:22px;height:22px}
-.head{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 50px);text-align:center;pointer-events:none;z-index:3}
-h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:34px;line-height:1;letter-spacing:.01em;text-shadow:0 2px 14px rgba(0,0,0,.5)}
-h1 i{color:var(--accent);transition:color .8s}
-.moods{display:flex;gap:6px;justify-content:center;margin:12px auto 0;padding:0 12px;max-width:520px;pointer-events:auto}
-.moods button{flex:1;max-width:110px;min-height:44px;border-radius:22px;border:1px solid var(--line);background:var(--chip);color:var(--muted);font:500 14px Manrope,system-ui,sans-serif;cursor:pointer;transition:all .4s}
-.moods button[aria-pressed="true"]{color:#0b1416;background:var(--accent);border-color:var(--accent);font-weight:600}
-.bar{position:fixed;left:0;right:0;bottom:0;padding:0 12px max(14px, calc(env(safe-area-inset-bottom) + 6px));z-index:3;pointer-events:none}
-.bar>*{pointer-events:auto;max-width:520px;margin:0 auto}
-.volrow{display:flex;align-items:center;gap:10px;padding:0 6px;height:44px}
-.volrow svg{width:20px;height:20px;flex:none;color:var(--muted)}
-input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:44px;background:transparent;cursor:pointer}
-input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:2px;background:linear-gradient(to right,var(--accent) var(--v,70%),rgba(246,239,228,.38) var(--v,70%))}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--ink);margin-top:-10.5px;box-shadow:0 2px 8px rgba(0,0,0,.4)}
-input[type=range]::-moz-range-track{height:3px;background:rgba(246,239,228,.22)}
-input[type=range]::-moz-range-progress{height:3px;background:var(--accent)}
-input[type=range]::-moz-range-thumb{width:24px;height:24px;border:0;border-radius:50%;background:var(--ink)}
-.btns{display:flex;gap:8px}
-.btns button{flex:1;min-height:60px;border-radius:16px;border:1px solid var(--line);background:rgba(8,16,18,.82);color:var(--ink);font:500 13px/1.15 Manrope,system-ui,sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:7px 6px;transition:all .3s}
-.btns button svg{width:22px;height:22px;flex:none}
-.btns button span{min-height:2.3em;display:flex;align-items:center;text-align:center}
-.btns button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#0b1416;font-weight:600}
-.start{position:fixed;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;pointer-events:none;z-index:2;transition:opacity 1.2s}
-.start.gone{opacity:0}
-.start .ring{width:74px;height:74px;margin:0 auto 18px;border-radius:50%;border:1px solid rgba(246,239,228,.5);animation:pulse 2.6s ease-out infinite}
-.start .t{font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;font-style:italic}
-.start .s{color:var(--muted);font-size:15px;margin-top:6px}
-@keyframes pulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.6);opacity:0}}
-.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 130px);transform:translate(-50%,10px);width:calc(100% - 40px);max-width:420px;background:rgba(8,14,16,.8);border:1px solid var(--line);border-radius:16px;padding:12px 16px;font-size:14px;line-height:1.45;color:var(--ink);text-align:center;opacity:0;pointer-events:none;transition:opacity .6s,transform .6s;z-index:4}
-.toast.on{opacity:1;transform:translate(-50%,0)}
-@media (prefers-reduced-motion:reduce){.start .ring{animation:none}}
+html,body{height:100%;overflow:hidden;background:#071718;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.ui{position:fixed;left:0;right:0;top:0;bottom:0;max-width:520px;margin:0 auto;display:flex;flex-direction:column;
+  padding:calc(var(--safe-t) + 6px) 20px calc(var(--safe-b) + 14px);pointer-events:none;z-index:3}
+.ui>*{pointer-events:auto}
+.ui .z-top .z-icon{background:rgba(8,18,20,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.ui .z-top .z-title{pointer-events:none}
+.moods{margin-top:4px;background:rgba(8,18,20,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.moods button{min-height:42px;font-size:14px}
+.moods button.on{color:var(--accent)}
+.bar{margin-top:auto;border-radius:var(--r-l);background:rgba(8,18,20,.55);box-shadow:inset 0 0 0 1px var(--line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);padding:6px}
+.bar .z-tool{min-height:54px}
+.bar .z-tool[aria-pressed="true"]{color:var(--accent);background:var(--accent-soft)}
+.intro{position:fixed;left:0;right:0;top:46%;transform:translateY(-50%);text-align:center;pointer-events:none;padding:0 32px;z-index:2;transition:opacity 1.4s var(--ease)}
+.intro.gone{opacity:0}
+.intro .ring{width:78px;height:78px;margin:0 auto 22px;border-radius:50%;box-shadow:0 0 0 1px rgba(243,236,224,.5);animation:pulse 2.8s ease-out infinite}
+.intro .z-h1{margin:0;text-shadow:0 2px 24px rgba(0,0,0,.55)}
+.intro .z-lead{margin:12px auto 0;text-shadow:0 1px 14px rgba(0,0,0,.7);color:var(--ink)}
+@keyframes pulse{0%{transform:scale(.55);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+.z-toast{white-space:normal;text-align:center;width:max-content;max-width:calc(100% - 40px);border-radius:20px;line-height:1.45;bottom:calc(var(--safe-b) + 108px)}
+.sheet-row{display:flex;align-items:center;gap:12px}
+.sheet-row svg{width:20px;height:20px;flex:none;color:var(--ink-2);fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+input[type=range]{flex:1;min-width:0;-webkit-appearance:none;appearance:none;height:44px;background:transparent;cursor:pointer;touch-action:pan-y}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--accent) var(--v,70%),rgba(243,236,224,.18) var(--v,70%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--ink);margin-top:-11px;box-shadow:0 2px 10px rgba(0,0,0,.45)}
+input[type=range]::-moz-range-track{height:4px;background:rgba(243,236,224,.18)}
+input[type=range]::-moz-range-progress{height:4px;background:var(--accent)}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:var(--ink)}
+.how{margin:6px 0 0;padding:0;list-style:none;color:var(--ink-2);font-size:15px;line-height:1.5}
+.how li{padding:9px 0 9px 18px;position:relative;text-wrap:pretty}
+.how li::before{content:"";position:absolute;left:2px;top:17px;width:6px;height:6px;border-radius:50%;background:var(--glow);box-shadow:0 0 8px var(--glow)}
+.stat{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.stat b{font:500 30px/1 var(--display);color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.intro .ring{animation:none;opacity:.6}}
 </style>
-
-
-
-
 <!--pwa--><link rel="manifest" href="../../manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="../../icons/icon-192.png"><link rel="apple-touch-icon" href="../../icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('../../sw.js'))</script><!--/pwa-->
 </head>
 <body>
 <canvas id="c" aria-label="Пруд: касайся воды, чтобы играть"></canvas>
 
-<div class="top">
-  <a class="back" href="../../index.html">‹ все приложения</a>
-  <button class="icon" id="mute" aria-label="Выключить звук" aria-pressed="false"></button>
+<div class="ui">
+  <div class="z-top">
+    <a class="z-icon" href="../../index.html" aria-label="Все приложения"><svg viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></a>
+    <div class="z-title"></div>
+    <button class="z-icon" id="mute" aria-label="Выключить звук" aria-pressed="false"></button>
+    <button class="z-icon" id="menu" aria-label="Настройки и подсказки"><svg viewBox="0 0 24 24"><path d="M5 8h14M5 16h14"/><circle cx="9" cy="8" r="2" fill="#0a1416"/><circle cx="15" cy="16" r="2" fill="#0a1416"/></svg></button>
+  </div>
+  <div class="z-seg moods" id="moods" role="group" aria-label="Настроение пруда"></div>
+  <div class="z-bar bar">
+    <button class="z-tool" id="tool" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 19.5c-4-1.4-6.4-5.4-5.2-9.8 2.3 2 4.5 4.8 5.2 9.8zm0 0c4-1.4 6.4-5.4 5.2-9.8-2.3 2-4.5 4.8-5.2 9.8zm0 0c-1.2-4.2 0-9 0-12.5 0 3.5 1.2 8.3 0 12.5z"/></svg><span>Кувшинка</span></button>
+    <button class="z-tool" id="auto" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 17V6l10-2v11"/><circle cx="6.5" cy="17" r="2.5"/><circle cx="16.5" cy="15" r="2.5"/></svg><span id="autoL">Сочинять</span></button>
+    <button class="z-tool" id="clear"><svg viewBox="0 0 24 24"><path d="M4 12c2.5-3 5.5-3 8 0s5.5 3 8 0"/></svg><span>Тишина</span></button>
+  </div>
 </div>
 
-<div class="head">
-  <h1>Поющий <i>пруд</i></h1>
-  <div class="moods" id="moods"></div>
-</div>
-
-<div class="start" id="start">
+<div class="intro" id="start">
   <div class="ring"></div>
-  <p class="t">Коснись воды</p>
-  <p class="s">и пруд зазвучит</p>
+  <h1 class="z-h1">Поющий <i>пруд</i></h1>
+  <p class="z-lead" id="introLead">Коснись воды — прозвучит нота.<br>Подержи палец — вырастет кувшинка.</p>
 </div>
 
-<div class="toast" id="toast"></div>
-
-<div class="bar">
-  <div class="volrow">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
-    <input type="range" id="vol" min="0" max="100" value="70" aria-label="Громкость">
-  </div>
-  <div class="btns">
-    <button id="tool" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 19c-4-1.5-6.5-6-5-10.5 2.2 2.3 4.4 5 5 10.5zm0 0c4-1.5 6.5-6 5-10.5-2.2 2.3-4.4 5-5 10.5zm0 0c-1.5-4.5 0-10 0-13 0 3 1.5 8.5 0 13z" fill="currentColor"/></svg><span>Посадить<br>кувшинку</span></button>
-    <button id="auto" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 17V6l10-2v11"/><circle cx="6.5" cy="17" r="2.5"/><circle cx="16.5" cy="15" r="2.5"/></svg><span>Сыграй сам</span></button>
-    <button id="clear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 12c2.5-3 5.5-3 8 0s5.5 3 8 0"/></svg><span>Тишина</span></button>
-  </div>
+<div class="z-scrim" id="scrim"></div>
+<div class="z-sheet" id="sheet" role="dialog" aria-label="Настройки пруда">
+  <div class="z-cap">Громкость</div>
+  <div class="sheet-row"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/></svg><input type="range" id="vol" min="0" max="100" value="70" aria-label="Громкость"></div>
+  <div class="z-cap" style="margin-top:10px">Как играть</div>
+  <ul class="how">
+    <li>Коснись воды — прозвучит нота. Чем выше касание, тем звонче.</li>
+    <li>Подержи палец — вырастет кувшинка и запоёт сама. У каждой свой ритм.</li>
+    <li>Коснись кувшинки — она уйдёт. Лягушка отзовётся, если её тронуть.</li>
+  </ul>
+  <div class="stat"><span class="z-cap">Кувшинок выросло за всё время</span><b class="z-num" id="cnt">0</b></div>
 </div>
+<div class="z-toast" id="toast" role="status"></div>
 
 <script>
 (() => {
@@ -97,134 +92,183 @@ const store = {
   set(k, v){ try{ localStorage.setItem(LS+k, JSON.stringify(v)); }catch(e){} }
 };
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+const hexRGB = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+const mixHex = (a,b,t) => { const A=hexRGB(a), B=hexRGB(b); return 'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')+')'; };
+const TAU = Math.PI*2;
 
-/* ---------- Настроения ---------- */
+/* Настроения: ключи, строй и состав те же, что в первой версии */
 const MOODS = {
-  pond:  {name:'Пруд',   root:62, scale:[0,2,4,7,9],        count:13, bpm:92, timbre:'bell',   ir:2.8, wet:.30, dly:.16,
-          c:{top:'#123230',bot:'#071718',ripple:'176,234,222',glow:'95,179,168',pad:'#5f8f63',pad2:'#7fae7a',petal:'#f0b6c4',petal2:'#f6efe4',core:'#e9c46a',accent:'#5fb3a8',moon:'246,239,228'}},
-  egypt: {name:'Египет', root:52, scale:[0,1,4,5,7,8,10],   count:16, bpm:76, timbre:'pluck',  ir:3.6, wet:.38, dly:.20, drone:true,
-          c:{top:'#24143a',bot:'#060409',ripple:'233,196,106',glow:'150,110,200',pad:'#3c4d3a',pad2:'#5a6d52',petal:'#a684cf',petal2:'#e6d8f5',core:'#e9c46a',accent:'#e9c46a',moon:'233,196,106'}},
-  night: {name:'Ночь',   root:57, scale:[0,3,5,7,10],       count:13, bpm:66, timbre:'epiano', ir:4.6, wet:.48, dly:.24,
-          c:{top:'#0e1c42',bot:'#03070f',ripple:'156,186,255',glow:'80,110,200',pad:'#33594f',pad2:'#4b7769',petal:'#f6efe4',petal2:'#dbe4ff',core:'#e9c46a',accent:'#8fb3ff',moon:'220,230,255'}},
-  rain:  {name:'Дождь',  root:65, scale:[0,2,4,6,7,9,11],   count:16, bpm:84, timbre:'drop',   ir:2.4, wet:.30, dly:.18, rain:true,
-          c:{top:'#1f2d31',bot:'#0a1214',ripple:'208,224,228',glow:'130,160,170',pad:'#5f8f63',pad2:'#7fae7a',petal:'#f0b6c4',petal2:'#f6efe4',core:'#e9c46a',accent:'#a9c7cc',moon:'200,215,220'}}
+  pond:  {name:'Пруд',   root:62, scale:[0,2,4,7,9],        count:13, bpm:92, timbre:'bell',   ir:3.2, wet:.34, dly:.16,
+          pad:{n:[-12,-5,4],type:'sine',lp:700,gain:.034},
+          c:{top:'#123230',bot:'#071718',ripple:'176,234,222',glow:'120,200,186',pad:'#4f7f58',pad2:'#7fae7a',petal:'#f0b6c4',petal2:'#fbeee6',core:'#e8c77a',accent:'#efb3c1',moon:'246,239,228'}},
+  egypt: {name:'Египет', root:52, scale:[0,1,4,5,7,8,10],   count:16, bpm:76, timbre:'pluck',  ir:3.8, wet:.40, dly:.20,
+          pad:{n:[-24,-17,-12],type:'sawtooth',lp:320,gain:.05},
+          c:{top:'#24143a',bot:'#060409',ripple:'233,196,106',glow:'170,130,220',pad:'#3c4d3a',pad2:'#5f7357',petal:'#a684cf',petal2:'#e6d8f5',core:'#e8c77a',accent:'#e8c77a',moon:'233,196,106'}},
+  night: {name:'Ночь',   root:57, scale:[0,3,5,7,10],       count:13, bpm:66, timbre:'epiano', ir:4.8, wet:.50, dly:.24,
+          pad:{n:[-12,-5,3],type:'triangle',lp:520,gain:.036},
+          c:{top:'#0e1c42',bot:'#03070f',ripple:'156,186,255',glow:'100,130,220',pad:'#33594f',pad2:'#547f70',petal:'#f6efe4',petal2:'#dbe4ff',core:'#e8c77a',accent:'#9db8ff',moon:'220,230,255'}},
+  rain:  {name:'Дождь',  root:65, scale:[0,2,4,6,7,9,11],   count:16, bpm:84, timbre:'drop',   ir:2.6, wet:.32, dly:.18, rain:true,
+          pad:{n:[-12,-5],type:'sine',lp:600,gain:.026},
+          c:{top:'#1f2d31',bot:'#0a1214',ripple:'208,224,228',glow:'150,180,190',pad:'#4f7f58',pad2:'#7fae7a',petal:'#f0b6c4',petal2:'#fbeee6',core:'#e8c77a',accent:'#a9c7cc',moon:'200,215,220'}}
 };
 const LOOPS = [4,6,8,3,5,4,12,6];
 
-/* ---------- Состояние ---------- */
+/* Состояние */
 const S = {
   mood: MOODS[store.get('mood','pond')] ? store.get('mood','pond') : 'pond',
   vol: store.get('vol', 70),
   muted: store.get('muted', false),
-  lilies: [], ripples: [], tool: 'note', auto: false, rainOn: true,
+  lilies: [], ripples: [], glows: [], tool: 'note', auto: false, rainOn: true, hush: false,
   beat: 0, vBeat: 0, nextT: 0, events: [], press: null, plantCount: store.get('count', 0),
   autoDeg: 5, autoX: .5, idSeq: 1,
   stats: {beats:0, scheduled:0, lilyPlays:{}, croaks:0, drops:0, autoNotes:0}
 };
+if (typeof S.vol !== 'number') S.vol = 70;
+if (typeof S.plantCount !== 'number') S.plantCount = 0;
 (store.get('lilies', []) || []).forEach(l => {
-  if (typeof l.x==='number' && typeof l.y==='number')
+  if (l && typeof l.x==='number' && typeof l.y==='number')
     S.lilies.push({id:S.idSeq++, x:l.x, y:l.y, n:l.n||4, phase:0, frog:!!l.frog, rot:l.rot||0, auto:false, pulse:0, croak:0, born:performance.now()-2000, dying:0});
 });
 const mood = () => MOODS[S.mood];
 function saveLilies(){ store.set('lilies', S.lilies.filter(l=>!l.auto && !l.dying).map(l=>({x:+l.x.toFixed(4),y:+l.y.toFixed(4),n:l.n,frog:l.frog,rot:+l.rot.toFixed(2)}))); }
 
-/* ---------- Ноты ---------- */
+/* Ноты (диапазон по высоте экрана тот же, что раньше, чтобы посаженные кувшинки пели те же ноты) */
 const mtof = m => 440*Math.pow(2,(m-69)/12);
 function notes(){ const m=mood(), a=[]; for(let o=0;a.length<m.count;o++) for(const iv of m.scale){ if(a.length<m.count) a.push(m.root+12*o+iv); } return a; }
 const PLAY_TOP=.16, PLAY_BOT=.80;
 function degFromY(yn){ const n=notes(); const t=Math.min(1,Math.max(0,(yn-PLAY_TOP)/(PLAY_BOT-PLAY_TOP))); return Math.round((1-t)*(n.length-1)); }
 function yFromDeg(d){ const n=notes(); return PLAY_TOP + (1-d/(n.length-1))*(PLAY_BOT-PLAY_TOP); }
-const beatDur = () => 60/mood().bpm/2; // восьмая
+const beatDur = () => 60/mood().bpm/2;
 
-/* ---------- Звук ---------- */
+/* Звук */
 let A = null;
 function makeIR(ctx, sec){
-  const len = Math.floor(ctx.sampleRate*sec), b = ctx.createBuffer(2,len,ctx.sampleRate);
-  for(let ch=0;ch<2;ch++){ const d=b.getChannelData(ch); let lp=0;
-    for(let i=0;i<len;i++){ const t=i/len; const n=(Math.random()*2-1); lp = lp + (n-lp)*(0.55-0.4*t); d[i] = lp*Math.pow(1-t,2.8)*(i<ctx.sampleRate*0.012?i/(ctx.sampleRate*0.012):1); } }
+  const sr = ctx.sampleRate, len = Math.floor(sr*sec), b = ctx.createBuffer(2,len,sr);
+  const pre = Math.floor(sr*.022);
+  for (let ch=0; ch<2; ch++){
+    const d = b.getChannelData(ch); let lp = 0, lp2 = 0;
+    for (let i=pre; i<len; i++){
+      const t = (i-pre)/(len-pre);
+      const n = Math.random()*2-1;
+      const k = .62 - .5*Math.pow(t,.6);
+      lp += (n-lp)*k; lp2 += (lp-lp2)*(.8-.3*t);
+      const fade = Math.min(1,(i-pre)/(sr*.02));
+      d[i] = lp2 * Math.pow(1-t, 2.6) * fade * 1.7;
+    }
+    const taps = ch ? [.031,.047,.066,.089,.113] : [.027,.041,.058,.079,.104];
+    taps.forEach((tp,j) => { const p = Math.floor(sr*tp); if (p<len) d[p] += (ch?-1:1) * .5 / (1+j*.7); });
+  }
   return b;
 }
+function makeNoise(ctx, sec){
+  const b = ctx.createBuffer(1, Math.floor(ctx.sampleRate*sec), ctx.sampleRate), d = b.getChannelData(0);
+  for (let i=0;i<d.length;i++) d[i] = Math.random()*2-1;
+  return b;
+}
+const volGain = () => Math.pow(S.vol/100, 1.6) * .9;
 function unlock(){
   if (A) { if (A.ctx.state!=='running') A.ctx.resume(); return; }
   const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return;
   const ctx = new AC({latencyHint:'interactive'});
   const bus = ctx.createGain(); bus.gain.value = .75;
-  const dry = ctx.createGain(); dry.gain.value = 1;
   const revSend = ctx.createGain(); revSend.gain.value = mood().wet;
   const conv = ctx.createConvolver(); conv.buffer = makeIR(ctx, mood().ir);
-  const revOut = ctx.createGain(); revOut.gain.value = .9;
+  const revOut = ctx.createGain(); revOut.gain.value = .85;
   const dlySend = ctx.createGain(); dlySend.gain.value = mood().dly;
-  const delay = ctx.createDelay(2); delay.delayTime.value = beatDur()*3;
-  const dlyF = ctx.createBiquadFilter(); dlyF.type='lowpass'; dlyF.frequency.value=2400;
-  const fb = ctx.createGain(); fb.gain.value=.36;
-  const glue = ctx.createDynamicsCompressor(); glue.threshold.value=-18; glue.knee.value=10; glue.ratio.value=3; glue.attack.value=.01; glue.release.value=.3;
+  const dL = ctx.createDelay(2), dR = ctx.createDelay(2);
+  const dlyF = ctx.createBiquadFilter(); dlyF.type='lowpass'; dlyF.frequency.value=2600;
+  const fb = ctx.createGain(); fb.gain.value=.38;
+  const glue = ctx.createDynamicsCompressor(); glue.threshold.value=-20; glue.knee.value=12; glue.ratio.value=3; glue.attack.value=.01; glue.release.value=.3;
   const lim = ctx.createDynamicsCompressor(); lim.threshold.value=-4; lim.knee.value=0; lim.ratio.value=20; lim.attack.value=.002; lim.release.value=.12;
   const master = ctx.createGain(); master.gain.value = S.muted?0:volGain();
   const an = ctx.createAnalyser(); an.fftSize = 2048;
-  bus.connect(dry); dry.connect(glue);
+  bus.connect(glue);
   bus.connect(revSend); revSend.connect(conv); conv.connect(revOut); revOut.connect(glue);
-  bus.connect(dlySend); dlySend.connect(delay); delay.connect(dlyF); dlyF.connect(fb); fb.connect(delay); dlyF.connect(glue); dlyF.connect(revSend);
+  bus.connect(dlySend); dlySend.connect(dlyF);
+  dlyF.connect(dL); dL.connect(dR); dR.connect(fb); fb.connect(dL);
+  const mk = (d, pan) => { const g = ctx.createGain(); g.gain.value=.8; d.connect(g); if (ctx.createStereoPanner){ const p=ctx.createStereoPanner(); p.pan.value=pan; g.connect(p); p.connect(glue); p.connect(revSend); } else { g.connect(glue); } };
+  mk(dL,-.7); mk(dR,.7);
   glue.connect(lim); lim.connect(master); master.connect(an); an.connect(ctx.destination);
-  A = {ctx, bus, revSend, conv, dlySend, delay, master, an, voices:0, drone:null, peak:0, peakBuf:new Float32Array(2048)};
-  // iOS: тихий буфер разблокирует вывод
+  A = {ctx, bus, revSend, conv, dlySend, dL, dR, master, an, voices:0, pad:null, peak:0, peakBuf:new Float32Array(2048), noise:makeNoise(ctx,1.5)};
+  const bt = beatDur()*3; dL.delayTime.value = bt; dR.delayTime.value = bt;
   const sb = ctx.createBufferSource(); sb.buffer = ctx.createBuffer(1,1,22050); sb.connect(ctx.destination); sb.start(0);
   if (ctx.state!=='running') ctx.resume();
   S.nextT = ctx.currentTime + .08; S.beat = 0;
   S.lilies.forEach(l => l.phase = (l.id*3) % l.n);
-  if (mood().drone) startDrone();
+  startPad();
   setInterval(schedule, 25);
-  document.getElementById('start').classList.add('gone');
-  if (!store.get('hint', false)) { setTimeout(()=>toast('Коснись воды — прозвучит нота. Подержи палец — вырастет кувшинка и будет петь сама. Коснись кувшинки, чтобы она ушла.', 7000), 900); store.set('hint', true); }
+  $('start').classList.add('gone');
+  if (!store.get('hint', false)) { setTimeout(()=>toast('Кувшинка поёт сама. Коснись её — и она уйдёт.', 5200), 2600); store.set('hint', true); }
+  store.set('v2_seen', true);
 }
-const volGain = () => Math.pow(S.vol/100, 1.6) * .9;
 function applyVol(){ if(A) A.master.gain.setTargetAtTime(S.muted?0:volGain(), A.ctx.currentTime, .05); }
 
-function vgain(peak, t, a, dec){
-  const g = A.ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
-  g.gain.exponentialRampToValueAtTime(peak, t+a); g.gain.exponentialRampToValueAtTime(0.0001, t+a+dec); return g;
+function tone(out, type, f, t, peak, att, dec, det){
+  const ctx = A.ctx, o = ctx.createOscillator(); o.type = type; o.frequency.setValueAtTime(f,t); if (det) o.detune.value = det;
+  const g = ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(Math.max(.0002,peak), t+att); g.gain.exponentialRampToValueAtTime(0.0001, t+att+dec);
+  o.connect(g); g.connect(out); o.start(t); o.stop(t+att+dec+.05); return o;
 }
-function osc(type, f, t, stop){ const o=A.ctx.createOscillator(); o.type=type; o.frequency.setValueAtTime(f,t); o.start(t); o.stop(stop); return o; }
+function tick(out, t, peak, freq, q, dur){
+  const ctx = A.ctx, s = ctx.createBufferSource(); s.buffer = A.noise;
+  const bp = ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value = Math.min(12000,freq); bp.Q.value = q;
+  const g = ctx.createGain(); g.gain.setValueAtTime(Math.max(.0002,peak),t); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  s.connect(bp); bp.connect(g); g.connect(out); s.start(t, Math.random()*.8); s.stop(t+dur+.02);
+}
 
 function playNote(midi, x, t, vel){
-  if(!A || A.voices>30) return false;
+  if(!A || A.voices>34) return false;
   const ctx=A.ctx, f=mtof(midi), m=mood(); vel = vel==null?1:vel;
   const lvl = vel * Math.max(.45, 1-(midi-55)/55);
   const out = ctx.createGain(); out.gain.value = 1;
   let node = out;
-  if (ctx.createStereoPanner){ const p=ctx.createStereoPanner(); p.pan.value=(x-.5)*1.1; out.connect(p); node=p; }
+  if (ctx.createStereoPanner){ const p=ctx.createStereoPanner(); p.pan.value=(x-.5)*1.2; out.connect(p); node=p; }
   node.connect(A.bus);
-  let end, last;
+  let last;
   if (m.timbre==='bell'){
-    const dec = 2.4-.8*x; end = t+dec+.05;
-    const c = osc('sine', f, t, end), ratio = 2+x*1.5;
-    const mo = osc('sine', f*ratio, t, end), mg = ctx.createGain();
-    mg.gain.setValueAtTime(f*ratio*(.5+2*x), t); mg.gain.exponentialRampToValueAtTime(f*.04, t+.9);
-    mo.connect(mg); mg.connect(c.frequency);
-    const g = vgain(.17*lvl, t, .004, dec); c.connect(g); g.connect(out);
-    const th = osc('sine', f*4, t, t+.25), tg = vgain(.05*lvl*(1-x)+.005, t, .002, .16); th.connect(tg); tg.connect(out);
-    last = c;
+    const dec = 3.0-1.1*x;
+    last = tone(out,'sine',f,t,.15*lvl,.006,dec);
+    tone(out,'sine',f,t,.06*lvl,.012,dec*.9,6);
+    tone(out,'sine',f*2.76,t,.045*lvl,.004,dec*.32);
+    tone(out,'sine',f*5.4,t,.02*lvl*(.4+x),.002,.22);
+    tick(out,t,.018*lvl,f*3,2,.05);
   } else if (m.timbre==='pluck'){
-    const dec = 1.7; end = t+dec+.05;
-    const a = osc('sawtooth', f, t, end), b = osc(x>.5?'square':'triangle', f*1.004, t, end);
-    const fl = ctx.createBiquadFilter(); fl.type='lowpass'; fl.Q.value=3;
-    fl.frequency.setValueAtTime(Math.min(12000,f*(3+7*x)), t); fl.frequency.exponentialRampToValueAtTime(f*1.1, t+.5);
-    const g = vgain(.11*lvl, t, .003, dec);
+    const dec = 1.9, tEnd = t+dec+.1;
+    const fl = ctx.createBiquadFilter(); fl.type='lowpass'; fl.Q.value=2.4;
+    fl.frequency.setValueAtTime(Math.min(11000,f*(3+7*x)), t); fl.frequency.exponentialRampToValueAtTime(f*1.1, t+.55);
+    const g = ctx.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.1*lvl,t+.004); g.gain.exponentialRampToValueAtTime(.0001,t+dec);
+    const a = ctx.createOscillator(); a.type='sawtooth'; a.frequency.value=f; a.detune.value=-4;
+    const b = ctx.createOscillator(); b.type='triangle'; b.frequency.value=f; b.detune.value=5;
     a.connect(fl); b.connect(fl); fl.connect(g); g.connect(out);
-    const s = osc('sine', f/2, t, end), sg = vgain(.06*lvl, t, .004, dec*.8); s.connect(sg); sg.connect(out);
+    a.start(t); b.start(t); a.stop(tEnd); b.stop(tEnd);
+    tone(out,'sine',f/2,t,.05*lvl,.005,dec*.8);
+    tone(out,'sine',f*1.5,t+.02,.012*lvl,.01,dec*.6);
+    tick(out,t,.03*lvl,f*5,3,.04);
     last = a;
   } else if (m.timbre==='epiano'){
-    const dec = 3.2; end = t+dec+.05;
-    const c = osc('sine', f, t, end), mo = osc('sine', f, t, end), mg = ctx.createGain();
-    mg.gain.setValueAtTime(f*(.5+1.4*x), t); mg.gain.exponentialRampToValueAtTime(f*.06, t+1.2);
-    mo.connect(mg); mg.connect(c.frequency);
-    const g = vgain(.17*lvl, t, .006, dec); c.connect(g); g.connect(out);
-    const tine = osc('sine', f*4, t, t+.6), tg = vgain(.025*lvl*(.3+x), t, .002, .45); tine.connect(tg); tg.connect(out);
-    last = c;
-  } else { // drop
-    const dec = 1.1; end = t+dec+.05;
-    const c = osc('sine', f*.72, t, end); c.frequency.exponentialRampToValueAtTime(f, t+.045);
-    const g = vgain(.16*lvl, t, .003, dec); c.connect(g); g.connect(out);
-    const h = osc('triangle', f*2, t, end), hg = vgain(.035*lvl*(.2+x), t, .003, dec*.5); h.connect(hg); hg.connect(out);
+    const dec = 3.4, tEnd = t+dec+.1;
+    const mk = (det, peak) => {
+      const c = ctx.createOscillator(), mo = ctx.createOscillator(), mg = ctx.createGain();
+      c.type='sine'; mo.type='sine'; c.frequency.value=f; mo.frequency.value=f; c.detune.value=det;
+      mg.gain.setValueAtTime(f*(.5+1.4*x),t); mg.gain.exponentialRampToValueAtTime(f*.05,t+1.3);
+      mo.connect(mg); mg.connect(c.frequency);
+      const g = ctx.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+.008); g.gain.exponentialRampToValueAtTime(.0001,t+dec);
+      c.connect(g); g.connect(out); c.start(t); mo.start(t); c.stop(tEnd); mo.stop(tEnd); return c;
+    };
+    last = mk(0,.14*lvl); mk(7,.06*lvl);
+    tone(out,'sine',f*4,t,.022*lvl*(.3+x),.002,.5);
+    tick(out,t,.012*lvl,f*2,1.5,.03);
+  } else {
+    const dec = 1.15;
+    const c = ctx.createOscillator(); c.type='sine'; c.frequency.setValueAtTime(f*.7,t); c.frequency.exponentialRampToValueAtTime(f,t+.05);
+    const g = ctx.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.15*lvl,t+.004); g.gain.exponentialRampToValueAtTime(.0001,t+dec);
+    c.connect(g); g.connect(out); c.start(t); c.stop(t+dec+.05);
+    tone(out,'triangle',f*2,t,.03*lvl*(.2+x),.003,dec*.45);
+    const t2 = t+.13, c2 = ctx.createOscillator(); c2.type='sine'; c2.frequency.setValueAtTime(f*1.25*.8,t2); c2.frequency.exponentialRampToValueAtTime(f*1.25,t2+.05);
+    const g2n = ctx.createGain(); g2n.gain.setValueAtTime(.0001,t2); g2n.gain.exponentialRampToValueAtTime(.05*lvl,t2+.004); g2n.gain.exponentialRampToValueAtTime(.0001,t2+.7);
+    c2.connect(g2n); g2n.connect(out); c2.start(t2); c2.stop(t2+.75);
+    tick(out,t,.02*lvl,f*3,1.2,.03);
     last = c;
   }
   A.voices++;
@@ -235,32 +279,45 @@ function croakSound(t, pitch){
   if(!A) return; const ctx=A.ctx;
   for (let i=0;i<2;i++){
     const t0 = t + i*.15, f0 = (i?240:200)*pitch;
-    const o = osc('sawtooth', f0, t0, t0+.2); o.frequency.exponentialRampToValueAtTime(f0*.62, t0+.12);
+    const o = ctx.createOscillator(); o.type='sawtooth'; o.frequency.setValueAtTime(f0,t0); o.frequency.exponentialRampToValueAtTime(f0*.62, t0+.12);
     const bp = ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=720*pitch; bp.Q.value=2.2;
-    const g = vgain(.11, t0, .015, .12);
-    o.connect(bp); bp.connect(g); g.connect(A.bus);
+    const g = ctx.createGain(); g.gain.setValueAtTime(.0001,t0); g.gain.exponentialRampToValueAtTime(.1,t0+.015); g.gain.exponentialRampToValueAtTime(.0001,t0+.14);
+    o.connect(bp); bp.connect(g); g.connect(A.bus); o.start(t0); o.stop(t0+.2);
   }
 }
 function removeSound(t){
-  if(!A) return; const o = osc('sine', 520, t, t+.35); o.frequency.exponentialRampToValueAtTime(260, t+.3);
-  const g = vgain(.05, t, .01, .28); o.connect(g); g.connect(A.bus);
+  if(!A) return; const o = A.ctx.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(520,t); o.frequency.exponentialRampToValueAtTime(260,t+.3);
+  const g = A.ctx.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.05,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+.3);
+  o.connect(g); g.connect(A.bus); o.start(t); o.stop(t+.35);
 }
-function startDrone(){
-  if(!A || A.drone) return; const ctx=A.ctx, t=ctx.currentTime, r=mood().root;
-  const g = ctx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(.06, t+4);
-  const fl = ctx.createBiquadFilter(); fl.type='lowpass'; fl.frequency.value=300; fl.Q.value=1.5;
-  const lfo = ctx.createOscillator(); lfo.frequency.value=.07; const lg = ctx.createGain(); lg.gain.value=140; lfo.connect(lg); lg.connect(fl.frequency); lfo.start();
-  const os = [ ['sawtooth', mtof(r-24)], ['sawtooth', mtof(r-17)*1.003], ['sine', mtof(r-12)] ].map(([ty,f])=>{ const o=ctx.createOscillator(); o.type=ty; o.frequency.value=f; o.connect(fl); o.start(); return o; });
+function startPad(){
+  if(!A || A.pad || S.hush) return;
+  const ctx=A.ctx, t=ctx.currentTime, m=mood(), sp=m.pad, r=m.root;
+  const g = ctx.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(sp.gain, t+4.5);
+  const fl = ctx.createBiquadFilter(); fl.type='lowpass'; fl.frequency.value=sp.lp; fl.Q.value=1.1;
+  const lfo = ctx.createOscillator(); lfo.frequency.value=.06; const lg = ctx.createGain(); lg.gain.value=sp.lp*.45; lfo.connect(lg); lg.connect(fl.frequency); lfo.start();
+  const os = [lfo];
+  sp.n.forEach((iv,i) => [-5,5].forEach(det => { const o=ctx.createOscillator(); o.type=sp.type; o.frequency.value=mtof(r+iv); o.detune.value=det+i; o.connect(fl); o.start(); os.push(o); }));
   fl.connect(g); g.connect(A.bus);
-  A.drone = {g, os:[...os, lfo]};
+  let rain = null;
+  if (m.rain){
+    const s = ctx.createBufferSource(); s.buffer = A.noise; s.loop = true;
+    const hp = ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=1400;
+    const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=5200;
+    const rg = ctx.createGain(); rg.gain.setValueAtTime(.0001,t); rg.gain.exponentialRampToValueAtTime(.022,t+4);
+    s.connect(hp); hp.connect(lp); lp.connect(rg); rg.connect(A.bus); s.start(); rain = {s, g:rg};
+  }
+  A.pad = {g, os, rain};
 }
-function stopDrone(){
-  if(!A || !A.drone) return; const d=A.drone, t=A.ctx.currentTime;
-  d.g.gain.cancelScheduledValues(t); d.g.gain.setValueAtTime(Math.max(.0001,d.g.gain.value), t); d.g.gain.exponentialRampToValueAtTime(.0001, t+1.8);
-  d.os.forEach(o=>o.stop(t+2)); A.drone=null;
+function stopPad(){
+  if(!A || !A.pad) return; const d=A.pad, t=A.ctx.currentTime;
+  const fade = gn => { gn.gain.cancelScheduledValues(t); gn.gain.setValueAtTime(Math.max(.0001,gn.gain.value), t); gn.gain.exponentialRampToValueAtTime(.0001, t+1.6); };
+  fade(d.g); d.os.forEach(o=>{ try{o.stop(t+1.8);}catch(e){} });
+  if (d.rain){ fade(d.rain.g); try{ d.rain.s.stop(t+1.8); }catch(e){} }
+  A.pad = null;
 }
 
-/* ---------- Планировщик ---------- */
+/* Планировщик: механика прежняя */
 function schedule(){
   if(!A) return; const ctx=A.ctx, now=ctx.currentTime;
   const ahead = document.hidden ? 1.6 : .14;
@@ -311,34 +368,39 @@ function autoStep(b, t){
   }
 }
 
-/* ---------- Действия ---------- */
+/* Действия */
 let W=0, H=0, dpr=1;
-const cv = document.getElementById('c'), g2 = cv.getContext('2d');
-const padR = () => Math.max(24, Math.min(40, Math.min(W,H)*.075));
-function ripple(xn, yn, s){ S.ripples.push({x:xn, y:yn, born:performance.now(), s:s||1}); if (S.ripples.length>40) S.ripples.shift(); }
+const cv = $('c'), g2 = cv.getContext('2d');
+const padR = () => Math.max(30, Math.min(46, Math.min(W,H)*.1));
+function ripple(xn, yn, s){ S.ripples.push({x:xn, y:yn, born:performance.now(), s:s||1}); if (S.ripples.length>34) S.ripples.shift(); }
+function glow(xn, yn, s, strong){ S.glows.push({x:xn, y:yn, born:performance.now(), s:s||1, a:strong||1}); if (S.glows.length>40) S.glows.shift(); }
+function vibe(ms){ if (!S.muted && navigator.vibrate) try{ navigator.vibrate(ms); }catch(e){} }
 function playAt(xn, yn){
-  unlock(); if(!A) { ripple(xn,yn,1); return; }
+  unlock(); if(!A) { ripple(xn,yn,1); glow(xn,yn,1); return; }
+  if (S.hush){ S.hush=false; startPad(); }
   S.rainOn = true;
-  playNote(notes()[degFromY(yn)], xn, A.ctx.currentTime+.01, 1); ripple(xn, yn, 1);
+  playNote(notes()[degFromY(yn)], xn, A.ctx.currentTime+.01, 1); ripple(xn, yn, 1); glow(xn, yn, 1);
 }
 function plantAt(xn, yn, auto){
   if (S.lilies.filter(l=>!l.dying).length >= 14) { toast('Пруд уже полон. Коснись кувшинки, чтобы освободить место.'); return null; }
   const n = LOOPS[S.plantCount % LOOPS.length];
-  const l = {id:S.idSeq++, x:xn, y:yn, n, phase:(S.beat+1)%n, frog:!auto && S.plantCount%3===1, rot:Math.random()*Math.PI*2, auto:!!auto, pulse:0, croak:0, born:performance.now(), dying:0};
-  S.plantCount++; store.set('count', S.plantCount);
-  S.lilies.push(l); ripple(xn, yn, 1.3); if(!auto) saveLilies(); return l;
+  const l = {id:S.idSeq++, x:xn, y:yn, n, phase:(S.beat+1)%n, frog:!auto && S.plantCount%3===1, rot:Math.random()*TAU, auto:!!auto, pulse:0, croak:0, born:performance.now(), dying:0};
+  if (!auto){ S.plantCount++; store.set('count', S.plantCount); }
+  S.lilies.push(l); ripple(xn, yn, 1.3); glow(xn, yn, 1.6, 1);
+  if(!auto){ saveLilies(); vibe(10); }
+  return l;
 }
 function removeLily(l){ l.dying = performance.now(); removeSound(A?A.ctx.currentTime+.01:0); ripple(l.x,l.y,.8); saveLilies(); }
-function frogPos(l){ const r=padR(); const a=l.rot+Math.PI*1.15; return {x:l.x*W+Math.cos(a)*r*.68, y:l.y*H+Math.sin(a)*r*.68}; }
+function frogPos(l){ const r=padR(); const a=l.rot+Math.PI*1.15; return {x:l.x*W+Math.cos(a)*r*.68, y:l.y*H+Math.sin(a)*r*.68*.88}; }
 function hit(px, py){
   const r=padR();
   for (let i=S.lilies.length-1;i>=0;i--){ const l=S.lilies[i]; if(l.dying) continue;
     if (l.frog){ const f=frogPos(l); if (Math.hypot(px-f.x,py-f.y) < r*.42) return {l, frog:true}; }
-    if (Math.hypot(px-l.x*W, py-l.y*H) < r+6) return {l, frog:false};
+    if (Math.hypot(px-l.x*W, (py-l.y*H)/.88) < r+6) return {l, frog:false};
   }
   return null;
 }
-function croakNow(l){ unlock(); if(!A) return; const t=A.ctx.currentTime+.01; croakSound(t, 1+Math.random()*.15); S.stats.croaks++; S.events.push({t, type:'croak', id:l.id}); }
+function croakNow(l){ unlock(); if(!A) return; const t=A.ctx.currentTime+.01; croakSound(t, 1+Math.random()*.15); S.stats.croaks++; S.events.push({t, type:'croak', id:l.id}); vibe(8); }
 
 cv.addEventListener('pointerdown', e => {
   e.preventDefault(); const x=e.clientX, y=e.clientY, xn=x/W, yn=y/H;
@@ -365,59 +427,89 @@ const endPress = e => {
 cv.addEventListener('pointerup', endPress); cv.addEventListener('pointercancel', endPress);
 cv.addEventListener('contextmenu', e=>e.preventDefault());
 ['pointerdown','touchend','click'].forEach(ev => document.addEventListener(ev, () => { if (A && A.ctx.state!=='running') A.ctx.resume(); }, {capture:true, passive:true}));
-// любая кнопка интерфейса тоже включает звук
-document.querySelectorAll('.top button, .moods, .bar').forEach(el => el.addEventListener('pointerdown', unlock, {passive:true}));
+document.querySelectorAll('.ui button').forEach(el => el.addEventListener('pointerdown', unlock, {passive:true}));
 document.addEventListener('visibilitychange', () => { if(!document.hidden && A && A.ctx.state!=='running') A.ctx.resume(); });
 
-/* ---------- Интерфейс ---------- */
-const moodsEl = document.getElementById('moods');
+/* Интерфейс */
+const moodsEl = $('moods');
 Object.entries(MOODS).forEach(([k,m]) => { const b=document.createElement('button'); b.textContent=m.name; b.dataset.m=k; b.addEventListener('click',()=>setMood(k)); moodsEl.appendChild(b); });
 function setMood(k){
   if(!MOODS[k]) return; const prev = S.mood; S.mood = k; store.set('mood', k);
   const m = mood();
   document.documentElement.style.setProperty('--accent', m.c.accent);
+  document.documentElement.style.setProperty('--accent-soft', 'rgba('+hexRGB(m.c.accent).join(',')+',.14)');
   document.querySelector('meta[name=theme-color]').content = m.c.bot;
-  moodsEl.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.m===k));
+  moodsEl.querySelectorAll('button').forEach(b => { const on=b.dataset.m===k; b.classList.toggle('on',on); b.setAttribute('aria-pressed', on); });
   if (A && prev!==k){
     const t=A.ctx.currentTime;
     A.conv.buffer = makeIR(A.ctx, m.ir);
     A.revSend.gain.setTargetAtTime(m.wet, t, .3); A.dlySend.gain.setTargetAtTime(m.dly, t, .3);
-    A.delay.delayTime.setTargetAtTime(beatDur()*3, t, .2);
-    if (m.drone) startDrone(); else stopDrone();
+    A.dL.delayTime.setTargetAtTime(beatDur()*3, t, .2); A.dR.delayTime.setTargetAtTime(beatDur()*3, t, .2);
+    stopPad(); S.hush=false; setTimeout(startPad, 400);
     S.rainOn = true;
     playNote(notes()[Math.floor(notes().length/2)], .5, t+.02, .7);
   }
 }
-const muteBtn = document.getElementById('mute');
+const muteBtn = $('mute');
 function drawMute(){
   muteBtn.innerHTML = S.muted
-    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>'
-    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
+    ? '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>'
+    : '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
   muteBtn.setAttribute('aria-pressed', S.muted); muteBtn.setAttribute('aria-label', S.muted?'Включить звук':'Выключить звук');
+  muteBtn.classList.toggle('on', S.muted);
 }
 muteBtn.addEventListener('click', () => { S.muted=!S.muted; store.set('muted',S.muted); drawMute(); applyVol(); });
-const vol = document.getElementById('vol');
+const vol = $('vol');
 vol.value = S.vol; vol.style.setProperty('--v', S.vol+'%');
 vol.addEventListener('input', () => { S.vol=+vol.value; vol.style.setProperty('--v', S.vol+'%'); store.set('vol',S.vol); if(S.muted){S.muted=false;store.set('muted',false);drawMute();} applyVol(); });
-const toolBtn = document.getElementById('tool');
-toolBtn.addEventListener('click', () => { S.tool = S.tool==='lily'?'note':'lily'; toolBtn.setAttribute('aria-pressed', S.tool==='lily'); if(S.tool==='lily') toast('Теперь каждое касание сажает кувшинку. Нажми ещё раз, чтобы просто играть.', 3500); });
-const autoBtn = document.getElementById('auto');
+const toolBtn = $('tool');
+toolBtn.addEventListener('click', () => { S.tool = S.tool==='lily'?'note':'lily'; toolBtn.setAttribute('aria-pressed', S.tool==='lily'); if(S.tool==='lily') toast('Каждое касание сажает кувшинку. Нажми ещё раз — и снова просто играй.', 3800); });
+const autoBtn = $('auto');
 function setAuto(on){
-  S.auto = on; autoBtn.setAttribute('aria-pressed', on); autoBtn.querySelector('span').textContent = on ? 'Играет сам' : 'Сыграй сам';
+  S.auto = on; autoBtn.setAttribute('aria-pressed', on); $('autoL').textContent = on ? 'Сочиняет' : 'Сочинять';
   if (!on) S.lilies.forEach(l => { if(l.auto && !l.dying) l.dying = performance.now(); });
 }
-autoBtn.addEventListener('click', () => { unlock(); setAuto(!S.auto); if (S.auto) toast('Пруд сочиняет сам. Можно положить телефон и заниматься делами.', 3500); });
-document.getElementById('clear').addEventListener('click', () => {
+autoBtn.addEventListener('click', () => { unlock(); setAuto(!S.auto); if (S.auto) toast('Пруд сочиняет сам. Можно положить телефон и заняться делами.', 3800); });
+$('clear').addEventListener('click', () => {
   setAuto(false); S.rainOn = false; const now=performance.now();
   S.lilies.forEach(l => { if(!l.dying) l.dying = now; }); saveLilies();
-  if (A && A.drone && !mood().drone) stopDrone();
+  S.hush = true; stopPad();
 });
-let toastT=0; const toastEl=document.getElementById('toast');
+let toastT=0; const toastEl=$('toast');
 function toast(msg, ms){ toastEl.textContent=msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove('on'), ms||3000); }
+const sheet=$('sheet'), scrim=$('scrim');
+function openSheet(on){ $('cnt').textContent = S.plantCount; sheet.classList.toggle('on',on); scrim.classList.toggle('on',on); }
+$('menu').addEventListener('click', () => openSheet(!sheet.classList.contains('on')));
+scrim.addEventListener('click', () => openSheet(false));
+addEventListener('keydown', e => { if (e.key==='Escape') openSheet(false); });
 
-/* ---------- Рисование ---------- */
-const stars = Array.from({length:70}, () => ({x:Math.random(), y:Math.random(), r:Math.random()*1.1+.3, p:Math.random()*6.28, s:.5+Math.random()*1.5}));
+/* Графика */
+const pals = {};
+function pal(){ const k=S.mood; if (pals[k]) return pals[k]; const c=MOODS[k].c;
+  return pals[k] = Object.assign({padHi:mixHex(c.pad2,'#ffffff',.2), padLo:mixHex(c.pad,'#000000',.5), padMid:mixHex(c.pad,c.pad2,.4)}, c); }
+const stars = Array.from({length:60}, () => ({x:Math.random(), y:Math.random(), r:Math.random()*1.0+.3, p:Math.random()*6.28, s:.5+Math.random()*1.5}));
 const rainLines = Array.from({length:60}, () => ({x:Math.random(), y:Math.random(), v:.6+Math.random()*.6, l:10+Math.random()*16}));
+const flies = Array.from({length:14}, () => ({px:Math.random()*6.28, py:Math.random()*6.28, sx:.05+Math.random()*.09, sy:.04+Math.random()*.08, cx:Math.random(), cy:.12+Math.random()*.76, ax:.05+Math.random()*.12, ay:.03+Math.random()*.07, ph:Math.random()*6.28, sp:.8+Math.random()*1.6}));
+const farPads = Array.from({length:7}, (_,i) => ({x:[.04,.96,.02,.98,.12,.88,.5][i], y:[.2,.35,.62,.78,.93,.9,1.02][i], r:[70,90,80,100,70,84,110][i], p:i*1.7}));
+const glowSprites = {};
+function glowSprite(rgb){ if (glowSprites[rgb]) return glowSprites[rgb]; const c=document.createElement('canvas'); c.width=c.height=96; const x=c.getContext('2d');
+  const g=x.createRadialGradient(48,48,0,48,48,48); g.addColorStop(0,'rgba('+rgb+',1)'); g.addColorStop(.25,'rgba('+rgb+',.45)'); g.addColorStop(1,'rgba('+rgb+',0)'); x.fillStyle=g; x.fillRect(0,0,96,96); return glowSprites[rgb]=c; }
+const causticPat = {};
+function causticFor(k){
+  if (causticPat[k]!==undefined) return causticPat[k];
+  const N=160, c=document.createElement('canvas'); c.width=c.height=N; const x=c.getContext('2d'), id=x.createImageData(N,N), d=id.data, w=TAU/N;
+  const rgb = MOODS[k].c.ripple.split(',').map(Number);
+  for (let py=0; py<N; py++) for (let px=0; px<N; px++){
+    const a = Math.sin((px*3+py)*w + Math.sin(py*2*w)*1.5);
+    const b = Math.sin((-px*2+py*4)*w + Math.sin(px*3*w)*1.3);
+    const e = Math.sin((px*5-py*3)*w + Math.sin((px+py)*2*w)*1.1);
+    const s = (a+b+e)/3, v = Math.pow(1-Math.abs(s), 9);
+    const i = (py*N+px)*4; d[i]=rgb[0]; d[i+1]=rgb[1]; d[i+2]=rgb[2]; d[i+3]=Math.min(255, v*330);
+  }
+  x.putImageData(id,0,0);
+  let p=null; try{ p=g2.createPattern(c,'repeat'); if(p && !p.setTransform) p=null; }catch(e){ p=null; }
+  return causticPat[k]=p;
+}
 function resize(){
   dpr = Math.min(2, window.devicePixelRatio||1); W = innerWidth; H = innerHeight;
   cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr); g2.setTransform(dpr,0,0,dpr,0,0);
@@ -425,99 +517,131 @@ function resize(){
 addEventListener('resize', resize);
 
 function drawBg(now){
-  const m=mood(), c=m.c;
+  const c=pal(), t=reduced?0:now/1000;
   const gr = g2.createLinearGradient(0,0,0,H); gr.addColorStop(0,c.top); gr.addColorStop(1,c.bot);
   g2.fillStyle = gr; g2.fillRect(0,0,W,H);
-  // лунная дорожка
-  const mx = W*.74, my = H*.3;
-  const rg = g2.createRadialGradient(mx,my,0,mx,my,Math.max(W,H)*.45);
-  rg.addColorStop(0,`rgba(${c.moon},.11)`); rg.addColorStop(1,`rgba(${c.moon},0)`);
+  const mx = W*.72, my = H*.3;
+  const rg = g2.createRadialGradient(mx,my,0,mx,my,Math.max(W,H)*.5);
+  rg.addColorStop(0,`rgba(${c.moon},.16)`); rg.addColorStop(.5,`rgba(${c.moon},.04)`); rg.addColorStop(1,`rgba(${c.moon},0)`);
   g2.fillStyle = rg; g2.fillRect(0,0,W,H);
-  g2.strokeStyle = `rgba(${c.moon},.13)`; g2.lineWidth = 1.2;
-  for (let i=0;i<9;i++){ const yy = my + (i-4)*18, w = (40 - Math.abs(i-4)*7) * (1+.15*Math.sin(now/900+i)); const off = reduced?0:Math.sin(now/1300+i*1.7)*6;
-    g2.beginPath(); g2.moveTo(mx-w+off,yy); g2.lineTo(mx+w+off,yy); g2.stroke(); }
-  if (S.mood==='egypt'){
-    // отражение полумесяца и тонкий золотой треугольник
-    g2.save(); g2.globalAlpha=.5; g2.fillStyle='rgba(233,196,106,.55)';
-    g2.beginPath(); g2.arc(mx, my-70, 16, Math.PI*.32, Math.PI*1.68); g2.arc(mx+8, my-70, 13, Math.PI*1.52, Math.PI*.48, true); g2.closePath(); g2.fill();
-    g2.globalAlpha=.10; g2.strokeStyle='#e9c46a'; g2.lineWidth=1;
-    g2.beginPath(); g2.moveTo(W*.08,H*.86); g2.lineTo(W*.32,H*.58); g2.lineTo(W*.56,H*.86); g2.closePath(); g2.stroke();
-    g2.beginPath(); g2.moveTo(W*.40,H*.86); g2.lineTo(W*.58,H*.66); g2.lineTo(W*.76,H*.86); g2.stroke();
+  for (const f of farPads){ const x=f.x*W + (reduced?0:Math.sin(t*.15+f.p)*6), y=f.y*H + (reduced?0:Math.cos(t*.12+f.p)*4), r=f.r;
+    g2.fillStyle = 'rgba(2,10,10,.34)'; g2.beginPath(); g2.ellipse(x,y,r,r*.74,0,0,TAU); g2.fill();
+    g2.fillStyle = c.padLo; g2.globalAlpha=.34; g2.beginPath(); g2.ellipse(x-2,y-3,r*.96,r*.7,0,0,TAU); g2.fill(); g2.globalAlpha=1; }
+  const cp = causticFor(S.mood);
+  if (cp){
+    g2.save(); g2.globalCompositeOperation='lighter';
+    const layers=[[2.0,.075,9,6],[3.1,.05,-7,11]];
+    for (const [s,al,vx,vy] of layers){ cp.setTransform(new DOMMatrix([s,0,0,s,t*vx,t*vy])); g2.globalAlpha=al; g2.fillStyle=cp; g2.fillRect(0,0,W,H); }
     g2.restore();
   }
-  // звёзды в воде
-  for (const s of stars){ const a = reduced ? .35 : .2+.25*(1+Math.sin(now/1000*s.s+s.p))/2;
-    g2.fillStyle = `rgba(${c.moon},${a})`; g2.beginPath(); g2.arc(s.x*W, s.y*H, s.r, 0, 6.283); g2.fill(); }
-  if (m.rain && S.rainOn && !reduced){
+  { const sp=glowSprite(c.moon), R=46+4*Math.sin(t*.7); g2.save(); g2.globalCompositeOperation='lighter'; g2.globalAlpha=.55; g2.drawImage(sp,mx-R,my-R,R*2,R*2); g2.globalAlpha=.9; g2.drawImage(sp,mx-12,my-12,24,24); g2.restore(); }
+  if (S.mood==='egypt'){
+    g2.save(); g2.fillStyle='rgba(233,196,106,.5)';
+    g2.beginPath(); g2.arc(mx, my-70, 16, Math.PI*.32, Math.PI*1.68); g2.arc(mx+8, my-70, 13, Math.PI*1.52, Math.PI*.48, true); g2.closePath(); g2.fill();
+    g2.strokeStyle='rgba(233,196,106,.13)'; g2.lineWidth=1;
+    g2.beginPath(); g2.moveTo(W*.06,H*.88); g2.lineTo(W*.32,H*.6); g2.lineTo(W*.58,H*.88); g2.closePath(); g2.stroke();
+    g2.beginPath(); g2.moveTo(W*.42,H*.88); g2.lineTo(W*.6,H*.68); g2.lineTo(W*.78,H*.88); g2.stroke();
+    g2.restore();
+  }
+  for (const s of stars){ const a = reduced ? .3 : .15+.25*(1+Math.sin(t*s.s+s.p))/2;
+    g2.fillStyle = `rgba(${c.moon},${a})`; g2.beginPath(); g2.arc(s.x*W, s.y*H, s.r, 0, TAU); g2.fill(); }
+  if (mood().rain && S.rainOn && !reduced){
     g2.strokeStyle='rgba(210,225,230,.10)'; g2.lineWidth=1;
     for (const r of rainLines){ r.y += r.v*.012; if (r.y>1.05){ r.y=-.05; r.x=Math.random(); }
       const x=r.x*W, y=r.y*H; g2.beginPath(); g2.moveTo(x,y); g2.lineTo(x-r.l*.25,y+r.l); g2.stroke(); }
   }
 }
+function drawFlies(now){
+  const t=reduced?0:now/1000, sp=glowSprite('232,199,122'); g2.save(); g2.globalCompositeOperation='lighter';
+  for (const f of flies){
+    const x=(f.cx+Math.sin(t*f.sx+f.px)*f.ax)*W, y=(f.cy+Math.sin(t*f.sy+f.py)*f.ay)*H;
+    const a = reduced?.5:.25+.6*Math.pow((1+Math.sin(t*f.sp+f.ph))/2,2);
+    g2.globalAlpha=a*.55; g2.drawImage(sp,x-14,y-14,28,28);
+    g2.globalAlpha=a; g2.drawImage(sp,x-4,y-4,8,8);
+  }
+  g2.restore();
+}
 function drawRipples(now){
-  const c=mood().c;
-  S.ripples = S.ripples.filter(r => now - r.born < 2600);
+  const c=pal(); S.ripples = S.ripples.filter(r => now - r.born < 3200);
+  g2.lineCap='round';
   for (const r of S.ripples){
-    const age=(now-r.born)/2600, x=r.x*W, y=r.y*H, rings = reduced?1:3;
-    for (let i=0;i<rings;i++){ const a = age - i*.09; if (a<=0) continue;
-      const R = (12 + a*150)*r.s, al = (1-a)*(1-a)*.55*(1-i*.25)*Math.min(1,r.s);
-      g2.strokeStyle=`rgba(${c.ripple},${al})`; g2.lineWidth = 1.6-i*.4;
-      g2.beginPath(); g2.ellipse(x,y,R,R*.62,0,0,6.283); g2.stroke(); }
-    if (age<.35){ const gl = g2.createRadialGradient(x,y,0,x,y,30*r.s); gl.addColorStop(0,`rgba(${c.ripple},${.35*(1-age/.35)})`); gl.addColorStop(1,`rgba(${c.ripple},0)`);
-      g2.fillStyle=gl; g2.beginPath(); g2.arc(x,y,30*r.s,0,6.283); g2.fill(); }
+    const age=(now-r.born)/3200, x=r.x*W, y=r.y*H, rings = reduced?1:3;
+    for (let i=0;i<rings;i++){ const a = age - i*.1; if (a<=0) continue;
+      const e = 1-Math.pow(1-a,2.2), R = (8 + e*118)*r.s, al = Math.pow(1-a,2)*.55*(1-i*.22)*Math.min(1,r.s);
+      g2.lineWidth = 1.7-i*.3;
+      g2.strokeStyle=`rgba(0,0,0,${al*.45})`; g2.beginPath(); g2.ellipse(x+1,y+1.4,R,R*.62,0,0,TAU); g2.stroke();
+      g2.strokeStyle=`rgba(${c.ripple},${al})`; g2.beginPath(); g2.ellipse(x,y,R,R*.62,0,0,TAU); g2.stroke(); }
   }
 }
+function drawGlows(now){
+  const c=pal(), sp=glowSprite(c.glow); S.glows = S.glows.filter(g => now-g.born < 1100);
+  g2.save(); g2.globalCompositeOperation='lighter';
+  for (const g of S.glows){ const a=(now-g.born)/1100, k=1-Math.pow(1-Math.min(1,a*2.4),2), al=Math.pow(1-a,1.6)*.7*g.a, R=(26+70*k)*g.s;
+    g2.globalAlpha=al; g2.drawImage(sp,g.x*W-R,g.y*H-R*.7,R*2,R*1.4); }
+  g2.restore();
+}
+function petalPath(len, w){ g2.beginPath(); g2.moveTo(0,0); g2.bezierCurveTo(w,-len*.22,w*.95,-len*.78,0,-len); g2.bezierCurveTo(-w*.95,-len*.78,-w,-len*.22,0,0); g2.closePath(); }
 function drawLily(l, now){
-  const c=mood().c, r=padR(), x=l.x*W, y=l.y*H;
-  let k = Math.max(0, Math.min(1, (now-l.born)/600)); k = 1-Math.pow(1-k,3);
+  const c=pal(), r=padR(), x=l.x*W, y=l.y*H, t=reduced?0:now/1000;
+  let k = Math.max(0, Math.min(1, (now-l.born)/700)); k = 1-Math.pow(1-k,3);
   let alpha = 1; if (l.dying){ const d=Math.min(1,Math.max(0,(now-l.dying)/600)); alpha = 1-d; k *= 1-d*.3; }
   if (k < .02 || alpha <= 0) return;
-  g2.save(); g2.globalAlpha = alpha; g2.translate(x,y); g2.scale(k,k);
-  // тень и лист
-  g2.fillStyle='rgba(0,0,0,.28)'; g2.beginPath(); g2.ellipse(3,5,r,r*.92,0,0,6.283); g2.fill();
-  g2.fillStyle=c.pad; g2.beginPath(); g2.moveTo(0,0); g2.arc(0,0,r,l.rot+.24,l.rot-.24+6.283); g2.closePath(); g2.fill();
-  g2.strokeStyle=c.pad2; g2.lineWidth=1; g2.globalAlpha=alpha*.6;
-  for (let i=1;i<7;i++){ const a=l.rot+.24+i*(6.283-.48)/7; g2.beginPath(); g2.moveTo(0,0); g2.lineTo(Math.cos(a)*r*.86,Math.sin(a)*r*.86); g2.stroke(); }
+  const bob = Math.sin(t*1.1+l.id*1.3)*.9, sway = Math.sin(t*.6+l.id)*.04, rot=l.rot+sway;
+  g2.save(); g2.globalAlpha = alpha; g2.translate(x,y+bob); g2.scale(k,k*.88);
+  const sg = g2.createRadialGradient(3,7,r*.4,3,7,r*1.25); sg.addColorStop(0,'rgba(0,0,0,.38)'); sg.addColorStop(1,'rgba(0,0,0,0)');
+  g2.fillStyle=sg; g2.beginPath(); g2.arc(3,7,r*1.25,0,TAU); g2.fill();
+  const lg = g2.createRadialGradient(-r*.28,-r*.32,r*.05,0,0,r*1.02);
+  lg.addColorStop(0,c.padHi); lg.addColorStop(.55,c.padMid); lg.addColorStop(1,c.padLo);
+  g2.fillStyle=lg; g2.beginPath(); g2.moveTo(0,0); g2.arc(0,0,r,rot+.24,rot-.24+TAU); g2.closePath(); g2.fill();
+  g2.lineWidth=1; g2.strokeStyle='rgba(0,0,0,.22)'; g2.stroke();
+  g2.globalAlpha=alpha*.5; g2.strokeStyle=c.padHi; g2.lineWidth=.9;
+  for (let i=0;i<9;i++){ const a=rot+.24+(i+.5)*(TAU-.48)/9; g2.beginPath(); g2.moveTo(Math.cos(a)*r*.2,Math.sin(a)*r*.2); g2.lineTo(Math.cos(a)*r*.9,Math.sin(a)*r*.9); g2.stroke(); }
+  g2.globalAlpha=alpha*.3; g2.strokeStyle='rgba(255,255,255,.8)'; g2.lineWidth=1.2; g2.beginPath(); g2.arc(0,0,r-1,Math.PI*1.1,Math.PI*1.62); g2.stroke();
   g2.globalAlpha=alpha;
-  // точки ритма
   const pos = (((S.vBeat - l.phase) % l.n) + l.n) % l.n;
-  for (let i=0;i<l.n;i++){ const a=-Math.PI/2+i*6.283/l.n;
-    g2.fillStyle = i===pos ? c.core : `rgba(${c.ripple},.28)`;
-    g2.beginPath(); g2.arc(Math.cos(a)*(r+8),Math.sin(a)*(r+8), i===pos?2.6:1.8, 0, 6.283); g2.fill(); }
-  // цветок
-  const fo = l.frog ? .24 : .1, fx = Math.cos(l.rot+Math.PI*.15)*r*fo, fy = Math.sin(l.rot+Math.PI*.15)*r*fo, s=r*(l.frog?.55:.62);
-  const pk = 1 + (reduced?0:l.pulse*.2);
-  if (l.pulse>.02){ const gl=g2.createRadialGradient(fx,fy,0,fx,fy,s*2.6); gl.addColorStop(0,`rgba(${c.glow},${.5*l.pulse})`); gl.addColorStop(1,`rgba(${c.glow},0)`); g2.fillStyle=gl; g2.beginPath(); g2.arc(fx,fy,s*2.6,0,6.283); g2.fill(); }
+  for (let i=0;i<l.n;i++){ const a=-Math.PI/2+i*TAU/l.n, px=Math.cos(a)*(r+9), py=Math.sin(a)*(r+9), on=i===pos;
+    if (on){ g2.save(); g2.globalCompositeOperation='lighter'; const gs=glowSprite('232,199,122'); g2.globalAlpha=alpha*.9; g2.drawImage(gs,px-9,py-9,18,18); g2.restore(); }
+    g2.fillStyle = on ? c.core : `rgba(${c.ripple},.34)`; g2.beginPath(); g2.arc(px,py, on?2.5:1.6, 0, TAU); g2.fill(); }
+  const fo = l.frog ? .24 : .1, fx = Math.cos(rot+Math.PI*.15)*r*fo, fy = Math.sin(rot+Math.PI*.15)*r*fo, s=r*(l.frog?.56:.64);
+  const pk = 1 + (reduced?0:l.pulse*.18);
+  if (l.pulse>.02){ g2.save(); g2.globalCompositeOperation='lighter'; const gs=glowSprite(c.glow); g2.globalAlpha=Math.min(1,l.pulse)*alpha; const R=s*2.8; g2.drawImage(gs,fx-R,fy-R,R*2,R*2); g2.restore(); }
   g2.save(); g2.translate(fx,fy);
-  g2.fillStyle=c.petal;
-  for (let i=0;i<8;i++){ g2.save(); g2.rotate(l.rot+i*Math.PI/4); g2.beginPath(); g2.ellipse(0,-s*.5*pk,s*.2,s*.5*pk,0,0,6.283); g2.fill(); g2.restore(); }
-  g2.fillStyle=c.petal2;
-  for (let i=0;i<6;i++){ g2.save(); g2.rotate(l.rot+.3+i*Math.PI/3); g2.beginPath(); g2.ellipse(0,-s*.3*pk,s*.13,s*.32*pk,0,0,6.283); g2.fill(); g2.restore(); }
-  g2.fillStyle=c.core; g2.beginPath(); g2.arc(0,0,s*.15*(1+l.pulse*.3),0,6.283); g2.fill();
+  const pg = g2.createLinearGradient(0,0,0,-s*pk); pg.addColorStop(0,c.petal2); pg.addColorStop(.55,c.petal2); pg.addColorStop(1,c.petal);
+  g2.fillStyle=pg; g2.strokeStyle='rgba(60,20,40,.16)'; g2.lineWidth=.7;
+  for (let i=0;i<8;i++){ g2.save(); g2.rotate(rot+i*Math.PI/4); petalPath(s*pk,s*.27); g2.fill(); g2.stroke(); g2.restore(); }
+  const pg2 = g2.createLinearGradient(0,0,0,-s*.7*pk); pg2.addColorStop(0,c.core); pg2.addColorStop(.35,c.petal2); pg2.addColorStop(1,c.petal2);
+  g2.fillStyle=pg2;
+  for (let i=0;i<7;i++){ g2.save(); g2.rotate(rot+.39+i*TAU/7); petalPath(s*.72*pk,s*.2); g2.fill(); g2.stroke(); g2.restore(); }
+  const cg = g2.createRadialGradient(0,0,0,0,0,s*.22); cg.addColorStop(0,'#fff3c4'); cg.addColorStop(1,c.core);
+  g2.fillStyle=cg; g2.beginPath(); g2.arc(0,0,s*.17*(1+l.pulse*.3),0,TAU); g2.fill();
+  g2.fillStyle='rgba(120,70,20,.55)'; for (let i=0;i<8;i++){ const a=i*TAU/8+rot; g2.beginPath(); g2.arc(Math.cos(a)*s*.11,Math.sin(a)*s*.11,.8,0,TAU); g2.fill(); }
   g2.restore(); g2.restore();
   if (l.frog) drawFrog(l, k, alpha);
 }
 function drawFrog(l, k, alpha){
-  const p=frogPos(l), r=padR()*k, s=r*.46;
-  g2.save(); g2.globalAlpha=alpha; g2.translate(p.x,p.y);
-  const bob = reduced?0:Math.sin(performance.now()/700+l.id)*.6;
-  g2.translate(0,bob);
-  g2.fillStyle='rgba(0,0,0,.25)'; g2.beginPath(); g2.ellipse(1.5,s*.55,s*.95,s*.45,0,0,6.283); g2.fill();
-  if (l.croak>.01){ g2.fillStyle=`rgba(246,239,228,${.75*l.croak})`; g2.beginPath(); g2.ellipse(0,s*.35,s*.5*(1+l.croak*.5),s*.38*(1+l.croak*.6),0,0,6.283); g2.fill(); }
-  g2.fillStyle='#9ccc8c'; g2.strokeStyle='rgba(20,40,24,.7)'; g2.lineWidth=1.2; g2.beginPath(); g2.ellipse(0,0,s*.95,s*.72,0,0,6.283); g2.fill(); g2.stroke();
-  g2.fillStyle='#86b878'; g2.beginPath(); g2.ellipse(-s*.75,s*.35,s*.35,s*.22,-.4,0,6.283); g2.ellipse(s*.75,s*.35,s*.35,s*.22,.4,0,6.283); g2.fill();
-  g2.fillStyle='#a9d898';
-  g2.beginPath(); g2.arc(-s*.45,-s*.55,s*.32,0,6.283); g2.arc(s*.45,-s*.55,s*.32,0,6.283); g2.fill();
-  g2.fillStyle='#0e1a1c'; g2.beginPath(); g2.arc(-s*.45,-s*.58,s*.15,0,6.283); g2.arc(s*.45,-s*.58,s*.15,0,6.283); g2.fill();
-  g2.fillStyle='rgba(255,255,255,.8)'; g2.beginPath(); g2.arc(-s*.4,-s*.64,s*.05,0,6.283); g2.arc(s*.5,-s*.64,s*.05,0,6.283); g2.fill();
+  const p=frogPos(l), r=padR()*k, s=r*.46, t=reduced?0:performance.now()/1000;
+  g2.save(); g2.globalAlpha=alpha; g2.translate(p.x,p.y); g2.scale(1,.92);
+  g2.translate(0,Math.sin(t*1.4+l.id)*.6);
+  g2.fillStyle='rgba(0,0,0,.28)'; g2.beginPath(); g2.ellipse(1.5,s*.6,s*1.0,s*.46,0,0,TAU); g2.fill();
+  if (l.croak>.01){ g2.fillStyle=`rgba(246,239,228,${.75*l.croak})`; g2.beginPath(); g2.ellipse(0,s*.35,s*.5*(1+l.croak*.5),s*.38*(1+l.croak*.6),0,0,TAU); g2.fill(); }
+  const bg = g2.createRadialGradient(-s*.3,-s*.3,s*.1,0,0,s*1.1); bg.addColorStop(0,'#b8de9e'); bg.addColorStop(1,'#6f9f62');
+  g2.fillStyle=bg; g2.strokeStyle='rgba(20,40,24,.65)'; g2.lineWidth=1.1; g2.beginPath(); g2.ellipse(0,0,s*.95,s*.72,0,0,TAU); g2.fill(); g2.stroke();
+  g2.fillStyle='#78aa6a'; g2.beginPath(); g2.ellipse(-s*.75,s*.35,s*.35,s*.22,-.4,0,TAU); g2.ellipse(s*.75,s*.35,s*.35,s*.22,.4,0,TAU); g2.fill();
+  g2.fillStyle='#b0dc9c'; g2.beginPath(); g2.arc(-s*.45,-s*.55,s*.32,0,TAU); g2.arc(s*.45,-s*.55,s*.32,0,TAU); g2.fill();
+  g2.fillStyle='#0e1a1c'; g2.beginPath(); g2.arc(-s*.45,-s*.58,s*.15,0,TAU); g2.arc(s*.45,-s*.58,s*.15,0,TAU); g2.fill();
+  g2.fillStyle='rgba(255,255,255,.85)'; g2.beginPath(); g2.arc(-s*.4,-s*.64,s*.05,0,TAU); g2.arc(s*.5,-s*.64,s*.05,0,TAU); g2.fill();
   g2.strokeStyle='#3e6a40'; g2.lineWidth=1; g2.beginPath(); g2.arc(0,-s*.05,s*.3,.25,Math.PI-.25); g2.stroke();
   g2.restore();
 }
 function drawPress(now){
   const p=S.press; if(!p || p.lily || p.moved || p.planted || S.tool==='lily') return;
   const a = Math.min(1,(now-p.t0)/480); if (a<.15) return;
-  g2.strokeStyle=`rgba(${mood().c.ripple},.7)`; g2.lineWidth=2;
-  g2.beginPath(); g2.arc(p.x,p.y,padR()+10,-Math.PI/2,-Math.PI/2+a*6.283); g2.stroke();
+  g2.strokeStyle=`rgba(${pal().ripple},.75)`; g2.lineWidth=2; g2.lineCap='round';
+  g2.beginPath(); g2.arc(p.x,p.y,padR()+10,-Math.PI/2,-Math.PI/2+a*TAU); g2.stroke();
+}
+function drawVignette(){
+  const g = g2.createRadialGradient(W/2,H*.46,Math.min(W,H)*.35,W/2,H*.46,Math.max(W,H)*.78);
+  g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,4,6,.55)'); g2.fillStyle=g; g2.fillRect(0,0,W,H);
 }
 function processEvents(){
   if(!A) return; const now=A.ctx.currentTime;
@@ -525,30 +649,38 @@ function processEvents(){
   while (S.events.length && S.events[0].t <= now){
     const e = S.events.shift();
     if (e.type==='beat') S.vBeat = e.b;
-    else if (e.type==='lily'){ const l=S.lilies.find(q=>q.id===e.id); if(l){ l.pulse=1; if(!reduced) ripple(l.x,l.y,.55); } }
+    else if (e.type==='lily'){ const l=S.lilies.find(q=>q.id===e.id); if(l){ l.pulse=1; if(!reduced) ripple(l.x,l.y,.55); glow(l.x,l.y,.9,.8); } }
     else if (e.type==='croak'){ const l=S.lilies.find(q=>q.id===e.id); if(l) l.croak=1; }
-    else if (e.type==='drop') ripple(e.x,e.y,e.s);
+    else if (e.type==='drop'){ ripple(e.x,e.y,e.s); glow(e.x,e.y,e.s*.9,.8); }
     else if (e.type==='plant'){ if (S.auto) plantAt(e.x,e.y,true); }
   }
 }
-let lastF = performance.now();
+let lastF = performance.now(), raf = 0;
 function frame(now){
-  requestAnimationFrame(frame);
+  raf = requestAnimationFrame(frame);
   now = Math.max(now, performance.now());
   const dt = Math.min(.1,Math.max(0,(now-lastF)/1000)); lastF = now;
   processEvents();
-  drawBg(now);
-  drawRipples(now);
+  drawBg(now); drawFlies(now); drawRipples(now);
   S.lilies = S.lilies.filter(l => !(l.dying && now-l.dying > 600));
   for (const l of S.lilies){ l.pulse *= Math.pow(.02, dt); l.croak *= Math.pow(.05, dt); drawLily(l, now); }
-  drawPress(now);
-  if (A){ A.an.getFloatTimeDomainData(A.peakBuf); let pk=0; for (let i=0;i<A.peakBuf.length;i+=2){ const v=Math.abs(A.peakBuf[i]); if(v>pk) pk=v; } if (pk>A.peak) A.peak=pk; }
+  drawGlows(now); drawPress(now); drawVignette();
 }
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden){ cancelAnimationFrame(raf); raf=0; } else if(!raf){ lastF=performance.now(); raf=requestAnimationFrame(frame); }
+});
 
+/* Запуск */
+const returning = store.get('hint', false) || S.plantCount>0 || S.lilies.length>0;
+const v2seen = store.get('v2_seen', false);
 resize(); setMood(S.mood); drawMute();
-requestAnimationFrame(frame);
+if (returning){
+  $('introLead').textContent = 'Коснись воды — и пруд зазвучит.';
+  if (!v2seen){ setTimeout(()=>{ toast('Пруд стал глубже: свет на воде, эхо и тихий фон. Всё, что ты посадила, на месте.', 6500); }, 1500); }
+}
+raf = requestAnimationFrame(frame);
 
-window.__pond = { S, MOODS, get A(){ return A; }, notes, degFromY, plantAt, playAt, setMood, setAuto, unlock };
+window.__pond = { S, MOODS, get A(){ return A; }, notes, degFromY, plantAt, playAt, setMood, setAuto, unlock, openSheet };
 })();
 </script>
 </body>

@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0a1416">
+<title>Сад камней</title>
+<link rel="stylesheet" href="../../assets/fonts/fonts.css">
+<link rel="stylesheet" href="../../assets/ui.css">
+<style>
+html,body{background:#17110d;height:100%;overflow:hidden;overscroll-behavior:none}
+body{touch-action:none;-webkit-user-select:none;user-select:none}
+#sand{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;z-index:0}
+.z-app{position:fixed;inset:0;max-width:none;min-height:0;padding:0;pointer-events:none;z-index:2;display:block}
+.z-app>*{pointer-events:auto}
+.shade-t,.shade-b{position:fixed;left:0;right:0;pointer-events:none;z-index:1}
+.shade-t{top:0;height:calc(var(--safe-t) + 96px);background:linear-gradient(180deg,rgba(14,10,8,.62),rgba(14,10,8,0))}
+.shade-b{bottom:0;height:calc(var(--safe-b) + 190px);background:linear-gradient(0deg,rgba(14,10,8,.7),rgba(14,10,8,0))}
+.z-top{position:absolute;left:12px;right:12px;top:calc(var(--safe-t) + 6px);margin:0;max-width:496px;margin-inline:auto}
+.z-top .z-title{font:400 24px/1 var(--display);letter-spacing:.01em;color:var(--ink);text-shadow:0 1px 10px rgba(0,0,0,.5)}
+.z-top .z-icon{color:rgba(243,236,224,.86);filter:drop-shadow(0 1px 6px rgba(0,0,0,.55))}
+.z-icon.muted .on{display:none}.z-icon .off{display:none}.z-icon.muted .off{display:inline}
+.dock{position:absolute;left:12px;right:12px;bottom:calc(var(--safe-b) + 12px);max-width:496px;margin-inline:auto;display:flex;flex-direction:column;gap:8px}
+.ctx{min-height:50px;display:flex;align-items:center;justify-content:center;gap:10px;padding:5px 8px;border-radius:999px;background:rgba(22,17,13,.62);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:inset 0 0 0 1px rgba(243,236,224,.1)}
+.ctx[hidden]{display:none}
+.ctx .z-seg{background:none;box-shadow:none;padding:0;width:100%}
+.ctx .z-seg button{min-height:40px;font-size:14px}
+.ctx .z-seg button.on{background:rgba(243,236,224,.14)}
+.ctx .txt{flex:1;font-size:13.5px;line-height:1.35;color:var(--ink-2);padding:0 8px;text-wrap:balance;text-align:center}
+.ctx .z-btn{min-height:40px;padding:0 16px;font-size:14px;flex:none}
+.tools{display:flex;padding:4px;border-radius:26px;background:rgba(22,17,13,.7);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  box-shadow:inset 0 0 0 1px rgba(243,236,224,.1),0 14px 34px -12px rgba(0,0,0,.6)}
+.tools .z-tool{min-height:58px;border-radius:22px;font-size:11.5px;color:rgba(243,236,224,.7)}
+.tools .z-tool.on{background:rgba(239,179,193,.16);color:var(--accent)}
+.tools .z-tool:disabled{opacity:.3}
+.tools .z-tool svg{width:23px;height:23px}
+.g-act{display:flex;flex-direction:column;gap:8px;margin:14px 0 4px}
+.g-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.g-card{position:relative;border-radius:var(--r);overflow:hidden;background:var(--surface);text-align:left;display:block;box-shadow:inset 0 0 0 1px var(--line)}
+.g-card img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#2a2119}
+.g-card .cap{display:block;padding:9px 12px 11px;font-size:12.5px;color:var(--ink-2);line-height:1.3}
+.g-del{position:absolute;top:6px;right:6px;width:34px;height:34px;border-radius:50%;background:rgba(14,10,8,.6);display:grid;place-items:center;color:var(--ink)}
+.g-del svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.g-empty{color:var(--ink-2);font-size:14.5px;line-height:1.55;margin:18px 2px 0;text-wrap:pretty}
+.z-toast{bottom:auto;top:calc(var(--safe-t) + 70px);transform:translate(-50%,-14px);white-space:normal;text-align:center;max-width:calc(100% - 40px);width:max-content;line-height:1.4;border-radius:20px}
+.z-toast.on{transform:translate(-50%,0)}
+.z-dialog p{color:var(--ink-2);font-size:15px;line-height:1.5;margin:10px 0 20px;text-wrap:balance}
+.z-dialog .z-btn{width:100%}.z-dialog .z-btn+.z-btn{margin-top:6px}
+@media (max-height:640px){.shade-b{height:150px}.tools .z-tool{min-height:52px}}
+</style>
+<!--pwa--><link rel="manifest" href="../../manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="../../icons/icon-192.png"><link rel="apple-touch-icon" href="../../icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('../../sw.js'))</script><!--/pwa-->
+</head>
+<body>
+<canvas id="sand" aria-label="Песок сада"></canvas>
+<div class="shade-t"></div><div class="shade-b"></div>
+
+<div class="z-app" id="app">
+  <header class="z-top">
+    <a class="z-icon" href="../../index.html" aria-label="Все приложения"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div class="z-title">Сад камней</div>
+    <button class="z-icon" id="sndBtn" aria-label="Шорох песка" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><g class="on"><path d="M15.5 9a4 4 0 010 6"/><path d="M18.2 6.5a8 8 0 010 11"/></g><g class="off"><path d="M16 9.5l5 5M21 9.5l-5 5"/></g></svg></button>
+  </header>
+
+  <div class="dock">
+    <div class="ctx" id="ctxRake">
+      <div class="z-seg" id="tines" role="radiogroup" aria-label="Грабли">
+        <button role="radio" data-n="1">Узкие</button>
+        <button role="radio" data-n="3">Средние</button>
+        <button role="radio" data-n="5">Широкие</button>
+      </div>
+    </div>
+    <div class="ctx" id="ctxStone" hidden>
+      <div class="txt" id="stoneTxt"></div>
+      <button class="z-btn ghost" id="stoneDel" hidden>Убрать камень</button>
+    </div>
+    <nav class="tools" aria-label="Инструменты">
+      <button class="z-tool on" id="tRake" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M6 7v6M10 7v6M14 7v6M18 7v6"/><path d="M12 13v8"/></svg><span>Грабли</span></button>
+      <button class="z-tool" id="tStone" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 16c-.6-4 1.6-8 6-8.4 4-.4 7.6 2 8 6 .2 2-1 3.4-3 3.4H8c-1.7 0-2.8-.3-3-1z"/><path d="M9 11.5c1-1 2.4-1.5 4-1.3"/></svg><span>Камни</span></button>
+      <button class="z-tool" id="tUndo"><svg viewBox="0 0 24 24"><path d="M9 7L5 11l4 4"/><path d="M5 11h9a5 5 0 010 10h-3"/></svg><span>Отмена</span></button>
+      <button class="z-tool" id="tWave"><svg viewBox="0 0 24 24"><path d="M3 9c3-3 6 3 9 0s6 3 9 0"/><path d="M3 15c3-3 6 3 9 0s6 3 9 0"/></svg><span>Волна</span></button>
+      <button class="z-tool" id="tLight"><svg viewBox="0 0 24 24"><g id="icDawn"><path d="M3 18h18"/><path d="M7 18a5 5 0 0110 0"/><path d="M12 6v3M5 10l2 2M19 10l-2 2"/></g><path id="icDusk" d="M19 14.5A7.5 7.5 0 019.5 5a7.5 7.5 0 109.5 9.5z" style="display:none"/></svg><span id="lightLbl">Рассвет</span></button>
+      <button class="z-tool" id="tGal"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2.5"/><path d="M4 15l4.5-4 4 3.5 3-2.5L20 15"/></svg><span>Сады</span></button>
+    </nav>
+  </div>
+</div>
+
+<div class="z-scrim" id="scrim"></div>
+<aside class="z-sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Мои сады" tabindex="-1">
+  <h2 class="z-h2">Мои <i>сады</i></h2>
+  <div class="g-act"><button class="z-btn wide" id="saveBtn">Сохранить этот сад</button></div>
+  <p class="g-empty" id="gEmpty">Здесь будут жить твои сады. Сохрани тот, что получился, и вернись к нему в любой день.</p>
+  <div class="g-grid" id="gGrid"></div>
+</aside>
+<div class="z-dialog" id="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlgT">
+  <h3 class="z-h3" id="dlgT"></h3><p id="dlgP"></p>
+  <button class="z-btn" id="dlgOk"></button><button class="z-btn quiet" id="dlgNo">Отмена</button>
+</div>
+<div class="z-toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+'use strict';
+var KEY='kuv_zen_',MAXST=7,PTCAP=16000,GMAX=10;
+function $(id){return document.getElementById(id);}
+function clamp(v,a,b){return v<a?a:v>b?b:v;}
+function load(k,d){try{var v=localStorage.getItem(KEY+k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function save(k,v){try{localStorage.setItem(KEY+k,JSON.stringify(v));return true;}catch(e){return false;}}
+function hash(x,y,s){var h=(x*374761393+y*668265263+s*982451653)|0;h=(h^(h>>>13))*1274126177|0;return((h^(h>>>16))>>>0)/4294967295;}
+function vnoise(x,y,s){var xi=Math.floor(x),yi=Math.floor(y),fx=x-xi,fy=y-yi;fx=fx*fx*(3-2*fx);fy=fy*fy*(3-2*fy);
+  var a=hash(xi,yi,s),b=hash(xi+1,yi,s),c=hash(xi,yi+1,s),d=hash(xi+1,yi+1,s);return a+(b-a)*fx+(c-a)*fy+(a-b-c+d)*fx*fy;}
+function fbm(x,y,s){return vnoise(x,y,s)*.55+vnoise(x*2.1,y*2.1,s+7)*.3+vnoise(x*4.3,y*4.3,s+13)*.15;}
+var reduced=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+/* ---------- настройки и состояние ---------- */
+var st0=load('settings',{});if(!st0||typeof st0!=='object')st0={};
+var set={sound:!!st0.sound,light:st0.light==='dusk'?'dusk':'dawn',tines:[1,3,5].indexOf(st0.tines)>=0?st0.tines:3};
+function saveSet(){save('settings',set);}
+
+var cv=$('sand'),ctx=cv.getContext('2d');
+var W=0,H=0,DPR=1,UPX=1;           /* UPX: css-пикселей в одной единице сада (1000 ед. = ширина) */
+var CELL=1.4,GW=0,GH=0,HM=null,HB=null,GRAIN=null,gcv=document.createElement('canvas'),gctx=gcv.getContext('2d'),IMG=null;
+var stones=[],strokes=[],mode='rake',sel=-1,dirty=true,gdirty=false,wave=null,dragStone=null,raker=null,curStroke=null,undone=false;
+var TS=0;
+
+var LIGHT={
+  dawn:{L:[-.62,-.5,.6],lit:[247,224,186],shd:[170,136,108],gl:'rgba(255,214,160,.22)',vg:'rgba(40,18,10,.34)',amb:.5},
+  dusk:{L:[.66,-.36,.66],lit:[212,190,178],shd:[74,60,86],gl:'rgba(150,120,190,.16)',vg:'rgba(10,6,22,.52)',amb:.42}
+};
+function lightVec(){var l=LIGHT[set.light].L,m=Math.hypot(l[0],l[1],l[2]);return [l[0]/m,l[1]/m,l[2]/m];}
+
+/* ---------- размеры и сетка ---------- */
+function fit(){
+  W=window.innerWidth;H=window.innerHeight;DPR=Math.min(window.devicePixelRatio||1,2);
+  cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+  UPX=W/1000;
+  CELL=Math.max(1.25,Math.sqrt(W*H/230000));
+  GW=Math.ceil(W/CELL)+2;GH=Math.ceil(H/CELL)+2;
+  HM=new Float32Array(GW*GH);HB=new Float32Array(GW*GH);
+  GRAIN=new Int8Array(GW*GH);for(var i=0;i<GRAIN.length;i++)GRAIN[i]=((Math.random()*2-1)*5)|0;
+  gcv.width=GW;gcv.height=GH;IMG=gctx.createImageData(GW,GH);
+  stones.forEach(function(s){s.spr=null;});
+  rebuild();
+}
+function stoneA(s){return (s.r*UPX*.98+6)/CELL;}  /* радиус обтекания в ячейках */
+
+/* ---------- борозды ---------- */
+function stamp(x,y,D){
+  var xi=Math.round(x),yi=Math.round(y),i,j;
+  for(j=yi-4;j<=yi+4;j++){if(j<1||j>=GH-1)continue;
+    for(i=xi-4;i<=xi+4;i++){if(i<1||i>=GW-1)continue;
+      var dx=i-x,dy=j-y,d=Math.sqrt(dx*dx+dy*dy);if(d>3.2)continue;
+      var t=-D*Math.exp(-d*d*.7);
+      var k=j*GW+i;if(t<HM[k])HM[k]+=(t-HM[k])*.7;
+    }}
+}
+function stampLine(ax,ay,bx,by,D){
+  var dx=bx-ax,dy=by-ay,L=Math.sqrt(dx*dx+dy*dy),n=Math.max(1,Math.ceil(L/.6));
+  for(var k=1;k<=n;k++)stamp(ax+dx*k/n,ay+dy*k/n,D);
+}
+function mapPt(x,y){
+  for(var s=0;s<stones.length;s++){
+    var S=stones[s],a=stoneA(S),cx=S.x*UPX/CELL,cy=S.y*UPX/CELL,dx=x-cx,dy=y-cy,r2=dx*dx+dy*dy;
+    if(r2>a*a*14)continue;
+    var r=Math.sqrt(r2)||.001,r1=Math.sqrt(r2+a*a),w=r<2*a?1:clamp(1-(r-2*a)/(1.6*a),0,1);w=w*w*(3-2*w);
+    var nr=r+(r1-r)*w;x=cx+dx/r*nr;y=cy+dy/r*nr;
+  }
+  return [x,y];
+}
+function Raker(n){this.n=n;this.last=null;this.dir=null;this.prev=null;this.sp=9/CELL;}
+Raker.prototype.add=function(ux,uy){
+  var x=ux*UPX/CELL,y=uy*UPX/CELL;
+  if(!this.last){this.last=[x,y];return;}
+  var dx=x-this.last[0],dy=y-this.last[1],L=Math.sqrt(dx*dx+dy*dy);
+  if(L<1.1)return;
+  dx/=L;dy/=L;
+  if(!this.dir)this.dir=[dx,dy];else{var nx=this.dir[0]*.72+dx*.28,ny=this.dir[1]*.72+dy*.28,m=Math.hypot(nx,ny)||1;this.dir=[nx/m,ny/m];}
+  this.last=[x,y];
+  var nxv=-this.dir[1],nyv=this.dir[0],cur=[],n=this.n,j;
+  for(j=0;j<n;j++){var off=(j-(n-1)/2)*this.sp;cur.push(mapPt(x+nxv*off,y+nyv*off));}
+  if(this.prev){
+    for(j=0;j<n;j++){
+      var p=this.prev[j],q=cur[j];if(Math.hypot(q[0]-p[0],q[1]-p[1])>this.sp*4)continue;
+      stampLine(p[0],p[1],q[0],q[1],1);
+    }
+    var minx=1e9,miny=1e9,maxx=-1e9,maxy=-1e9;
+    for(j=0;j<n;j++){minx=Math.min(minx,this.prev[j][0],cur[j][0]);maxx=Math.max(maxx,this.prev[j][0],cur[j][0]);miny=Math.min(miny,this.prev[j][1],cur[j][1]);maxy=Math.max(maxy,this.prev[j][1],cur[j][1]);}
+    relight(minx-6,miny-6,maxx+6,maxy+6);
+  }
+  this.prev=cur;
+};
+function ringsInto(A){
+  var keep=HM;HM=A;
+  stones.forEach(function(S){
+    var a=stoneA(S),cx=S.x*UPX/CELL,cy=S.y*UPX/CELL,sp=9/CELL;
+    for(var j=0;j<3;j++){
+      var r=a+j*sp,n=Math.max(24,Math.ceil(Math.PI*2*r/.6)),px=cx+r,py=cy;
+      for(var k=1;k<=n;k++){var an=k/n*Math.PI*2,qx=cx+Math.cos(an)*r,qy=cy+Math.sin(an)*r;stamp(qx,qy,.9-j*.12);px=qx;py=qy;}
+    }
+  });
+  HM=keep;
+}
+function rebuild(){
+  HM.fill(0);HB.fill(0);
+  var keep=HM;HM=HB;HM=keep; /* HB считаем отдельно */
+  ringsInto(HB);
+  HM.set(HB);
+  strokes.forEach(function(s){var r=new Raker(s.t),p=s.p;for(var i=0;i<p.length;i+=2)r.add(p[i],p[i+1]);});
+  relight(0,0,GW,GH);dirty=true;
+}
+
+/* ---------- освещение песка ---------- */
+function relight(x0,y0,x1,y1){
+  x0=clamp(Math.floor(x0),1,GW-2);y0=clamp(Math.floor(y0),1,GH-2);x1=clamp(Math.ceil(x1),1,GW-2);y1=clamp(Math.ceil(y1),1,GH-2);
+  if(x1<x0||y1<y0)return;
+  var P=LIGHT[set.light],L=lightVec(),lit=P.lit,sh=P.shd,d=IMG.data,amb=P.amb,
+      lx=L[0],ly=L[1],lz=L[2],base=lz;
+  for(var y=y0;y<=y1;y++){
+    for(var x=x0;x<=x1;x++){
+      var k=y*GW+x,gx=HM[k+1]-HM[k-1],gy=HM[k+GW]-HM[k-GW],h=HM[k];
+      var nx=-gx*3.2,ny=-gy*3.2,m=1/Math.sqrt(nx*nx+ny*ny+1);
+      var lam=(nx*lx+ny*ly+lz)*m;
+      var t=amb+(lam-base)*1.9+h*.42;t=t<0?0:t>1?1:t;
+      var gr=GRAIN[k],o=k*4;
+      d[o]=sh[0]+(lit[0]-sh[0])*t+gr;d[o+1]=sh[1]+(lit[1]-sh[1])*t+gr;d[o+2]=sh[2]+(lit[2]-sh[2])*t+gr*.8;d[o+3]=255;
+    }
+  }
+  gctx.putImageData(IMG,0,0,x0,y0,x1-x0+1,y1-y0+1);
+  gdirty=true;dirty=true;
+}
+
+/* ---------- камни: процедурный объём и мох ---------- */
+function stoneSprite(s){
+  var R=Math.max(14,Math.round(s.r*UPX*DPR)),N=Math.ceil(R*2.5),c=document.createElement('canvas');c.width=c.height=N;
+  var x=c.getContext('2d'),im=x.createImageData(N,N),d=im.data,z=new Float32Array(N*N),al=new Float32Array(N*N),cx=N/2,cy=N/2;
+  var sd=s.seed,rot=s.rot,cr=Math.cos(rot),sr=Math.sin(rot),asp=s.asp,a1=sd*1.7,a2=sd*2.9,a3=sd*4.1;
+  var P=LIGHT[set.light],L=lightVec(),i,j;
+  for(j=0;j<N;j++)for(i=0;i<N;i++){
+    var px=i-cx,py=j-cy,u=(px*cr+py*sr)/R,v=(-px*sr+py*cr)/(R*asp),rho=Math.sqrt(u*u+v*v),th=Math.atan2(v,u);
+    var edge=1+.1*Math.sin(2*th+a1)+.06*Math.sin(3*th+a2)+.035*Math.sin(5*th+a3),dd=rho/edge,k=j*N+i;
+    if(dd>=1.04){z[k]=0;al[k]=0;continue;}
+    al[k]=clamp((1-dd)*R/1.4,0,1);
+    var zz=Math.pow(Math.max(0,1-dd*dd),.62);
+    z[k]=zz*.92+(fbm(i*.09,j*.09,sd|0)-.5)*.11+(vnoise(i*.35,j*.35,sd+3)-.5)*.03;
+  }
+  var kz=R*.9,mossC=[70,92,58],base=s.tone;
+  for(j=1;j<N-1;j++)for(i=1;i<N-1;i++){
+    var k2=j*N+i,a=al[k2];if(a<=0)continue;
+    var gx=(z[k2+1]-z[k2-1])*kz*.5,gy=(z[k2+N]-z[k2-N])*kz*.5,m=1/Math.sqrt(gx*gx+gy*gy+1),nx=-gx*m,ny=-gy*m,nz=m;
+    var lam=Math.max(0,nx*L[0]+ny*L[1]+nz*L[2]);
+    var sh=P.amb*.42+.95*lam,tx=fbm(i*.05,j*.05,sd+21),fleck=vnoise(i*.5,j*.5,sd+5);
+    var rr=base[0]*(.86+.3*tx),gg=base[1]*(.86+.3*tx),bb=base[2]*(.86+.3*tx);
+    if(fleck>.76){rr+=22;gg+=20;bb+=16;}
+    var mm=fbm(i*.045+7,j*.045,sd+40)+nz*.34-.52+(hash(i,j,1)-.5)*.1;
+    var mk=clamp(mm*4.2,0,.82)*(s.moss);
+    if(mk>0){var mt=.62+.4*vnoise(i*.4,j*.4,sd+9);rr+=(mossC[0]*mt-rr)*mk;gg+=(mossC[1]*mt-gg)*mk;bb+=(mossC[2]*mt-bb)*mk;}
+    var spec=Math.pow(lam,14)*(1-mk)*26;
+    var cool=set.light==='dusk'?[.9,.92,1.08]:[1.04,1,.94];
+    var o=k2*4;
+    d[o]=clamp(rr*sh*cool[0]+spec,0,255);d[o+1]=clamp(gg*sh*cool[1]+spec,0,255);d[o+2]=clamp(bb*sh*cool[2]+spec,0,255);d[o+3]=a*255;
+  }
+  x.putImageData(im,0,0);
+  return {c:c,N:N,R:R,light:set.light,dpr:DPR,upx:UPX};
+}
+function drawStones(){
+  var L=LIGHT[set.light].L,ang=Math.atan2(-L[1],-L[0]),dark=set.light==='dusk'?.5:.38;
+  var order=stones.map(function(s,i){return i;}).sort(function(a,b){return stones[a].y-stones[b].y;});
+  order.forEach(function(i){
+    var s=stones[i],px=s.x*UPX,py=s.y*UPX,rc=s.r*UPX,sc=1;
+    if(s.born&&!reduced){var age=(TS-s.born)/360;if(age<1){sc=1-Math.pow(1-age,3);sc=.55+.45*sc;dirty=true;}else s.born=0;}
+    /* тень */
+    ctx.save();ctx.translate(px+Math.cos(ang)*rc*.55*sc,py+Math.sin(ang)*rc*.42*sc);ctx.rotate(ang);ctx.scale(1.55,.8);
+    var g=ctx.createRadialGradient(0,0,rc*.1,0,0,rc*1.1*sc);g.addColorStop(0,'rgba(20,10,6,'+dark+')');g.addColorStop(.6,'rgba(20,10,6,'+(dark*.55)+')');g.addColorStop(1,'rgba(20,10,6,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,rc*1.1*sc,0,6.2832);ctx.fill();ctx.restore();
+    /* контакт с песком */
+    ctx.save();ctx.translate(px,py+rc*.08);ctx.scale(1.08,.9);var g2=ctx.createRadialGradient(0,0,rc*.7*sc,0,0,rc*1.18*sc);g2.addColorStop(0,'rgba(20,10,6,.42)');g2.addColorStop(1,'rgba(20,10,6,0)');
+    ctx.fillStyle=g2;ctx.beginPath();ctx.arc(0,0,rc*1.18*sc,0,6.2832);ctx.fill();ctx.restore();
+    if(!s.spr||s.spr.light!==set.light||s.spr.dpr!==DPR||s.spr.upx!==UPX)s.spr=stoneSprite(s);
+    var k=sc/DPR;ctx.drawImage(s.spr.c,px-s.spr.N/2*k,py-s.spr.N/2*k,s.spr.N*k,s.spr.N*k);
+    if(i===sel&&mode==='stone'){ctx.strokeStyle='rgba(239,179,193,.9)';ctx.lineWidth=2;ctx.setLineDash([6,6]);ctx.beginPath();ctx.arc(px,py,rc*1.32,0,6.2832);ctx.stroke();ctx.setLineDash([]);}
+  });
+}
+function composite(){
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+  ctx.drawImage(gcv,0,0,GW*CELL,GH*CELL);
+  var P=LIGHT[set.light],g;
+  g=ctx.createRadialGradient(set.light==='dawn'?W*.15:W*.85,H*.1,0,W*.5,H*.5,Math.max(W,H)*.85);
+  g.addColorStop(0,P.gl);g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  g=ctx.createRadialGradient(W*.5,H*.48,Math.min(W,H)*.35,W*.5,H*.5,Math.max(W,H)*.78);
+  g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,P.vg);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  drawStones();
+  if(raker&&raker.prev&&curStroke){
+    ctx.fillStyle='rgba(255,246,226,.5)';
+    for(var j=0;j<raker.prev.length;j++){ctx.beginPath();ctx.arc(raker.prev[j][0]*CELL,raker.prev[j][1]*CELL,2.2,0,6.2832);ctx.fill();}
+  }
+}
+function frame(ts){
+  TS=ts;
+  if(wave)stepWave(ts);
+  if(dirty||gdirty){dirty=false;gdirty=false;composite();}
+  requestAnimationFrame(frame);
+}
+
+/* ---------- волна: разглаживает песок к исходному (только кольца вокруг камней) ---------- */
+function startWave(){
+  if(wave)return;
+  if(!strokes.length){toast('Песок и так гладкий.',2200);return;}
+  commitSnapshot();
+  wave={t0:0,front:0};sfxWave();
+}
+function stepWave(ts){
+  if(!wave.t0)wave.t0=ts;
+  var p=clamp((ts-wave.t0)/(reduced?500:1900),0,1),front=p*(GH+GH*.5)-GH*.1,band=GH*.28;
+  var rows=0;
+  for(var y=1;y<GH-1;y++){
+    var dist=front-y;if(dist<-4)continue;
+    var wgt=clamp(dist/band,0,1),rate=.06+.5*wgt,rip=(dist>0&&dist<band*1.4)?Math.sin(y*.55-front*.2)*.22*(1-dist/(band*1.4)):0;
+    var row=y*GW;
+    for(var x=1;x<GW-1;x++){var k=row+x;HM[k]+=(HB[k]+rip-HM[k])*rate;}
+    rows++;
+  }
+  relight(0,0,GW,GH);
+  if(p>=1){wave=null;strokes=[];gdirty=true;HM.set(HB);relight(0,0,GW,GH);persist();}
+}
+var snapshot=null;
+function commitSnapshot(){snapshot={strokes:strokes.slice()};}
+
+/* ---------- ввод ---------- */
+function pos(e){var r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];}
+function stoneAt(x,y){
+  for(var i=stones.length-1;i>=0;i--){var s=stones[i];if(Math.hypot(x-s.x*UPX,y-s.y*UPX)<=s.r*UPX*1.1+8)return i;}
+  return -1;
+}
+var pid=null,lastMove=0,lastX=0,lastY=0,moved=0,downAt=0,downStone=-1,downX=0,downY=0;
+cv.addEventListener('pointerdown',function(e){
+  if(pid!==null||wave)return;
+  pid=e.pointerId;try{cv.setPointerCapture(pid);}catch(_){}
+  var p=pos(e);lastX=downX=p[0];lastY=downY=p[1];moved=0;downAt=performance.now();
+  if(mode==='rake'){
+    curStroke={t:set.tines,p:[]};raker=new Raker(set.tines);
+    addPoint(p[0],p[1]);rustleStart();
+  }else{
+    downStone=stoneAt(p[0],p[1]);
+    if(downStone>=0){dragStone=downStone;sel=downStone;updateStoneUi();dirty=true;}
+  }
+  e.preventDefault();
+});
+cv.addEventListener('pointermove',function(e){
+  if(e.pointerId!==pid)return;
+  var evs=(e.getCoalescedEvents&&e.getCoalescedEvents())||[e];if(!evs.length)evs=[e];
+  for(var i=0;i<evs.length;i++){
+    var p=pos(evs[i]),dx=p[0]-lastX,dy=p[1]-lastY,dd=Math.hypot(dx,dy);
+    moved+=dd;
+    if(mode==='rake'){
+      if(dd>=1.5){addPoint(p[0],p[1]);rustleMove(dd,e.timeStamp-lastMove||16);lastX=p[0];lastY=p[1];lastMove=e.timeStamp;}
+    }else if(dragStone!==null){
+      var s=stones[dragStone],ar=areaUnits();
+      s.x=clamp(p[0]/UPX,s.r,1000-s.r);s.y=clamp(p[1]/UPX,ar.t+s.r,ar.b-s.r);lastX=p[0];lastY=p[1];dirty=true;
+    }
+  }
+  e.preventDefault();
+});
+function end(e){
+  if(e.pointerId!==pid)return;
+  pid=null;
+  if(mode==='rake'){
+    rustleStop();
+    if(curStroke&&curStroke.p.length>=4){hideHint();strokes.push(curStroke);trimStrokes();gdirty=true;persist();}
+    else if(curStroke&&curStroke.p.length){/* случайное касание — ничего не оставляем в записи */}
+    curStroke=null;raker=null;dirty=true;
+  }else{
+    if(dragStone!==null){
+      if(moved>6){rebuild();persist();thump();}
+      dragStone=null;
+    }else if(moved<10&&performance.now()-downAt<500){
+      addStone(downX,downY);
+    }
+    sel=sel;
+  }
+}
+cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+function areaUnits(){return {t:(88)/UPX,b:(H-168)/UPX};}
+var accum=null;
+function addPoint(x,y){
+  var ux=x/UPX,uy=y/UPX,p=curStroke.p,n=p.length;
+  if(n>=2){var dx=ux-p[n-2],dy=uy-p[n-1];if(dx*dx+dy*dy<16)return;}
+  curStroke.p.push(Math.round(ux),Math.round(uy));
+  raker.add(Math.round(ux),Math.round(uy));
+  dirty=true;
+}
+function trimStrokes(){
+  var total=0,i;for(i=0;i<strokes.length;i++)total+=strokes[i].p.length/2;
+  while(total>PTCAP&&strokes.length>1){total-=strokes[0].p.length/2;strokes.shift();}
+}
+
+/* ---------- камни: добавить, убрать ---------- */
+function addStone(x,y){
+  if(stones.length>=MAXST){toast('В саду уже семь камней — больше не нужно. Можно убрать лишний.',3200);return;}
+  var ar=areaUnits(),r=50+Math.random()*38;
+  var tones=[[118,112,106],[104,104,110],[128,116,100],[96,98,96]];
+  var s={x:clamp(x/UPX,r,1000-r),y:clamp(y/UPX,ar.t+r,ar.b-r),r:r,seed:Math.floor(Math.random()*9000)+1,rot:Math.random()*6.28,asp:.74+Math.random()*.24,
+    tone:tones[Math.floor(Math.random()*tones.length)],moss:Math.random()<.72?.55+Math.random()*.7:.15,born:TS||1};
+  stones.push(s);sel=stones.length-1;rebuild();persist();thump();updateStoneUi();
+}
+function removeSel(){
+  if(sel<0)return;stones.splice(sel,1);sel=-1;rebuild();persist();updateStoneUi();dirty=true;
+}
+
+/* ---------- звук ---------- */
+var AU=null;
+function audio(){
+  if(AU)return AU;var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+  var c=new AC(),m=c.createGain();m.gain.value=.7;m.connect(c.destination);
+  var len=c.sampleRate*2,buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0),b0=0;
+  for(var i=0;i<len;i++){var w=Math.random()*2-1;b0=b0*.62+w*.38;d[i]=b0*1.8;}
+  var src=c.createBufferSource();src.buffer=buf;src.loop=true;
+  var bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=2200;bp.Q.value=.6;
+  var hp=c.createBiquadFilter();hp.type='highpass';hp.frequency.value=700;
+  var g=c.createGain();g.gain.value=0;src.connect(bp);bp.connect(hp);hp.connect(g);g.connect(m);src.start();
+  AU={c:c,m:m,bp:bp,g:g};return AU;
+}
+function rustleStart(){if(!set.sound)return;var a=audio();if(a&&a.c.state==='suspended')a.c.resume();}
+function rustleMove(dd,dt){
+  if(!set.sound||!AU)return;var v=dd/Math.max(8,dt),t=AU.c.currentTime;
+  AU.g.gain.setTargetAtTime(clamp(v*.16,0,.26),t,.05);AU.bp.frequency.setTargetAtTime(1500+clamp(v,0,3)*700,t,.08);
+}
+function rustleStop(){if(AU)AU.g.gain.setTargetAtTime(0,AU.c.currentTime,.09);}
+function thump(){
+  if(!set.sound)return;var a=audio();if(!a)return;if(a.c.state==='suspended')a.c.resume();
+  var c=a.c,t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(52,t+.22);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.34,t+.01);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.connect(g);g.connect(a.m);o.start(t);o.stop(t+.35);
+}
+function sfxWave(){
+  if(!set.sound)return;var a=audio();if(!a)return;if(a.c.state==='suspended')a.c.resume();
+  var t=a.c.currentTime;a.bp.frequency.cancelScheduledValues(t);a.bp.frequency.setValueAtTime(500,t);a.bp.frequency.exponentialRampToValueAtTime(3200,t+1.8);
+  a.g.gain.cancelScheduledValues(t);a.g.gain.setValueAtTime(0,t);a.g.gain.linearRampToValueAtTime(.2,t+.5);a.g.gain.linearRampToValueAtTime(0,t+2);
+}
+
+/* ---------- сохранение ---------- */
+var persT=0,savedSig='';
+function sig(){return JSON.stringify([stones.map(function(s){return [Math.round(s.x),Math.round(s.y),s.seed];}),strokes.length,strokes.length?strokes[strokes.length-1].p.length:0]);}
+function persist(){clearTimeout(persT);persT=setTimeout(function(){
+  var ok=save('current',{v:2,light:set.light,stones:stones.map(packStone),strokes:strokes});
+  if(!ok)toast('Не получилось сохранить сад в памяти телефона.',3500);
+},400);}
+function packStone(s){return {x:Math.round(s.x),y:Math.round(s.y),r:Math.round(s.r),seed:s.seed,rot:+s.rot.toFixed(3),asp:+s.asp.toFixed(3),tone:s.tone,moss:+s.moss.toFixed(2)};}
+function unpackStone(o){
+  if(!o||typeof o!=='object')return null;
+  var tone=Array.isArray(o.tone)&&o.tone.length===3?o.tone.map(function(v){return clamp(+v||100,40,200);}):[112,108,104];
+  return {x:clamp(+o.x||500,0,1000),y:Math.max(0,+o.y||500),r:clamp(+o.r||60,30,110),seed:(+o.seed|0)||1,rot:+o.rot||0,asp:clamp(+o.asp||.85,.6,1),tone:tone,moss:clamp(+o.moss||0,0,1.4)};
+}
+function cleanStrokes(a){
+  var out=[];if(!Array.isArray(a))return out;
+  a.forEach(function(s){if(!s||!Array.isArray(s.p)||s.p.length<4)return;var p=s.p.slice(0,s.p.length-(s.p.length%2)).map(function(v){return +v||0;});out.push({t:[1,3,5].indexOf(s.t)>=0?s.t:3,p:p});});
+  return out;
+}
+function applyGarden(g){
+  stones=((g&&g.stones)||[]).map(unpackStone).filter(Boolean).slice(0,MAXST);
+  strokes=cleanStrokes(g&&g.strokes);trimStrokes();
+  var ar=areaUnits();stones.forEach(function(s){s.y=clamp(s.y,ar.t+s.r,Math.max(ar.t+s.r,ar.b-s.r));});
+  sel=-1;
+  if(g&&(g.light==='dusk'||g.light==='dawn'))setLight(g.light,true);
+}
+function defaultStones(){
+  var m=[[.3,.3,70,11],[.68,.5,56,23],[.4,.7,48,37]],ar=areaUnits(),tones=[[118,112,106],[104,104,110],[128,116,100]];
+  return m.map(function(a,i){return {x:a[0]*1000,y:ar.t+(ar.b-ar.t)*(a[1]*1),r:a[2],seed:a[3]*7,rot:i*2.1+.4,asp:.8+i*.05,tone:tones[i],moss:i===1?.55:.9};});
+}
+
+/* ---------- интерфейс ---------- */
+function setMode(m){
+  mode=m;$('tRake').classList.toggle('on',m==='rake');$('tStone').classList.toggle('on',m==='stone');
+  $('tRake').setAttribute('aria-pressed',String(m==='rake'));$('tStone').setAttribute('aria-pressed',String(m==='stone'));
+  $('ctxRake').hidden=m!=='rake';$('ctxStone').hidden=m!=='stone';sel=-1;updateStoneUi();dirty=true;
+}
+function updateStoneUi(){
+  var n=stones.length;
+  $('stoneTxt').textContent=sel>=0?'Тяни камень, чтобы передвинуть.':(n?'Нажми на песок — появится камень. Камней: '+n+' из '+MAXST+'.':'Нажми на песок, чтобы поставить первый камень.');
+  $('stoneDel').hidden=sel<0;
+}
+function syncTines(){Array.prototype.forEach.call(document.querySelectorAll('#tines button'),function(b){var on=+b.dataset.n===set.tines;b.classList.toggle('on',on);b.setAttribute('aria-checked',String(on));});}
+Array.prototype.forEach.call(document.querySelectorAll('#tines button'),function(b){b.addEventListener('click',function(){set.tines=+b.dataset.n;saveSet();syncTines();});});
+function setLight(l,quiet){
+  set.light=l;if(!quiet)saveSet();
+  $('lightLbl').textContent=l==='dawn'?'Рассвет':'Сумерки';$('icDawn').style.display=l==='dawn'?'':'none';$('icDusk').style.display=l==='dusk'?'':'none';
+  document.querySelector('meta[name=theme-color]').setAttribute('content',l==='dawn'?'#0a1416':'#0a1416');
+  stones.forEach(function(s){s.spr=null;});
+  if(HM){relight(0,0,GW,GH);}dirty=true;
+}
+function syncSound(){$('sndBtn').classList.toggle('muted',!set.sound);$('sndBtn').classList.toggle('on',set.sound);$('sndBtn').setAttribute('aria-pressed',String(set.sound));}
+$('sndBtn').addEventListener('click',function(){set.sound=!set.sound;saveSet();syncSound();if(set.sound){var a=audio();if(a&&a.c.state==='suspended')a.c.resume();thump();}else rustleStop();});
+$('tRake').addEventListener('click',function(){setMode('rake');});
+$('tStone').addEventListener('click',function(){setMode('stone');});
+$('tUndo').addEventListener('click',function(){
+  if(wave)return;
+  if(!strokes.length){toast('Отменять пока нечего.',1800);return;}
+  strokes.pop();rebuild();persist();
+});
+$('tWave').addEventListener('click',startWave);
+$('tLight').addEventListener('click',function(){setLight(set.light==='dawn'?'dusk':'dawn');persist();});
+$('stoneDel').addEventListener('click',removeSel);
+
+var toastT=0;function toast(t,ms){var e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(function(){e.classList.remove('on');},ms||4200);}
+function hideHint(){if($('toast').textContent.indexOf('Проведи')===0)$('toast').classList.remove('on');}
+
+/* диалог подтверждения */
+var dlgCb=null;
+function ask(t,p,ok,cb){$('dlgT').textContent=t;$('dlgP').textContent=p;$('dlgOk').textContent=ok;dlgCb=cb;$('scrim').classList.add('on');$('scrim').style.zIndex=60;$('dlg').classList.add('on');$('dlg').style.zIndex=61;}
+function closeDlg(){$('dlg').classList.remove('on');if(!$('sheet').classList.contains('on'))$('scrim').classList.remove('on');$('scrim').style.zIndex='';dlgCb=null;}
+$('dlgOk').addEventListener('click',function(){var f=dlgCb;closeDlg();if(f)f();});
+$('dlgNo').addEventListener('click',closeDlg);
+
+/* галерея */
+var gardens=load('gardens',[]);if(!Array.isArray(gardens))gardens=[];
+function fmtDate(ts){var d=new Date(ts);return d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function thumb(){
+  var w=150,h=Math.round(w*4/3),c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
+  var sw=W,sh=W*4/3,sy=clamp((H-sh)/2,0,Math.max(0,H-sh));
+  x.drawImage(cv,0,sy*DPR,W*DPR,Math.min(sh,H)*DPR,0,0,w,h);
+  try{return c.toDataURL('image/jpeg',.62);}catch(e){return '';}
+}
+function renderGallery(){
+  var grid=$('gGrid');grid.textContent='';$('gEmpty').hidden=gardens.length>0;
+  gardens.forEach(function(g,i){
+    var card=document.createElement('div');card.className='g-card';
+    var b=document.createElement('button');b.className='g-card';b.style.width='100%';b.setAttribute('aria-label','Открыть сад от '+fmtDate(g.ts));
+    var im=document.createElement('img');im.alt='';im.src=g.thumb||'';var cap=document.createElement('span');cap.className='cap';cap.textContent=fmtDate(g.ts);
+    b.appendChild(im);b.appendChild(cap);
+    b.addEventListener('click',function(){openGarden(i);});
+    var del=document.createElement('button');del.className='g-del';del.setAttribute('aria-label','Удалить сад');del.innerHTML='<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+    del.addEventListener('click',function(e){e.stopPropagation();ask('Удалить этот сад?','Он исчезнет из галереи насовсем.','Удалить',function(){gardens.splice(i,1);persistGardens();renderGallery();});});
+    var wrap=document.createElement('div');wrap.style.position='relative';wrap.appendChild(b);wrap.appendChild(del);grid.appendChild(wrap);
+  });
+}
+function persistGardens(){
+  var ok=save('gardens',gardens);
+  while(!ok&&gardens.length>1){gardens.pop();ok=save('gardens',gardens);if(ok)toast('Память почти заполнена — самый старый сад пришлось убрать.',4200);}
+  return ok;
+}
+function openSheet(){renderGallery();$('scrim').classList.add('on');$('sheet').classList.add('on');$('sheet').focus({preventScroll:true});}
+function closeSheet(){$('sheet').classList.remove('on');$('scrim').classList.remove('on');}
+$('tGal').addEventListener('click',openSheet);
+$('scrim').addEventListener('click',function(){if($('dlg').classList.contains('on'))closeDlg();else closeSheet();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if($('dlg').classList.contains('on'))closeDlg();else closeSheet();}});
+$('saveBtn').addEventListener('click',function(){
+  var g={id:Date.now(),ts:Date.now(),light:set.light,stones:stones.map(packStone),strokes:strokes,thumb:thumb()};
+  gardens.unshift(g);
+  if(gardens.length>GMAX)gardens.length=GMAX;
+  if(persistGardens()){savedSig=sig();toast('Сад сохранён.',2200);}
+  renderGallery();
+});
+function openGarden(i){
+  var g=gardens[i];if(!g)return;
+  var go=function(){applyGarden(g);rebuild();persist();savedSig=sig();closeSheet();updateStoneUi();toast('Сад открыт.',1800);};
+  if(sig()!==savedSig&&(strokes.length||stones.length>3))ask('Открыть другой сад?','Нынешний сад не сохранён и будет заменён.','Открыть',go);else go();
+}
+var sy0=0;
+$('sheet').addEventListener('touchstart',function(e){sy0=e.touches[0].clientY;},{passive:true});
+$('sheet').addEventListener('touchend',function(e){if(e.changedTouches[0].clientY-sy0>90&&$('sheet').scrollTop<=0)closeSheet();},{passive:true});
+
+window.addEventListener('resize',function(){clearTimeout(fit._t);fit._t=setTimeout(fit,150);});
+document.addEventListener('visibilitychange',function(){if(document.hidden){rustleStop();clearTimeout(persT);if(HM)save('current',{v:2,light:set.light,stones:stones.map(packStone),strokes:strokes});}});
+window.addEventListener('pagehide',function(){if(HM)save('current',{v:2,light:set.light,stones:stones.map(packStone),strokes:strokes});});
+
+/* ---------- запуск ---------- */
+syncTines();syncSound();setLight(set.light,true);
+(function boot(){
+  W=window.innerWidth;H=window.innerHeight;UPX=W/1000;
+  var cur=load('current',null);
+  if(cur&&typeof cur==='object'&&Array.isArray(cur.stones))applyGarden(cur);
+  else{stones=defaultStones();strokes=[];}
+  fit();savedSig=sig();updateStoneUi();
+  requestAnimationFrame(frame);
+  var seen=null;try{seen=localStorage.getItem(KEY+'seen');}catch(e){}
+  if(!seen){setTimeout(function(){toast('Проведи пальцем по песку — останутся борозды.',5200);try{localStorage.setItem(KEY+'seen','1');}catch(e){}},900);}
+})();
+window.ZEN={get stones(){return stones;},get strokes(){return strokes;},set:set,rebuild:rebuild,addStone:addStone,setMode:setMode,gardens:function(){return gardens;}};
+})();
+</script>
+</body>
+</html>

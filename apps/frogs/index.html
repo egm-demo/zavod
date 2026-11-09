@@ -4,157 +4,121 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0e1a1c">
+<meta name="theme-color" content="#0a1416">
 <title>Лягушачий пасьянс</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap&subset=cyrillic" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/fonts/fonts.css"><link rel="stylesheet" href="../../assets/ui.css">
 <style>
-:root{--bg:#0e1a1c;--bg2:#13262a;--ink:#f6efe4;--muted:#b7c4bd;--pink:#f0b6c4;--leaf:#7fae7a;--leaf2:#5f8f63;--gold:#e9c46a;--line:rgba(246,239,228,.12);--violet:#5b3f7a}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
-body{min-height:100vh;min-height:100dvh;overflow-x:hidden;background:radial-gradient(120% 70% at 50% 0%,#17302f 0%,var(--bg) 60%) fixed}
-button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-user-select:none;user-select:none;touch-action:manipulation}
-.wrap{position:relative;max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 22px);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
-.top{display:flex;align-items:center;justify-content:space-between;min-height:44px;margin-right:-10px}
-.back{color:var(--muted);text-decoration:none;font-size:14px;padding:12px 8px 12px 0;min-height:44px;display:inline-flex;align-items:center}
-.back:active{color:var(--ink)}
-.icon{width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}
-.icon:active{background:rgba(246,239,228,.08)}
-.icon svg{width:22px;height:22px}
-h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:38px;line-height:1.05;margin-top:6px}
-h1 i{color:var(--pink);font-style:italic}
-.sub{color:var(--muted);font-size:14.5px;line-height:1.5;margin-top:8px}
-.screen{display:none;flex:1;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
 .screen.on{display:flex}
-/* menu */
-.rules{margin-top:16px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(19,38,42,.6);font-size:14px;line-height:1.55;color:var(--muted)}
-.rules b{color:var(--ink);font-weight:600}
-.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:20px}
-.lv{position:relative;aspect-ratio:1/1;min-height:52px;border-radius:50% 50% 50% 12%;background:radial-gradient(circle at 35% 30%,#2a4a3e,#1a322e);border:1px solid rgba(127,174,122,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:600;font-size:17px;transition:transform .15s}
-.lv:active{transform:scale(.94)}
-.lv.done{background:radial-gradient(circle at 35% 30%,#6e9d68,#47704a);border-color:rgba(246,239,228,.25)}
-.lv.locked{opacity:.55}.lv.locked span:first-child{color:#c9d3cc}
-.lv .st{display:flex;gap:1px;margin-top:3px;height:12px}
-.lv .st svg{width:12px;height:12px}
-.sec{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:var(--gold);margin-top:22px}
-.progress{font-size:13px;color:var(--muted);margin-top:4px}
-/* game */
-.ghead{display:flex;align-items:baseline;justify-content:space-between;margin-top:2px}
-.ghead h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:30px}
-.ghead h2 i{color:var(--pink)}
-.left{font-size:14px;color:var(--muted)}
-.msg{min-height:42px;margin-top:4px;font-size:14.5px;color:var(--muted);line-height:1.4}
-.msg.warn{color:var(--pink)}
-.stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
-.board{position:relative;width:100%;max-width:440px;margin:4px auto 0;aspect-ratio:1/1;touch-action:manipulation}
-.board svg{width:100%;height:100%;display:block;overflow:visible}
-.pad{cursor:pointer}
-.bar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding-top:14px}
-.btn{min-height:54px;border-radius:14px;border:1px solid var(--line);background:rgba(19,38,42,.75);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12.5px;color:var(--muted)}
-.btn svg{width:20px;height:20px;color:var(--ink)}
-.btn:active{background:rgba(127,174,122,.18)}
-.btn[disabled]{opacity:.4}
-/* overlay */
-.ov{position:fixed;inset:0;background:rgba(8,14,15,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:20}
-.ov.on{display:flex;animation:fade .3s ease}
-.card{width:100%;max-width:360px;background:linear-gradient(180deg,#183230,#11211f);border:1px solid rgba(246,239,228,.14);border-radius:22px;padding:26px 22px 20px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
-.card h3{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:34px}
-.card h3 i{color:var(--pink)}
-.card p{color:var(--muted);font-size:14.5px;line-height:1.5;margin-top:8px}
-.stars{display:flex;justify-content:center;gap:10px;margin:16px 0 4px}
-.stars svg{width:34px;height:34px}
-.stars svg.on{animation:pop .5s cubic-bezier(.3,1.6,.5,1) both}
-.cbtns{display:flex;gap:10px;margin-top:18px}
-.cbtns button{flex:1;min-height:50px;border-radius:14px;border:1px solid var(--line);font-weight:600;font-size:15px}
-.cbtns .pri{background:var(--leaf2);border-color:transparent;color:#fff}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-@media (max-height:700px){h1{font-size:32px}.msg{min-height:34px}}
+.z-top a.z-icon{text-decoration:none}
+.lvgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:26px 10px;margin-top:26px;padding-bottom:12px}
+.lv{position:relative;aspect-ratio:1;min-height:52px;display:grid;place-items:center;font:500 22px/1 var(--display);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.55);font-variant-numeric:lining-nums tabular-nums;font-feature-settings:'lnum' 1,'tnum' 1;transition:transform .15s var(--ease)}
+.lv:active{transform:scale(.93)}
+.lv svg.pd{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.lv span{position:relative;z-index:1;margin-top:-2px}
+.lv.locked{opacity:.7}.lv.locked span{opacity:.8}
+.lv .dots{position:absolute;left:0;right:0;bottom:-13px;display:flex;justify-content:center;gap:3px;z-index:1}
+.lv .dots i{width:7px;height:7px;border-radius:50%;background:var(--glow);box-shadow:0 0 6px rgba(232,199,122,.8)}
+.lv .dots i.off{background:rgba(243,236,224,.38);box-shadow:none}
+.prog{margin-top:14px}
+.stage{flex:1;min-height:0;position:relative;margin:0 -20px 0;display:flex;align-items:flex-start;justify-content:center;padding-top:6px}
+#cv{width:100%;max-width:min(520px,60vh);aspect-ratio:1;display:block;touch-action:manipulation}
+.gcap{text-align:center;min-height:44px;padding:0 6px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px}
+.gcap .z-h2{font-size:34px}
+.msg{font-size:14.5px;line-height:1.4;color:var(--ink-2);min-height:20px;text-align:center;transition:color .3s}
+.msg.warn{color:var(--accent)}
+.fin{position:absolute;left:0;right:0;bottom:-4px;display:flex;flex-direction:column;align-items:center;gap:14px;padding:0 20px 4px;opacity:0;transform:translateY(14px);pointer-events:none;transition:all .7s var(--ease)}
+.fin.on{opacity:1;transform:none;pointer-events:auto}
+.fin p{margin:0;text-align:center;color:var(--ink-2);font-size:15px;text-wrap:balance;max-width:26em}
+.fin .z-h2{font-size:38px}
+.fin .row{display:flex;gap:8px;align-items:center}
+.stuck{position:absolute;left:50%;top:54%;transform:translate(-50%,10px);opacity:0;pointer-events:none;text-align:center;transition:all .5s var(--ease);width:min(300px,86%)}
+.stuck.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.stuck .z-card{background:rgba(10,20,22,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:18px}
+.stuck p{margin:6px 0 12px;color:var(--ink-2);font-size:14.5px}
+.stuck .row{display:flex;gap:8px;justify-content:center}
+.stuck .z-btn{min-height:46px;padding:0 18px;font-size:15px}
+.sheet-h{margin:4px 0 12px}
+.rule{display:flex;gap:14px;align-items:flex-start;margin:14px 0;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+.rule b{color:var(--ink);font-weight:600}
+.rule em{flex:none;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font:600 14px/26px var(--text);text-align:center;font-style:normal}
+.srow{display:flex;justify-content:space-between;align-items:center;min-height:52px;border-top:1px solid var(--line);font-size:15px}
+.new{font-size:13.5px;color:var(--ink-2);margin-top:10px}
 </style>
-
-
-
-
 <!--pwa--><link rel="manifest" href="../../manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="../../icons/icon-192.png"><link rel="apple-touch-icon" href="../../icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('../../sw.js'))</script><!--/pwa-->
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <a class="back" href="../../index.html">‹ все приложения</a>
-    <button class="icon" id="muteBtn" aria-label="Звук"></button>
+<div class="z-app">
+  <div class="z-top">
+    <a class="z-icon" id="back" href="../../index.html" aria-label="Все приложения"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div class="z-title" id="ttl"></div>
+    <button class="z-icon" id="muteBtn" aria-label="Звук"></button>
+    <button class="z-icon" id="helpBtn" aria-label="Как играть"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.7.4-1 .9-1 1.6M12 16.6v.1"/></svg></button>
   </div>
 
   <section class="screen on" id="menu">
-    <h1>Лягушачий <i>пасьянс</i></h1>
-    <p class="sub">Тихий пруд, тринадцать листьев кувшинки и одна рыжая лягушка, которой нужен покой.</p>
-    <div class="rules">Нажмите на лягушку, затем на свободный лист. Лягушка <b>перепрыгивает через соседку</b> по&nbsp;линии, а&nbsp;соседка ныряет в воду. Нужно, чтобы на пруду осталась <b>только рыжая</b>. Рыжую перепрыгивать нельзя.</div>
-    <div class="sec">Уровни</div>
-    <div class="progress" id="progress"></div>
-    <div class="grid" id="grid"></div>
+    <h1 class="z-h1 z-in">Лягушачий <i>пасьянс</i></h1>
+    <p class="z-lead z-in" style="animation-delay:.08s">Тринадцать листьев, одна рыжая лягушка и тихий пруд.</p>
+    <div class="z-cap prog z-in" id="progress" style="animation-delay:.14s"></div>
+    <div class="new" id="newNote"></div>
+    <div class="lvgrid z-in" id="grid" style="animation-delay:.2s"></div>
   </section>
 
   <section class="screen" id="game">
-    <div class="ghead">
-      <h2>Пруд <i id="lvNum">1</i></h2>
-      <div class="left" id="left"></div>
+    <div class="gcap">
+      <div class="z-cap" id="left"></div>
+      <div class="msg" id="msg"></div>
     </div>
-    <div class="msg" id="msg"></div>
-    <div class="stage"><div class="board" id="board"></div></div>
-    <div class="bar">
-      <button class="btn" id="bMenu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><circle cx="12" cy="12" r="2.2"/></svg>Уровни</button>
-      <button class="btn" id="bUndo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L4 9l5 5"/><path d="M4 9h10a5.5 5.5 0 0 1 0 11h-3"/></svg>Назад</button>
-      <button class="btn" id="bRestart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v4.5h-4.5"/></svg>Заново</button>
-      <button class="btn" id="bHint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>Подсказка</button>
+    <div class="stage" id="stage">
+      <canvas id="cv" aria-label="Пруд с лягушками" role="img"></canvas>
+      <div class="stuck" id="stuck"><div class="z-card"><div class="z-h3">Ходов больше нет</div><p>Лягушки застыли. Это бывает.</p><div class="row"><button class="z-btn ghost" id="sUndo">Отменить ход</button><button class="z-btn" id="sRestart">Заново</button></div></div></div>
+      <div class="fin" id="fin"><div class="z-h2">Тишина на <i>пруду</i></div><p id="finText"></p><div class="row"><button class="z-btn quiet" id="wMenu">Все пруды</button><button class="z-btn" id="wNext">Дальше</button></div></div>
+    </div>
+    <div class="z-bar" id="bar">
+      <button class="z-tool" id="bMenu"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="12" r="2"/></svg>Пруды</button>
+      <button class="z-tool" id="bUndo"><svg viewBox="0 0 24 24"><path d="M9 4L4 9l5 5"/><path d="M4 9h10a5.5 5.5 0 0 1 0 11h-3"/></svg>Назад</button>
+      <button class="z-tool" id="bRestart"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v4.5h-4.5"/></svg>Заново</button>
+      <button class="z-tool" id="bHint"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>Подсказка</button>
     </div>
   </section>
 </div>
 
-<div class="ov" id="winOv"><div class="card">
-  <h3 id="winTitle">Тишина на <i>пруду</i></h3>
-  <div class="stars" id="winStars"></div>
-  <p id="winText"></p>
-  <div class="cbtns"><button id="wMenu">Уровни</button><button class="pri" id="wNext">Дальше</button></div>
-</div></div>
-
-<div class="ov" id="stuckOv"><div class="card">
-  <h3>Ходов <i>нет</i></h3>
-  <p>Лягушки больше не могут прыгать. Можно отменить ход или начать уровень заново.</p>
-  <div class="cbtns"><button id="sUndo">Назад</button><button class="pri" id="sRestart">Заново</button></div>
-</div></div>
+<div class="z-scrim" id="scrim"></div>
+<div class="z-sheet" id="sheet" role="dialog" aria-label="Как играть">
+  <h2 class="z-h2 sheet-h">Как <i>играть</i></h2>
+  <div class="rule"><em>1</em><div>Коснитесь лягушки, затем свободного листа <b>через одну соседку</b> — по прямой или по диагонали.</div></div>
+  <div class="rule"><em>2</em><div>Соседка, через которую прыгнули, <b>ныряет в воду</b>.</div></div>
+  <div class="rule"><em>3</em><div>Цель — чтобы на пруду осталась <b>только рыжая</b>. Её саму перепрыгивать нельзя.</div></div>
+  <div class="srow"><span>Звёзды: без подсказок и отмен — три</span></div>
+  <div class="srow"><span>Всё сохраняется само</span><button class="z-btn quiet" id="shClose">Понятно</button></div>
+</div>
+<div class="z-toast" id="toast"></div>
 
 <script>
 (() => {
 'use strict';
+/* localStorage (формат v1 сохранён): kuv_frogs_stars {индекс:1..3}, kuv_frogs_last число, kuv_frogs_muted bool; новый: kuv_frogs_v2_seen */
 const LS = 'kuv_frogs_';
 const store = {
   get(k, d) { try { const v = localStorage.getItem(LS + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch (e) {} }
 };
 const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
 
-/* ---------- geometry: 13 pads on 5x5 checker (corners+edges+center + 4 diagonal centres) ---------- */
 const P = [];
 for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) if ((r + c) % 2 === 0) P.push([r, c]);
-const N = P.length; // 13
+const N = P.length;
 const at = (r, c) => P.findIndex(p => p[0] === r && p[1] === c);
-const JUMPS = []; // [from, over, to]
+const JUMPS = [];
 P.forEach(([r, c], a) => {
   for (const [dr, dc] of [[0,2],[2,0],[0,-2],[-2,0],[1,1],[1,-1],[-1,1],[-1,-1]]) {
     const o = at(r + dr, c + dc), t = at(r + 2 * dr, c + 2 * dc);
     if (o >= 0 && t >= 0) JUMPS.push([a, o, t]);
   }
 });
-const LINES = []; // neighbour segments for drawing
-P.forEach(([r, c], a) => {
-  for (const [dr, dc] of [[0,2],[2,0],[1,1],[1,-1]]) { const b = at(r + dr, c + dc); if (b >= 0) LINES.push([a, b]); }
-});
-
-/* ---------- levels: generated by reverse play from a single red frog, ordered by difficulty ---------- */
 const LEVELS = ["G..G.......R.","..RG.G.......","...G.G.G....R",".G..G....G..R",".G..G...G.R..",".R.G....GG..G",".GR....G.G.G.","..R.GG...G..G","..G.GG.G.G..R","...G...G.GGRG","...GG.G.G..GR","..RG...G.GGGG","G.G.GG.G.G.R.","..GGG.G.GR.G.","GG.GG.GGGR...","GGGRGGG..G...","GG...GGG.G.GR","GG.GGG..GR.GG","GGGGGG.GGR...","RGG.G.GG.GGG.","RGGG.GGGGGG..","GG.RGG.GGGG.G","GGGGGG...GGGR","GGGGG.GG.GRGG","RGG.GG.GGGGGG","GGRGGGG..GGGG","GGGGGGGRGG.GG","GGGGGGRGGGGG.",".G..G.RGGGGGG","GGGRG.GGGG.G."];
 function parse(s) { let mask = 0, red = -1; for (let i = 0; i < N; i++) { if (s[i] !== '.') mask |= 1 << i; if (s[i] === 'R') red = i; } return { mask, red }; }
-
-/* ---------- solver (DFS with memo on bitmask + red position) ---------- */
 const memo = new Map();
 function legal(mask, red) {
   const out = [];
@@ -173,293 +137,393 @@ function nextMove(mask, red) { for (const j of legal(mask, red)) { const [m2, r2
 function solution(mask, red) { const seq = []; let m = mask, r = red; while (m !== (1 << r)) { const j = nextMove(m, r); if (!j) return null; seq.push(j); [m, r] = apply(m, r, j); } return seq; }
 const LV = LEVELS.map(parse).filter(l => l.red >= 0 && solvable(l.mask, l.red));
 
-/* ---------- sound (WebAudio synth) ---------- */
+/* ---------- sound ---------- */
 let actx = null, muted = store.get('muted', false);
 function ac() { if (muted) return null; if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } } if (actx.state === 'suspended') actx.resume(); return actx; }
-function tone(freq, freq2, dur, vol, type, delay) {
+function tone(f1, f2, dur, vol, type, delay) {
   const c = ac(); if (!c) return; const t0 = c.currentTime + (delay || 0);
   const o = c.createOscillator(), g = c.createGain();
-  o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t0); o.frequency.exponentialRampToValueAtTime(freq2, t0 + dur);
+  o.type = type || 'sine'; o.frequency.setValueAtTime(f1, t0); o.frequency.exponentialRampToValueAtTime(f2, t0 + dur);
   g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
   o.connect(g).connect(c.destination); o.start(t0); o.stop(t0 + dur + 0.02);
 }
+const buzz = n => { if (!muted && navigator.vibrate) navigator.vibrate(n); };
 const snd = {
-  tap() { tone(520, 640, 0.07, 0.05, 'triangle'); },
+  tap() { tone(520, 640, 0.07, 0.05, 'triangle'); buzz(8); },
   hop() { tone(260, 520, 0.16, 0.07, 'sine'); },
   plop() { tone(900, 140, 0.22, 0.16, 'sine'); tone(380, 90, 0.3, 0.06, 'sine', 0.05); },
   no() { tone(200, 160, 0.12, 0.05, 'triangle'); },
-  win() { [523, 659, 784, 1046].forEach((f, i) => tone(f, f * 1.01, 0.5, 0.07, 'sine', i * 0.11)); }
+  win() { [523, 659, 784, 1046, 1318].forEach((f, i) => tone(f, f * 1.01, 0.7, 0.06, 'sine', i * 0.12)); buzz(20); }
 };
-const muteBtn = document.getElementById('muteBtn');
+const muteBtn = $('muteBtn');
 function drawMute() {
   muteBtn.innerHTML = muted
-    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>'
-    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
+    ? '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>'
+    : '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
   muteBtn.setAttribute('aria-label', muted ? 'Включить звук' : 'Выключить звук');
 }
 muteBtn.onclick = () => { muted = !muted; store.set('muted', muted); drawMute(); if (!muted) snd.tap(); };
 drawMute();
 
-/* ---------- progress ---------- */
-let stars = store.get('stars', {}); // {levelIndex: 1..3}
-const STAR = (on) => `<svg viewBox="0 0 24 24"><path d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7z" fill="${on ? '#e9c46a' : 'rgba(246,239,228,.16)'}"/></svg>`;
+/* ---------- progress / menu ---------- */
+let stars = store.get('stars', {});
+if (!stars || typeof stars !== 'object') stars = {};
 function unlockedUpTo() { let u = 0; while (u < LV.length && stars[u]) u++; return Math.min(LV.length - 1, u + 2); }
-
-/* ---------- menu ---------- */
-const $ = id => document.getElementById(id);
-function show(id) { for (const s of document.querySelectorAll('.screen')) s.classList.toggle('on', s.id === id); window.scrollTo(0, 0); }
+function show(id) { for (const s of document.querySelectorAll('.screen')) s.classList.toggle('on', s.id === id); $('ttl').textContent = id === 'game' ? 'Пруд ' + (cur + 1) : ''; window.scrollTo(0, 0); if (id === 'game') startLoop(); else stopLoop(); }
+function padSvg(i, s, lock) {
+  const rot = (i * 67 + 20) % 360, a1 = rot * Math.PI / 180, a2 = a1 + .42, R = 24;
+  const am = (a1 + a2) / 2, d = `M${(32 + 13 * Math.cos(am)).toFixed(1)} ${(32 + 13 * Math.sin(am)).toFixed(1)} L${(32 + R * Math.cos(a2)).toFixed(1)} ${(32 + R * Math.sin(a2)).toFixed(1)} A${R} ${R} 0 1 1 ${(32 + R * Math.cos(a1)).toFixed(1)} ${(32 + R * Math.sin(a1)).toFixed(1)} Z`;
+  const c1 = s ? '#8fc7a0' : '#4a7a66', c2 = s ? '#4a8466' : '#2c5648';
+  return `<svg class="pd" viewBox="0 0 64 64"><defs><radialGradient id="pg${i}" cx="40%" cy="35%" r="75%"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></radialGradient></defs><ellipse cx="33" cy="37" rx="25" ry="22" fill="#050c0d" opacity=".4"/><path d="${d}" fill="url(#pg${i})"/></svg>`;
+}
 function renderMenu() {
   const g = $('grid'); g.innerHTML = '';
-  const up = unlockedUpTo();
-  let done = 0, total = 0;
+  const up = unlockedUpTo(); let done = 0, total = 0;
   LV.forEach((l, i) => {
     const b = document.createElement('button');
     const s = stars[i] || 0; if (s) { done++; total += s; } const lock = i > up && !s;
-    b.className = 'lv' + (s ? ' done' : '') + (lock ? ' locked' : '');
-    b.innerHTML = `<span>${i + 1}</span><span class="st">${s ? [1,2,3].map(k => STAR(k <= s)).join('') : ''}</span>`;
-    b.setAttribute('aria-label', 'Уровень ' + (i + 1));
-    b.onclick = () => { if (lock) { snd.no(); b.animate && !reduced && b.animate([{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}], {duration: 220}); return; } snd.tap(); startLevel(i); };
+    b.className = 'lv' + (lock ? ' locked' : '');
+    b.innerHTML = padSvg(i, s, lock) + `<span>${i + 1}</span>` + (s ? `<div class="dots">${[1,2,3].map(k => `<i class="${k <= s ? '' : 'off'}"></i>`).join('')}</div>` : '');
+    b.setAttribute('aria-label', 'Пруд ' + (i + 1) + (s ? ', звёзд ' + s : lock ? ', закрыт' : ''));
+    b.onclick = () => {
+      if (lock) { snd.no(); toast('Сначала пройдите предыдущие пруды'); return; }
+      snd.tap(); startLevel(i);
+    };
     g.appendChild(b);
   });
-  $('progress').textContent = done ? `Пройдено ${done} из ${LV.length} · звёзд ${total} из ${LV.length * 3}` : `${LV.length} прудов — от совсем простых до задумчивых. Следующие открываются по мере прохождения.`;
+  $('progress').textContent = done ? `Пройдено ${done} из ${LV.length} · звёзд ${total}` : `${LV.length} прудов`;
 }
+let toastT = 0;
+function toast(t) { const e = $('toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), 2200); }
+function openSheet() { $('scrim').classList.add('on'); $('sheet').classList.add('on'); }
+function closeSheet() { $('scrim').classList.remove('on'); $('sheet').classList.remove('on'); store.set('v2_seen', 1); }
+$('helpBtn').onclick = openSheet; $('shClose').onclick = closeSheet; $('scrim').onclick = closeSheet;
 
-/* ---------- board drawing ---------- */
-const NS = 'http://www.w3.org/2000/svg';
-const S = 500, M = 58, STEP = (S - 2 * M) / 4;
+/* ---------- canvas world ---------- */
+const cv = $('cv'), ctx = cv.getContext('2d');
+const S = 500, M = 64, STEP = (S - 2 * M) / 4;
 const pos = i => [M + P[i][1] * STEP, M + P[i][0] * STEP];
-const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
-
-const FROG = `    <!-- back legs -->
-    <path class="leg" d="M-20 10 C-36 8 -40 22 -30 30 C-24 34 -16 30 -14 24" />
-    <path class="leg" d="M20 10 C36 8 40 22 30 30 C24 34 16 30 14 24" />
-    <path class="toe" d="M-31 30 l-6 4 M-29 31 l-3 6 M31 30 l6 4 M29 31 l3 6" />
-    <!-- front legs -->
-    <path class="leg" d="M-14 -4 C-24 -2 -26 6 -22 10" />
-    <path class="leg" d="M14 -4 C24 -2 26 6 22 10" />
-    <!-- body -->
-    <ellipse class="body" cx="0" cy="6" rx="21" ry="20"/>
-    <ellipse class="belly" cx="0" cy="12" rx="12" ry="9"/>
-    <!-- head -->
-    <ellipse class="body" cx="0" cy="-10" rx="22" ry="15"/>
-    <!-- eyes -->
-    <circle class="body" cx="-12" cy="-20" r="8.5"/>
-    <circle class="body" cx="12" cy="-20" r="8.5"/>
-    <circle cx="-12" cy="-20.5" r="5.6" fill="#fbf6ea"/>
-    <circle cx="12" cy="-20.5" r="5.6" fill="#fbf6ea"/>
-    <g class="pupils"><circle cx="-11.3" cy="-20" r="3.3" fill="#1b2420"/><circle cx="12.7" cy="-20" r="3.3" fill="#1b2420"/>
-    <circle cx="-10" cy="-21.6" r="1.2" fill="#fff"/><circle cx="14" cy="-21.6" r="1.2" fill="#fff"/></g>
-    <!-- smile and cheeks -->
-    <path d="M-8 -5 Q0 1 8 -5" fill="none" stroke="#24321f" stroke-width="1.6" stroke-linecap="round" opacity=".75"/>
-    <ellipse class="cheek" cx="-14" cy="-6" rx="3.6" ry="2.2"/>
-    <ellipse class="cheek" cx="14" cy="-6" rx="3.6" ry="2.2"/>
-    <!-- spots on back -->
-    <circle class="spot" cx="-7" cy="10" r="2.4"/><circle class="spot" cx="6" cy="16" r="1.8"/><circle class="spot" cx="8" cy="5" r="1.4"/>
-`;
-const DEFS = `
-<defs>
-  <radialGradient id="water" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#1d3d3c"/><stop offset=".7" stop-color="#132a2b"/><stop offset="1" stop-color="#0e1a1c"/></radialGradient>
-  <radialGradient id="padG" cx="40%" cy="35%" r="75%"><stop offset="0" stop-color="#8dbb84"/><stop offset=".65" stop-color="#679a64"/><stop offset="1" stop-color="#4b7a4d"/></radialGradient>
-  <radialGradient id="gBody" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#a9d48d"/><stop offset=".6" stop-color="#78b061"/><stop offset="1" stop-color="#4f8a45"/></radialGradient>
-  <radialGradient id="rBody" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#f7b38e"/><stop offset=".6" stop-color="#e2774f"/><stop offset="1" stop-color="#b9503a"/></radialGradient>
-  <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
-</defs>
-<style>
-  .frog .leg{fill:none;stroke-width:6.5;stroke-linecap:round}
-  .frog .toe{fill:none;stroke-width:2.4;stroke-linecap:round}
-  .frog.g .leg,.frog.g .toe{stroke:#5e9a4f}.frog.g .body{fill:url(#gBody)}.frog.g .belly{fill:#d6e9b0;opacity:.55}.frog.g .cheek{fill:#f0b6c4;opacity:.55}.frog.g .spot{fill:#4f8642;opacity:.55}
-  .frog.r .leg,.frog.r .toe{stroke:#c9603f}.frog.r .body{fill:url(#rBody)}.frog.r .belly{fill:#fde0c6;opacity:.6}.frog.r .cheek{fill:#f7a3a8;opacity:.8}.frog.r .spot{fill:#a8452f;opacity:.45}
-</style>`;
-
-let svg, gLines, gPads, gFx, gFrogs, frogEls = {}, padEls = [], hintEl = null;
-function buildBoard() {
-  const host = $('board'); host.innerHTML = '';
-  svg = el('svg', { viewBox: `0 0 ${S} ${S}`, role: 'img', 'aria-label': 'Пруд с лягушками' });
-  svg.innerHTML = DEFS;
-  el('rect', { x: 6, y: 6, width: S - 12, height: S - 12, rx: 70, fill: 'url(#water)' }, svg);
-  // soft water glints
-  const gl = el('g', { opacity: .35 }, svg);
-  [[90, 260, 40], [380, 110, 30], [300, 420, 46], [170, 120, 22]].forEach(([x, y, r]) => el('ellipse', { cx: x, cy: y, rx: r, ry: r * .28, fill: 'none', stroke: '#9cc3b8', 'stroke-width': 1, opacity: .5 }, gl));
-  gLines = el('g', {}, svg);
-  LINES.forEach(([a, b]) => { const [x1, y1] = pos(a), [x2, y2] = pos(b); el('line', { x1, y1, x2, y2, stroke: 'rgba(246,239,228,.10)', 'stroke-width': 2, 'stroke-dasharray': '2 7', 'stroke-linecap': 'round' }, gLines); });
-  gPads = el('g', {}, svg); padEls = [];
-  P.forEach((_, i) => {
-    const [x, y] = pos(i); const rot = (i * 67 + 20) % 360;
-    const g = el('g', { class: 'pad', transform: `translate(${x} ${y})`, 'data-i': i }, gPads);
-    el('ellipse', { cx: 3, cy: 6, rx: 44, ry: 40, fill: '#081314', opacity: .45, filter: 'url(#soft)' }, g);
-    const R = 42, n = 0.42; // notch
-    const a1 = rot * Math.PI / 180, a2 = a1 + n;
-    const d = `M0 0 L${(R * Math.cos(a2)).toFixed(1)} ${(R * Math.sin(a2)).toFixed(1)} A${R} ${R} 0 1 1 ${(R * Math.cos(a1)).toFixed(1)} ${(R * Math.sin(a1)).toFixed(1)} Z`;
-    el('path', { d, fill: 'url(#padG)', class: 'leaf' }, g);
-    // veins
-    for (let k = 1; k < 7; k++) { const a = a2 + k * (2 * Math.PI - n) / 7; el('line', { x1: 0, y1: 0, x2: (R * .82 * Math.cos(a)).toFixed(1), y2: (R * .82 * Math.sin(a)).toFixed(1), stroke: '#a9cf98', 'stroke-width': 1, opacity: .35 }, g); }
-    const ring = el('circle', { r: 47, fill: 'none', stroke: '#e9c46a', 'stroke-width': 3, opacity: 0, class: 'ring' }, g);
-    el('circle', { r: 50, fill: 'transparent' }, g); // hit area
-    g.addEventListener('click', () => tapPad(i));
-    padEls.push({ g, ring });
-  });
-  // a lily flower on one empty corner of water, decorative
-  const fl = el('g', { transform: 'translate(250 30) scale(.55)', opacity: .9 }, svg);
-  for (let k = 0; k < 8; k++) el('ellipse', { cx: 0, cy: -14, rx: 6, ry: 15, fill: k % 2 ? '#f6efe4' : '#f0b6c4', transform: `rotate(${k * 45})` }, fl);
-  el('circle', { r: 5, fill: '#e9c46a' }, fl);
-  gFx = el('g', {}, svg);
-  gFrogs = el('g', {}, svg);
-  host.appendChild(svg);
+let DPR = 1, raf = 0, running = false, T0 = performance.now();
+function fit() {
+  DPR = Math.min(3, window.devicePixelRatio || 1);
+  const w = cv.clientWidth || 360;
+  cv.width = Math.round(w * DPR); cv.height = Math.round(w * DPR);
 }
-function frogNode(i, red) {
-  const g = el('g', { class: 'frog ' + (red ? 'r' : 'g'), 'pointer-events': 'none' }, gFrogs);
-  const inner = el('g', {}, g);
-  inner.innerHTML = FROG;
-  if (red) { // tiny crown of a water-lily bud for the red one
-    const c = el('g', { transform: 'translate(0 -31)' }, inner);
-    el('path', { d: 'M-7 3 Q-6 -6 0 -9 Q6 -6 7 3 Z', fill: '#f0b6c4' }, c);
-    el('path', { d: 'M-3 3 Q0 -5 3 3 Z', fill: '#f6efe4' }, c);
-  }
-  return { g, inner, rot: 0 };
-}
-function placeFrog(f, i, scale, lift) {
-  const [x, y] = pos(i); f.g.setAttribute('transform', `translate(${x} ${y - (lift || 0)}) rotate(${f.rot}) scale(${scale || 1})`);
-}
+addEventListener('resize', () => { if (running) fit(); });
 
-/* ---------- game state ---------- */
+const rnd = (() => { let s = 7; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+const PAD = P.map((_, i) => ({ rot: ((i * 67 + 20) % 360) * Math.PI / 180, ph: i * 1.7, sz: 40 + (i % 3) * 1.5 }));
+const FLOW = [[56, 436, 1], [446, 62, .8], [450, 440, .9], [52, 70, .7]].map(([x, y, s], k) => ({ x, y, s, ph: k * 2 }));
+const FLY = Array.from({ length: 9 }, () => ({ x: rnd() * S, y: rnd() * S, ph: rnd() * 6.28, sp: .15 + rnd() * .2 }));
+
+/* состояние лягушек: независимая анимация для каждой */
 let cur = 0, mask = 0, red = 0, hist = [], sel = -1, busy = false, usedHint = false, usedUndo = false, moves = 0;
-let ids = []; // pad -> frog element id
+let frogs = {};     // pad -> {x,y,z,rot,sc,alpha,blink,squash}
+let ripples = [];   // {x,y,t0,delay}
+let sparks = [];    // {x,y,vx,vy,t0,life,c}
+let hintMove = null, hintT0 = 0, winT0 = 0, won = false;
+
+function mkFrog(i) { const [x, y] = pos(i); return { x, y, z: 0, rot: ((i * 37) % 40 - 20) * Math.PI / 180, sc: 1, alpha: 1, sq: 0, bl: 3 + Math.random() * 4 }; }
+
+function ripple(x, y, n) { const t = performance.now(); for (let k = 0; k < (n || 3); k++) ripples.push({ x, y, t0: t + k * 160, dur: 1100 }); }
+function burst(x, y, c, n) { const t = performance.now(); for (let k = 0; k < n; k++) { const a = Math.random() * 6.28, v = 20 + Math.random() * 60; sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 20, t0: t, life: 900 + Math.random() * 700, c }); } }
+
+function drawWater(t) {
+  const g = ctx.createRadialGradient(S * .5, S * .42, 20, S * .5, S * .5, S * .75);
+  g.addColorStop(0, '#1f4343'); g.addColorStop(.6, '#133033'); g.addColorStop(1, '#0a1819');
+  ctx.fillStyle = g; rr(6, 6, S - 12, S - 12, 72); ctx.fill();
+  ctx.save(); rr(6, 6, S - 12, S - 12, 72); ctx.clip();
+  // каустика: пересекающиеся мягкие волны
+  ctx.lineWidth = 1.2;
+  for (let k = 0; k < 9; k++) {
+    ctx.strokeStyle = `rgba(156,205,190,${.05 + .03 * Math.sin(t * .6 + k)})`;
+    ctx.beginPath();
+    for (let x = 0; x <= S; x += 12) {
+      const y = 30 + k * 55 + Math.sin(x * .02 + t * .5 + k * 1.3) * 10 + Math.sin(x * .05 - t * .8 + k) * 4;
+      x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+  }
+  // отражение неба
+  const sk = ctx.createLinearGradient(0, 0, 0, S * .5);
+  sk.addColorStop(0, 'rgba(120,170,170,.10)'); sk.addColorStop(1, 'rgba(120,170,170,0)');
+  ctx.fillStyle = sk; ctx.fillRect(0, 0, S, S * .5);
+  ctx.restore();
+  // кромка
+  ctx.strokeStyle = 'rgba(243,236,224,.07)'; ctx.lineWidth = 1.5; rr(6, 6, S - 12, S - 12, 72); ctx.stroke();
+}
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+function drawFlower(x, y, s, t, ph) {
+  ctx.save(); ctx.translate(x, y + Math.sin(t * .8 + ph) * 1.5); ctx.scale(s, s);
+  // лист-подложка
+  ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(2, 6, 30, 26, 0, 0, 6.28); ctx.fill();
+  const lg = ctx.createRadialGradient(-8, -8, 4, 0, 0, 32); lg.addColorStop(0, '#7fae78'); lg.addColorStop(1, '#3f6a4a');
+  ctx.fillStyle = lg; ctx.beginPath(); ctx.arc(0, 0, 29, .5, 6.28 + .2); ctx.lineTo(0, 0); ctx.fill();
+  for (let ring = 0; ring < 3; ring++) {
+    const n = 8 - ring, len = 19 - ring * 5, wd = 7 - ring;
+    for (let k = 0; k < n; k++) {
+      ctx.save(); ctx.rotate(k * 6.283 / n + ring * .3 + Math.sin(t * .5 + ph) * .03);
+      const pg = ctx.createLinearGradient(0, 0, 0, -len);
+      pg.addColorStop(0, ring === 2 ? '#f3d98f' : '#f6e6e8'); pg.addColorStop(1, ring === 0 ? '#e89fb2' : '#f1bfcb');
+      ctx.fillStyle = pg; ctx.beginPath(); ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(wd, -len * .3, wd * .8, -len * .8, 0, -len); ctx.bezierCurveTo(-wd * .8, -len * .8, -wd, -len * .3, 0, 0); ctx.fill();
+      ctx.restore();
+    }
+  }
+  ctx.fillStyle = '#e8c77a'; ctx.beginPath(); ctx.arc(0, 0, 3.4, 0, 6.28); ctx.fill();
+  ctx.restore();
+}
+
+function drawPad(i, t) {
+  const [x, y] = pos(i), p = PAD[i], R = p.sz + 4;
+  const bob = Math.sin(t * .9 + p.ph) * 1.4, tilt = Math.sin(t * .6 + p.ph) * .03;
+  ctx.save(); ctx.translate(x, y + bob); ctx.rotate(tilt);
+  // тень на воде
+  const a1 = p.rot, a2 = a1 + .42, am = (a1 + a2) / 2;
+  const path = () => { ctx.beginPath(); ctx.moveTo(.36 * R * Math.cos(am), .36 * R * Math.sin(am)); ctx.lineTo(R * Math.cos(a2), R * Math.sin(a2)); ctx.arc(0, 0, R, a2, a1 + 6.2832); ctx.closePath(); };
+  ctx.save(); ctx.translate(3, 7); ctx.fillStyle = 'rgba(2,10,10,.35)'; path(); ctx.fill(); ctx.restore();
+  path();
+  const g = ctx.createRadialGradient(-R * .3, -R * .35, R * .1, 0, 0, R * 1.05);
+  g.addColorStop(0, '#6fb59a'); g.addColorStop(.6, '#3f8670'); g.addColorStop(1, '#2b6154');
+  ctx.fillStyle = g; ctx.fill();
+  // прожилки
+  ctx.strokeStyle = 'rgba(210,240,225,.22)'; ctx.lineWidth = 1;
+  for (let k = 1; k < 9; k++) { const a = a2 + k * (6.2832 - .42) / 9; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(R * .86 * Math.cos(a), R * .86 * Math.sin(a)); ctx.stroke(); }
+  // край и блик
+  ctx.strokeStyle = 'rgba(14,45,40,.6)'; ctx.lineWidth = 1.6; ctx.stroke();
+  const hl = ctx.createLinearGradient(-R, -R, R * .2, R * .2); hl.addColorStop(0, 'rgba(255,255,230,.22)'); hl.addColorStop(1, 'rgba(255,255,230,0)');
+  ctx.fillStyle = hl; ctx.fill();
+  ctx.restore();
+}
+
+function drawRing(i, t, kind) {
+  const [x, y] = pos(i); const R = 52 + Math.sin(t * 4) * 1.2;
+  ctx.save(); ctx.translate(x, y);
+  if (kind === 'sel') { ctx.strokeStyle = 'rgba(232,199,122,.95)'; ctx.lineWidth = 3; ctx.shadowColor = 'rgba(232,199,122,.8)'; ctx.shadowBlur = 14; ctx.beginPath(); ctx.arc(0, 0, R, 0, 6.28); ctx.stroke(); }
+  else { ctx.strokeStyle = 'rgba(243,236,224,.75)'; ctx.lineWidth = 2.2; ctx.setLineDash([5, 7]); ctx.lineDashOffset = -t * 14; ctx.beginPath(); ctx.arc(0, 0, R - 4, 0, 6.28); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = 'rgba(243,236,224,.08)'; ctx.fill(); }
+  ctx.restore();
+}
+
+function drawFrog(f, isRed, t) {
+  if (f.alpha <= .01) return;
+  const sc = f.sc * .84, br = Math.sin(t * 2 + f.x) * .02;
+  // тень на листе/воде
+  ctx.save(); ctx.globalAlpha = f.alpha;
+  ctx.fillStyle = 'rgba(0,0,0,.28)'; ctx.beginPath(); ctx.ellipse(f.x + 3, f.y + 8, 24 * sc * (1 - f.z / 120), 16 * sc * (1 - f.z / 120), 0, 0, 6.28); ctx.fill();
+  ctx.translate(f.x, f.y - f.z); ctx.rotate(f.rot); ctx.scale(sc * (1 + f.sq * .12), sc * (1 + br - f.sq * .1));
+  const c1 = isRed ? ['#f9bd98', '#e2774f', '#b04c38'] : ['#e4f5a8', '#a9d44f', '#6a9a2c'];
+  const leg = isRed ? '#c9603f' : '#86b83a';
+  const body = ctx.createRadialGradient(-6, -4, 2, 0, 4, 28); body.addColorStop(0, c1[0]); body.addColorStop(.55, c1[1]); body.addColorStop(1, c1[2]);
+  ctx.lineCap = 'round'; ctx.strokeStyle = leg; ctx.lineWidth = 6.5; ctx.fillStyle = 'none';
+  for (const s of [-1, 1]) {
+    ctx.beginPath(); ctx.moveTo(s * 20, 10); ctx.bezierCurveTo(s * 36, 8, s * 40, 22, s * 30, 30); ctx.bezierCurveTo(s * 24, 34, s * 16, 30, s * 14, 24); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(s * 14, -4); ctx.bezierCurveTo(s * 24, -2, s * 26, 6, s * 22, 10); ctx.stroke();
+  }
+  ctx.lineWidth = 2.4; for (const s of [-1, 1]) { ctx.beginPath(); ctx.moveTo(s * 31, 30); ctx.lineTo(s * 37, 34); ctx.moveTo(s * 29, 31); ctx.lineTo(s * 32, 37); ctx.stroke(); }
+  ctx.fillStyle = body;
+  ctx.beginPath(); ctx.ellipse(0, 6, 21, 20, 0, 0, 6.28); ctx.fill();
+  ctx.fillStyle = isRed ? 'rgba(253,224,198,.6)' : 'rgba(246,250,200,.6)'; ctx.beginPath(); ctx.ellipse(0, 12, 12, 9, 0, 0, 6.28); ctx.fill();
+  ctx.fillStyle = body; ctx.beginPath(); ctx.ellipse(0, -10, 22, 15, 0, 0, 6.28); ctx.fill();
+  for (const s of [-1, 1]) { ctx.beginPath(); ctx.arc(s * 12, -20, 8.5, 0, 6.28); ctx.fill(); }
+  const blink = (t + f.bl) % 5 < .14;
+  for (const s of [-1, 1]) {
+    ctx.fillStyle = '#fbf6ea'; ctx.beginPath(); ctx.ellipse(s * 12, -20.5, 5.6, blink ? .8 : 5.6, 0, 0, 6.28); ctx.fill();
+    if (!blink) { ctx.fillStyle = '#1b2420'; ctx.beginPath(); ctx.arc(s * 12 + .7, -20, 3.3, 0, 6.28); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(s * 12 + 2, -21.6, 1.2, 0, 6.28); ctx.fill(); }
+  }
+  ctx.strokeStyle = 'rgba(36,50,31,.75)'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(-8, -5); ctx.quadraticCurveTo(0, 1, 8, -5); ctx.stroke();
+  ctx.fillStyle = isRed ? 'rgba(247,163,168,.8)' : 'rgba(240,182,196,.55)';
+  for (const s of [-1, 1]) { ctx.beginPath(); ctx.ellipse(s * 14, -6, 3.6, 2.2, 0, 0, 6.28); ctx.fill(); }
+  ctx.fillStyle = isRed ? 'rgba(168,69,47,.45)' : 'rgba(70,110,30,.5)';
+  for (const [a, b, r] of [[-7, 10, 2.4], [6, 16, 1.8], [8, 5, 1.4]]) { ctx.beginPath(); ctx.arc(a, b, r, 0, 6.28); ctx.fill(); }
+  if (isRed) { // бутон кувшинки на макушке и лёгкое свечение
+    ctx.fillStyle = '#f0b6c4'; ctx.beginPath(); ctx.moveTo(-7, -28); ctx.quadraticCurveTo(-6, -37, 0, -40); ctx.quadraticCurveTo(6, -37, 7, -28); ctx.fill();
+    ctx.fillStyle = '#f6efe4'; ctx.beginPath(); ctx.moveTo(-3, -28); ctx.quadraticCurveTo(0, -36, 3, -28); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function frame(now) {
+  if (!running) return;
+  raf = requestAnimationFrame(frame);
+  const t = (now - T0) / 1000;
+  if (!cv.width) fit();
+  ctx.setTransform(cv.width / S, 0, 0, cv.width / S, 0, 0);
+  ctx.clearRect(0, 0, S, S);
+  drawWater(t);
+  FLOW.forEach(f => drawFlower(f.x, f.y, f.s * .75, t, f.ph));
+  // отражения света
+  for (const f of FLY) {
+    const x = 40 + ((f.x + Math.sin(t * f.sp + f.ph) * 30 + S) % S) * .84, y = 40 + ((f.y + Math.cos(t * f.sp * 1.3 + f.ph) * 24 + S) % S) * .84;
+    const a = .25 + .25 * Math.sin(t * 1.4 + f.ph);
+    const g = ctx.createRadialGradient(x, y, 0, x, y, 9); g.addColorStop(0, `rgba(232,199,122,${a})`); g.addColorStop(1, 'rgba(232,199,122,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 9, 0, 6.28); ctx.fill();
+  }
+  for (let i = 0; i < N; i++) drawPad(i, t);
+  // подсветка целей
+  if (sel >= 0 && !busy) {
+    const mv = legal(mask, red).filter(j => j[0] === sel);
+    mv.forEach(j => drawRing(j[2], t, 'tgt'));
+    drawRing(sel, t, 'sel');
+  }
+  // подсказка
+  if (hintMove && !busy) {
+    const [x0, y0] = pos(hintMove[0]), [x1, y1] = pos(hintMove[2]);
+    const mx = (x0 + x1) / 2, my = (y0 + y1) / 2, nx = -(y1 - y0), ny = x1 - x0, L = Math.hypot(nx, ny);
+    const cx = mx + nx / L * 90, cy = my + ny / L * 90;
+    ctx.save(); ctx.strokeStyle = 'rgba(247,214,128,1)'; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.setLineDash([1, 11]); ctx.lineDashOffset = -t * 20;
+    ctx.shadowColor = 'rgba(232,199,122,.9)'; ctx.shadowBlur = 10;
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo(cx, cy, x1, y1); ctx.stroke(); ctx.restore();
+  }
+  // круги на воде
+  ripples = ripples.filter(r => now - r.t0 < r.dur);
+  for (const r of ripples) {
+    const k = (now - r.t0) / r.dur; if (k < 0) continue;
+    ctx.strokeStyle = `rgba(207,230,220,${(1 - k) * .6})`; ctx.lineWidth = 2.4 * (1 - k) + .4;
+    ctx.beginPath(); ctx.ellipse(r.x, r.y + 6, 10 + k * 56, (10 + k * 56) * .85, 0, 0, 6.28); ctx.stroke();
+  }
+  // лягушки (сначала зелёные, рыжая сверху)
+  const keys = Object.keys(frogs).map(Number).sort((a, b) => (a === red) - (b === red) || (frogs[a].y - frogs[b].y));
+  for (const k of keys) {
+    const f = frogs[k];
+    if (+k === sel && !busy && !f.anim) { f.z += (9 - f.z) * .25; f.sc += (1.08 - f.sc) * .25; }
+    else if (!f.anim) { f.z += (0 - f.z) * .25; f.sc += (1 - f.sc) * .25; }
+    drawFrog(f, +k === red, t);
+  }
+  for (const f of sinking) drawFrog(f, false, t);
+  // искры
+  sparks = sparks.filter(s => now - s.t0 < s.life);
+  for (const s of sparks) {
+    const k = (now - s.t0) / s.life, dt = (now - s.t0) / 1000;
+    const x = s.x + s.vx * dt, y = s.y + s.vy * dt + 20 * dt * dt;
+    ctx.globalAlpha = 1 - k; ctx.fillStyle = s.c; ctx.beginPath(); ctx.arc(x, y, 2.6 * (1 - k * .5), 0, 6.28); ctx.fill(); ctx.globalAlpha = 1;
+  }
+  // победа: кувшинки распускаются на пустых листьях
+  if (won) {
+    const k = Math.min(1, (now - winT0) / 1600);
+    for (let i = 0; i < N; i++) if (i !== red) {
+      const [x, y] = pos(i); const d = Math.max(0, Math.min(1, k * 1.6 - (i % 5) * .12));
+      if (d > 0) drawFlower(x, y, .55 * (1 - Math.pow(1 - d, 3)) , t, i);
+    }
+    if (Math.random() < .25) burst(...pos(red), '#e8c77a', 1);
+  }
+}
+let sinking = [];
+function startLoop() { if (running) return; running = true; fit(); raf = requestAnimationFrame(frame); }
+function stopLoop() { running = false; cancelAnimationFrame(raf); }
+document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(raf); } else if (running) { raf = requestAnimationFrame(frame); } });
+
+/* ---------- игра ---------- */
 function startLevel(i) {
   cur = i; const L = LV[i]; mask = L.mask; red = L.red; hist = []; sel = -1; busy = false; usedHint = false; usedUndo = false; moves = 0;
+  hintMove = null; won = false; sinking = []; ripples = []; sparks = [];
   store.set('last', i);
-  $('lvNum').textContent = i + 1;
-  hideOv();
-  show('game'); buildBoard(); renderFrogs();
-  setMsg(i === 0 ? 'Нажмите на зелёную лягушку, потом на свободный лист за соседкой.' : '');
+  hideOv(); setFrogs();
+  show('game'); setMsg(i === 0 && !Object.keys(stars).length ? 'Коснитесь зелёной лягушки, затем свободного листа за соседкой.' : '');
   update();
 }
-function renderFrogs() {
-  gFrogs.innerHTML = ''; frogEls = {};
-  for (let i = 0; i < N; i++) if (mask >> i & 1) {
-    const f = frogNode(i, i === red); f.rot = ((i * 37) % 40) - 20; placeFrog(f, i); frogEls[i] = f;
-  }
-}
+function setFrogs() { frogs = {}; for (let i = 0; i < N; i++) if (mask >> i & 1) frogs[i] = mkFrog(i); }
 function setMsg(t, warn) { const m = $('msg'); m.textContent = t; m.classList.toggle('warn', !!warn); }
 function frogsLeft() { let n = 0; for (let i = 0; i < N; i++) if (mask >> i & 1) n++; return n; }
 function update() {
   const n = frogsLeft() - 1;
-  $('left').textContent = n === 0 ? 'осталась только рыжая' : `зелёных: ${n}`;
-  $('bUndo').disabled = hist.length === 0;
-  padEls.forEach(({ ring }, i) => {
-    let op = 0, col = '#e9c46a', dash = '';
-    if (i === sel) { op = 1; }
-    else if (sel >= 0 && legal(mask, red).some(j => j[0] === sel && j[2] === i)) { op = .8; col = '#f6efe4'; dash = '5 6'; }
-    ring.setAttribute('opacity', op); ring.setAttribute('stroke', col); ring.setAttribute('stroke-dasharray', dash);
-  });
-  for (const k in frogEls) { const f = frogEls[k]; placeFrog(f, +k, +k === sel ? 1.1 : 1, +k === sel ? 4 : 0); }
+  $('left').textContent = n === 0 ? 'осталась только рыжая' : 'зелёных: ' + n;
+  $('bUndo').disabled = hist.length === 0 || busy;
 }
-function clearHint() { if (hintEl) { hintEl.remove(); hintEl = null; } }
+function hit(ev) {
+  const r = cv.getBoundingClientRect();
+  const x = (ev.clientX - r.left) / r.width * S, y = (ev.clientY - r.top) / r.height * S;
+  let best = -1, bd = 1e9;
+  for (let i = 0; i < N; i++) { const [px, py] = pos(i); const d = Math.hypot(px - x, py - y); if (d < bd) { bd = d; best = i; } }
+  return bd < STEP * .62 ? best : -1;
+}
+cv.addEventListener('click', ev => { const i = hit(ev); if (i >= 0) tapPad(i); });
+
 function tapPad(i) {
-  if (busy) return;
-  ac(); // unlock audio on first touch
-  clearHint();
+  if (busy || won) return;
+  ac(); hintMove = null;
   const has = mask >> i & 1;
   if (has) {
     if (sel === i) { sel = -1; update(); return; }
     const mv = legal(mask, red).filter(j => j[0] === i);
     sel = i; snd.tap();
-    if (!mv.length) setMsg('Этой лягушке сейчас некуда прыгнать.', true); else setMsg('');
+    setMsg(mv.length ? '' : 'Этой лягушке сейчас некуда прыгнуть.', !mv.length);
     update(); return;
   }
-  if (sel < 0) { setMsg('Сначала выберите лягушку.'); return; }
+  if (sel < 0) { setMsg('Сначала коснитесь лягушки.'); return; }
   const j = legal(mask, red).find(j => j[0] === sel && j[2] === i);
   if (!j) {
-    const blockedByRed = JUMPS.some(([a, o, t]) => a === sel && t === i && o === red && (mask >> o & 1));
-    snd.no(); setMsg(blockedByRed ? 'Рыжую лягушку перепрыгивать нельзя.' : 'Туда не допрыгнуть: прыгать можно только через соседку на свободный лист.', true);
+    const blocked = JUMPS.some(([a, o, t]) => a === sel && t === i && o === red && (mask >> o & 1));
+    snd.no(); buzz(14);
+    setMsg(blocked ? 'Рыжую лягушку перепрыгивать нельзя.' : 'Прыгать можно только через соседку на свободный лист.', true);
     return;
   }
   doMove(j);
 }
+const ease = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
 function doMove(j, instant) {
   const [a, o, t] = j;
   hist.push([mask, red]); moves++;
-  const fA = frogEls[a], fO = frogEls[o];
+  const fA = frogs[a], fO = frogs[o];
   [mask, red] = apply(mask, red, j);
-  delete frogEls[a]; delete frogEls[o]; frogEls[t] = fA; sel = -1; setMsg('');
-  const done = () => { busy = false; update(); checkEnd(); };
-  if (instant || reduced) { fO.g.remove(); placeFrog(fA, t); ripple(o, true); snd.plop(); done(); return Promise.resolve(); }
-  busy = true; snd.hop();
+  delete frogs[a]; delete frogs[o]; frogs[t] = fA; sel = -1; setMsg('');
+  const [x0, y0] = pos(a), [x1, y1] = pos(t), [xo, yo] = pos(o);
+  const done = () => { fA.anim = false; fA.x = x1; fA.y = y1; fA.z = 0; fA.sq = 0; busy = false; update(); checkEnd(); };
+  if (instant || reduced) { fA.x = x1; fA.y = y1; ripple(xo, yo, 1); snd.plop(); done(); return Promise.resolve(); }
+  busy = true; fA.anim = true; snd.hop(); buzz(8);
+  const ang = Math.atan2(y1 - y0, x1 - x0) + Math.PI / 2; let r0 = fA.rot, r1 = ang;
+  while (r1 - r0 > Math.PI) r1 -= 2 * Math.PI; while (r1 - r0 < -Math.PI) r1 += 2 * Math.PI;
+  sinking.push(fO); fO.sinkT = null;
   return new Promise(res => {
-    const [x0, y0] = pos(a), [x1, y1] = pos(t); const dur = 460; const t0 = performance.now();
-    const ang = Math.atan2(y1 - y0, x1 - x0) * 180 / Math.PI + 90; const r0 = fA.rot; let r1 = ang; while (r1 - r0 > 180) r1 -= 360; while (r1 - r0 < -180) r1 += 360;
-    let plopped = false;
+    const t0 = performance.now(), dur = 520; let plopped = false;
     const step = now => {
-      const k = Math.min(1, (now - t0) / dur); const e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
-      const x = x0 + (x1 - x0) * e, y = y0 + (y1 - y0) * e; const h = Math.sin(Math.PI * k);
-      fA.rot = r0 + (r1 - r0) * Math.min(1, k * 2.2);
-      fA.g.setAttribute('transform', `translate(${x} ${y - h * 26}) rotate(${fA.rot}) scale(${1 + h * .28})`);
-      if (!plopped && k > .5) { plopped = true; sink(fO, o); }
-      if (k < 1) requestAnimationFrame(step); else { done(); res(); }
+      const k = Math.min(1, (now - t0) / dur), e = ease(k), h = Math.sin(Math.PI * k);
+      // присед → прыжок → приземление
+      fA.x = x0 + (x1 - x0) * e; fA.y = y0 + (y1 - y0) * e; fA.z = h * 34;
+      fA.rot = r0 + (r1 - r0) * Math.min(1, k * 2.4); fA.sc = 1 + h * .22;
+      fA.sq = k < .12 ? k / .12 : k > .86 ? (1 - k) / .14 * .8 : 0;
+      if (!plopped && k > .45) {
+        plopped = true; snd.plop(); ripple(xo, yo); burst(xo, yo, '#cfe6dc', 8);
+        const s0 = performance.now();
+        const sk = n2 => {
+          const q = Math.min(1, (n2 - s0) / 520);
+          fO.alpha = 1 - q; fO.sc = 1 - q * .8; fO.z = -q * 8; fO.rot += .05;
+          if (q < 1) requestAnimationFrame(sk); else sinking = sinking.filter(x => x !== fO);
+        };
+        requestAnimationFrame(sk);
+      }
+      if (k < 1) requestAnimationFrame(step); else { ripple(x1, y1, 1); done(); res(); }
     };
     requestAnimationFrame(step);
   });
 }
-function sink(f, i) {
-  snd.plop(); ripple(i);
-  const [x, y] = pos(i); const t0 = performance.now(); const dur = 420;
-  const step = now => {
-    const k = Math.min(1, (now - t0) / dur);
-    f.g.setAttribute('transform', `translate(${x} ${y + k * 6}) rotate(${f.rot + k * 40}) scale(${1 - k * .85})`);
-    f.g.setAttribute('opacity', 1 - k);
-    if (k < 1) requestAnimationFrame(step); else f.g.remove();
-  };
-  requestAnimationFrame(step);
-}
-function ripple(i, quick) {
-  const [x, y] = pos(i);
-  for (let n = 0; n < 3; n++) {
-    const c = el('circle', { cx: x, cy: y, r: 10, fill: 'none', stroke: '#cfe6dc', 'stroke-width': 2.2, opacity: 0 }, gFx);
-    if (quick || reduced) { setTimeout(() => c.remove(), 10); continue; }
-    const t0 = performance.now() + n * 150, dur = 900;
-    const step = now => {
-      const k = (now - t0) / dur; if (k < 0) { requestAnimationFrame(step); return; }
-      if (k >= 1) { c.remove(); return; }
-      c.setAttribute('r', 10 + k * 48); c.setAttribute('opacity', (1 - k) * .7); c.setAttribute('stroke-width', 2.2 * (1 - k) + .3);
-      requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }
-}
 function checkEnd() {
   if (mask === (1 << red)) { win(); return; }
-  if (!legal(mask, red).length) { setTimeout(() => $('stuckOv').classList.add('on'), reduced ? 0 : 350); return; }
+  if (!legal(mask, red).length) setTimeout(() => $('stuck').classList.add('on'), reduced ? 0 : 400);
 }
 function win() {
   const s = usedHint ? 1 : (usedUndo ? 2 : 3);
   if ((stars[cur] || 0) < s) { stars[cur] = s; store.set('stars', stars); }
-  snd.win();
+  snd.win(); won = true; winT0 = performance.now();
   const last = cur === LV.length - 1;
-  $('winStars').innerHTML = [1, 2, 3].map(k => STAR(k <= s).replace('<svg', `<svg class="${k <= s ? 'on' : ''}" style="animation-delay:${k * .12}s"`)).join('');
-  $('winText').textContent = last ? 'Это был последний пруд. Все лягушки дома, рыжая — королева тишины.'
-    : s === 3 ? 'Чисто, без подсказок и отмен.' : s === 2 ? 'Решено. Без отмены ходов будет три звезды.' : 'Решено с подсказкой. Попробуйте потом сами — за это звёзды.';
-  $('wNext').textContent = last ? 'Ещё раз' : 'Дальше';
-  setTimeout(() => $('winOv').classList.add('on'), reduced ? 0 : 450);
+  $('finText').textContent = (last ? 'Это был последний пруд. Все лягушки дома, рыжая — хозяйка тишины.'
+    : s === 3 ? 'Чисто, без подсказок и отмен. ★★★' : s === 2 ? 'Решено. Без отмены ходов будет три звезды. ★★' : 'Решено с подсказкой. ★');
+  $('wNext').textContent = last ? 'Сначала' : 'Дальше';
+  $('bar').style.visibility = 'hidden'; $('left').parentNode.style.visibility = 'hidden';
+  setTimeout(() => $('fin').classList.add('on'), reduced ? 0 : 1300);
 }
-function hideOv() { $('winOv').classList.remove('on'); $('stuckOv').classList.remove('on'); }
+function hideOv() { $('fin').classList.remove('on'); $('stuck').classList.remove('on'); $('bar').style.visibility = ''; $('left').parentNode.style.visibility = ''; }
 function undo() {
   if (busy || !hist.length) return;
-  clearHint(); hideOv(); [mask, red] = hist.pop(); usedUndo = true; sel = -1; renderFrogs(); setMsg(''); update(); snd.tap();
+  hintMove = null; hideOv(); won = false; [mask, red] = hist.pop(); usedUndo = true; sel = -1; setFrogs(); setMsg(''); update(); snd.tap();
 }
 function restart() { if (busy) return; const h = usedHint, u = usedUndo || hist.length > 0; startLevel(cur); usedHint = h; usedUndo = u; }
 function hint() {
-  if (busy) return; clearHint(); hideOv();
-  let j = nextMove(mask, red);
-  if (!j) { setMsg('Из этой позиции уже не выйти. Отменим ход?', true); snd.no(); return; }
-  usedHint = true; sel = j[0]; update();
-  const [x0, y0] = pos(j[0]), [x1, y1] = pos(j[2]); const mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
-  const nx = -(y1 - y0), ny = x1 - x0, L = Math.hypot(nx, ny);
-  const cx = mx + nx / L * 40, cy = my + ny / L * 40;
-  hintEl = el('path', { d: `M${x0} ${y0} Q${cx} ${cy} ${x1} ${y1}`, fill: 'none', stroke: '#e9c46a', 'stroke-width': 3, 'stroke-dasharray': '7 7', 'stroke-linecap': 'round', opacity: .9 }, gFx);
-  if (!reduced && hintEl.animate) hintEl.animate([{ strokeDashoffset: 28 }, { strokeDashoffset: 0 }], { duration: 700, iterations: Infinity });
-  setMsg('Подсказка: прыгните выделенной лягушкой по золотой дуге.');
-  snd.tap();
+  if (busy || won) return; hideOv();
+  const j = nextMove(mask, red);
+  if (!j) { setMsg('Из этой позиции выхода нет. Отменим ход?', true); snd.no(); return; }
+  usedHint = true; sel = j[0]; hintMove = j; update(); setMsg('Прыгните по золотой дуге.'); snd.tap();
 }
-
 $('bUndo').onclick = undo; $('sUndo').onclick = undo;
 $('bRestart').onclick = restart; $('sRestart').onclick = () => { hideOv(); restart(); };
 $('bHint').onclick = hint;
@@ -468,13 +532,16 @@ $('wMenu').onclick = () => { hideOv(); renderMenu(); show('menu'); };
 $('wNext').onclick = () => { hideOv(); startLevel(cur === LV.length - 1 ? 0 : cur + 1); };
 
 renderMenu();
-
-/* test/automation hooks */
+if (!store.get('v2_seen', 0)) {
+  const has = Object.keys(stars).length;
+  if (has) $('newNote').textContent = 'Пруд стал живее: вода колышется, лягушки дышат. Ваши пройденные уровни на месте.';
+  setTimeout(() => { $('newNote').textContent = ''; if (!has) openSheet(); store.set('v2_seen', 1); }, has ? 6000 : 900);
+}
 window.frogs = {
   levels: LV.length, solvable: () => LV.map(l => solvable(l.mask, l.red)),
-  start: startLevel, tap: tapPad, state: () => ({ cur, mask, red, left: frogsLeft(), moves, busy }),
+  start: startLevel, tap: tapPad, state: () => ({ cur, mask, red, left: frogsLeft(), moves, busy, won }),
   solution: () => solution(mask, red), hint, undo, restart,
-  async autoSolve(instant) { const seq = solution(mask, red); for (const [a, , t] of seq) { tapPad(a); if (instant) { const j = legal(mask, red).find(j => j[0] === a && j[2] === t); doMove(j, true); } else { tapPad(t); while (busy) await new Promise(r => setTimeout(r, 30)); } } return mask === (1 << red); }
+  async autoSolve(instant) { const seq = solution(mask, red); for (const [a, , t] of seq) { sel = -1; tapPad(a); if (instant) { const j = legal(mask, red).find(j => j[0] === a && j[2] === t); await doMove(j, true); } else { tapPad(t); while (busy) await new Promise(r => setTimeout(r, 30)); } } return mask === (1 << red); }
 };
 })();
 </script>

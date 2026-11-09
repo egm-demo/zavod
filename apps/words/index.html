@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a1416">
+<title>Слова на воде</title>
+<link rel="stylesheet" href="../../assets/fonts/fonts.css"><link rel="stylesheet" href="../../assets/ui.css">
+<style>
+#water{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.z-app{position:relative;z-index:1}
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
+.screen.on{display:flex}
+.z-top a.z-icon{text-decoration:none}
+.go{margin-top:22px;align-self:flex-start}
+.lvgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px 10px;margin-top:26px;padding-bottom:16px}
+.lv{position:relative;aspect-ratio:1;min-height:52px;border-radius:50%;display:grid;place-items:center;font:500 21px/1 var(--display);color:#fff;font-variant-numeric:lining-nums tabular-nums;font-feature-settings:'lnum' 1,'tnum' 1;background:radial-gradient(circle at 38% 32%,#4a8a74,#2b5a4c);box-shadow:0 4px 10px rgba(0,0,0,.35);transition:transform .15s var(--ease)}
+.lv:active{transform:scale(.93)}
+.lv.done{background:radial-gradient(circle at 38% 32%,#8fc7a0,#4a8466)}
+.lv.done::after{content:'';position:absolute;right:4px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--glow);box-shadow:0 0 8px rgba(232,199,122,.8)}
+.lv.locked{background:rgba(243,236,224,.12);color:rgba(243,236,224,.82);box-shadow:none}
+.lv.now{box-shadow:0 0 0 3px var(--glow),0 4px 10px rgba(0,0,0,.35)}
+.prog{margin-top:14px}
+.gm{flex:1;display:flex;flex-direction:column;min-height:0}
+.ginfo .z-cap{color:var(--ink)}.ginfo{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 0}
+.fire{display:inline-flex;align-items:center;gap:6px;color:var(--glow);font:600 15px/1 var(--text)}
+.fire i{width:10px;height:10px;border-radius:50%;background:var(--glow);box-shadow:0 0 10px 2px rgba(232,199,122,.7)}
+#board{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative}
+#cells{display:grid;gap:5px;position:relative}
+.cell{border-radius:28%;display:grid;place-items:center;font:600 var(--fs,24px)/1 var(--display);text-transform:uppercase;color:#10241d;position:relative}
+.cell.e{background:rgba(243,236,224,.14);box-shadow:inset 0 0 0 1.5px rgba(243,236,224,.28)}
+.cell.f{background:radial-gradient(circle at 35% 30%,#d9efc9,#9cc98f);box-shadow:0 3px 8px rgba(0,0,0,.35);z-index:2}
+.cell.h{background:radial-gradient(circle at 35% 30%,#fbe7ae,#e8c77a)}
+.cell.n{visibility:hidden}
+.cell.pulse{animation:pulse .7s var(--ease)}
+@keyframes pulse{40%{box-shadow:0 0 0 4px rgba(232,199,122,.9)}}
+#pv{height:54px;margin-top:4px;display:flex;align-items:center;justify-content:center;position:relative}
+#pvw{font:600 30px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#10241d;background:var(--glow);padding:8px 16px 8px 20px;border-radius:999px;opacity:0;transform:scale(.8);transition:opacity .15s,transform .2s var(--ease);box-shadow:0 4px 14px rgba(0,0,0,.35)}
+#pvw.on{opacity:1;transform:none}
+#pvw.bad{background:#e4857a;animation:shake .35s}
+#pvw.dup{background:#cfe0d6}
+#pvw.good{background:#b9e3a3}
+@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+#note{min-height:22px;margin-bottom:8px;text-align:center;font-size:14.5px;color:var(--ink-2);padding:2px 8px 4px;transition:color .3s}
+#note.warn{color:var(--accent)}
+#wheel{position:relative;margin:0 auto;width:var(--W);height:var(--W);touch-action:none;user-select:none;-webkit-user-select:none}
+#disc{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 40%,rgba(31,67,67,.9),rgba(10,24,25,.92));box-shadow:inset 0 0 0 1.5px rgba(243,236,224,.12),0 10px 30px rgba(0,0,0,.4)}
+#trail{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.pad{position:absolute;width:calc(var(--W)*.21);height:calc(var(--W)*.21);margin:calc(var(--W)*-.105) 0 0 calc(var(--W)*-.105);border-radius:50%;display:grid;place-items:center;font:600 calc(var(--W)*.105)/1 var(--display);text-transform:uppercase;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);background:radial-gradient(circle at 36% 30%,#6fb59a,#2f6b5b);box-shadow:0 4px 10px rgba(0,0,0,.45);transition:left .55s var(--ease),top .55s var(--ease),transform .15s,background .15s;z-index:3;pointer-events:none;padding-bottom:2px}
+.pad.on{background:radial-gradient(circle at 36% 30%,#fbe7ae,#e8c77a);color:#10241d;text-shadow:none;transform:scale(1.12)}
+#shuf{position:absolute;left:50%;top:50%;width:calc(var(--W)*.17);height:calc(var(--W)*.17);margin:calc(var(--W)*-.085) 0 0 calc(var(--W)*-.085);border-radius:50%;background:rgba(243,236,224,.1);display:grid;place-items:center;z-index:4}
+#shuf svg{width:55%;height:55%;fill:none;stroke:var(--ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.badge{position:absolute;right:calc(50% - 30px);top:2px;min-width:18px;height:18px;border-radius:9px;background:var(--glow);color:#10241d;font:700 11px/18px var(--text);text-align:center;padding:0 4px}
+.z-tool{position:relative}
+.fin{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(4,10,11,.8);opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+.fin.on{opacity:1;pointer-events:auto}
+.fin .z-card{background:#16302f;border:1px solid rgba(243,236,224,.16);max-width:340px;width:100%;text-align:center;padding:26px 22px;transform:translateY(14px);transition:transform .6s var(--ease)}
+.fin.on .z-card{transform:none}
+.fin p{color:var(--ink-2);margin:8px 0 20px;font-size:15px;line-height:1.45}
+.fin .row{display:flex;gap:8px;justify-content:center}
+.rule{display:flex;gap:14px;align-items:flex-start;margin:14px 0;font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+.rule b{color:var(--ink);font-weight:600}
+.rule em{flex:none;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font:600 14px/26px var(--text);text-align:center;font-style:normal}
+.sheet-h{margin:4px 0 12px}
+.bw{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px}
+.bw span{padding:8px 14px;border-radius:999px;background:rgba(243,236,224,.09);font-size:16px;text-transform:capitalize}
+.srow{display:flex;justify-content:flex-end;border-top:1px solid var(--line);padding-top:12px}
+.flyer{position:fixed;z-index:40;pointer-events:none;border-radius:50%;background:var(--glow);box-shadow:0 0 14px 4px rgba(232,199,122,.8);width:12px;height:12px}
+</style>
+<!--pwa--><link rel="manifest" href="../../manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="../../icons/icon-192.png"><link rel="apple-touch-icon" href="../../icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('../../sw.js'))</script><!--/pwa-->
+</head>
+<body>
+<canvas id="water" aria-hidden="true"></canvas>
+<div class="z-app">
+  <div class="z-top">
+    <a class="z-icon" id="back" href="../../index.html" aria-label="Все приложения"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div class="z-title" id="ttl"></div>
+    <button class="z-icon" id="muteBtn" aria-label="Звук"></button>
+    <button class="z-icon" id="helpBtn" aria-label="Как играть"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.7.4-1 .9-1 1.6M12 16.6v.1"/></svg></button>
+  </div>
+
+  <section class="screen on" id="menu">
+    <h1 class="z-h1 z-in">Слова <i>на воде</i></h1>
+    <p class="z-lead z-in" style="animation-delay:.08s">Буквы плывут по кругу. Соберите из них слова — и кроссворд заполнится.</p>
+    <div class="z-cap prog z-in" id="progress" style="animation-delay:.14s"></div>
+    <button class="z-btn go z-in" id="goBtn" style="animation-delay:.18s">Играть</button>
+    <div class="lvgrid z-in" id="grid" style="animation-delay:.22s"></div>
+  </section>
+
+  <section class="screen" id="game">
+    <div class="ginfo"><div class="z-cap" id="cnt"></div><div class="fire" title="Светлячки"><i></i><span id="fl">0</span></div></div>
+    <div id="board"><div id="cells"></div></div>
+    <div id="pv"><div id="pvw"></div></div>
+    <div id="note"></div>
+    <div id="wheel"><div id="disc"></div><svg id="trail" viewBox="0 0 100 100" preserveAspectRatio="none"></svg><button id="shuf" aria-label="Перемешать буквы"><svg viewBox="0 0 24 24"><path d="M4 7h3c4 0 6 10 10 10h3M4 17h3c1.6 0 2.8-1 3.8-2.4M13 9.4C14 8 15.4 7 17 7h3"/><path d="M18 4.5L20.5 7 18 9.5M18 14.5l2.5 2.5-2.5 2.5"/></svg></button></div>
+    <div class="z-bar" id="bar">
+      <button class="z-tool" id="bMenu"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="12" r="2"/></svg>Уровни</button>
+      <button class="z-tool" id="bHint"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg>Светлячок<span class="badge" id="hb">0</span></button>
+      <button class="z-tool" id="bBonus"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z"/></svg>Бонусные<span class="badge" id="bb">0</span></button>
+    </div>
+  </section>
+</div>
+
+<div class="fin" id="fin"><div class="z-card"><div class="z-h2" id="finT">Все слова <i>найдены</i></div><p id="finP"></p><div class="row"><button class="z-btn quiet" id="fMenu">Уровни</button><button class="z-btn" id="fNext">Дальше</button></div></div></div>
+<div class="z-scrim" id="scrim"></div>
+<div class="z-sheet" id="sheet" role="dialog" aria-label="Как играть">
+  <h2 class="z-h2 sheet-h">Как <i>играть</i></h2>
+  <div class="rule"><em>1</em><div>Проведите пальцем по буквам на круге, не отрывая его, — получится слово.</div></div>
+  <div class="rule"><em>2</em><div>Слово из кроссворда <b>встанет на своё место</b>. Слова, которых в сетке нет, — <b>бонусные</b>: они копят светлячков.</div></div>
+  <div class="rule"><em>3</em><div><b>Светлячок</b> открывает одну букву в сетке. Три бонусных слова — один светлячок.</div></div>
+  <div class="srow"><button class="z-btn quiet" id="shClose">Понятно</button></div>
+</div>
+<div class="z-sheet" id="bsheet" role="dialog" aria-label="Бонусные слова">
+  <h2 class="z-h2 sheet-h">Бонусные <i>слова</i></h2>
+  <div id="bwList"></div>
+  <div class="srow"><button class="z-btn quiet" id="bsClose">Закрыть</button></div>
+</div>
+<div class="z-toast" id="toast"></div>
+
+<script>
+const RAW=["уход|дух.1.2.v;ход.1.0.h;уход.0.0.v|ухо", "остн|стон.2.0.h;сон.0.3.v;нос.0.1.h|тон", "аксо|оса.0.3.v;коса.2.0.h;сок.0.0.v|", "ктор|крот.0.1.v;кот.0.1.h;рот.2.0.h|", "отшра|штора.0.0.v;рот.3.0.h;шар.0.0.h|рота", "однра|народ.0.1.v;род.3.0.h;дно.0.0.h|дар", "оогдр|город.0.0.v;род.2.0.h;год.0.0.h|рог", "оьесн|осень.0.2.v;нос.1.0.h;сон.3.0.h|", "оксле|лесок.0.0.h;лес.0.0.v;село.2.0.h|сок", "шурга|груша.2.0.h;шаг.0.0.v;шар.0.0.h|", "взали|залив.1.0.h;ива.0.4.v;зал.0.1.v|виза", "лазсе|слеза.1.0.h;зал.0.4.v;лес.0.2.v|", "нсоас|сосна.0.0.v;сон.2.0.h;нос.2.2.v|оса", "кзато|отказ.2.0.h;кот.0.1.v;коза.0.1.h|акт", "лпчое|плечо.3.0.h;поле.0.2.v;пол.0.2.h|", "кулба|булка.0.2.v;клуб.1.0.h;лук.3.0.h|", "охвды|вход.0.2.v;выход.1.0.h;ход.3.0.h|", "оаргз|гроза.0.0.v;гора.0.0.h;роза.0.2.v|газ рог", "ркуча|куча.0.3.v;рука.3.0.h;ручка.0.0.h|", "ьелот|отель.0.2.v;тело.3.0.h;лето.1.0.v|ель", "акутш|штука.0.2.v;утка.3.0.h;шутка.1.0.h|акт шут", "таорв|автор.0.4.v;товар.4.0.h;рот.2.2.h|рота", "оептл|тепло.0.3.v;поле.1.0.h;лето.4.0.h;пол.0.1.v|тело", "нкосо|носок.0.0.h;окно.0.3.v;нос.0.0.v;сон.3.2.h|око сок", "апрот|тропа.0.3.v;порт.0.0.h;пора.4.0.h;рот.2.2.h|пар рота", "аедср|адрес.0.4.v;среда.0.0.h;еда.0.2.v;сад.0.0.v|дар", "лаисв|слива.2.0.h;лиса.0.0.v;сила.1.2.v;ива.0.4.v|", "осптр|спорт.2.0.h;рост.1.2.v;пост.0.0.v;рот.0.4.v|порт сорт спор", "марак|рамка.0.0.v;марка.2.0.h;рама.1.4.v;арка.1.2.v|мак мрак", "анзок|закон.0.3.v;знак.2.0.h;коза.0.0.v;зона.4.1.h|", "лцносе|солнце.1.0.h;сон.1.0.v;село.0.5.v;лес.1.2.v;нос.3.0.h|слон", "отрпки|портик.0.0.v;крот.5.0.h;порт.0.0.h;кот.3.3.v;рот.2.0.h|тип", "овзхду|воздух.1.0.h;уход.0.5.v;дух.1.3.v;вход.3.2.h;ход.0.1.v|вздох ухо", "оеткцв|цветок.1.3.v;цвет.4.0.h;отец.1.0.h;век.6.1.h;кот.0.0.v|", "еосркл|кресло.0.4.v;лесок.0.0.h;срок.0.2.v;село.5.1.h;лес.0.0.v|сок", "годаро|дорога.2.0.h;город.0.2.v;год.2.4.v;род.4.0.h;гора.0.2.h|дар рог", "клмбуа|клумба.3.0.h;булка.0.0.v;клуб.0.4.v;лук.2.2.v;мука.0.2.h|мак", "еооклс|сокол.0.4.v;колесо.0.0.h;лес.0.2.v;лесок.2.0.h;село.4.2.h|око сок", "моаснр|роман.0.2.v;роса.0.2.h;романс.2.0.h;нос.2.4.v;сон.4.0.h|норма оса", "аолквз|вокзал.0.2.v;коза.1.1.h;овал.4.0.h;волк.3.0.v;зал.0.4.v|", "хсрдао|расход.0.2.v;сад.5.0.h;роса.3.0.v;ход.3.2.h;род.1.4.v|дар оса хаос", "згоуар|угроза.0.2.v;груз.0.0.h;гроза.0.0.v;роза.2.2.h;узор.1.4.v|газ гора рог", "арманк|карман.2.0.h;рама.0.3.v;арка.0.2.h;марка.1.1.v;рамка.5.0.h|кран мак мрак", "кртауб|трубка.3.0.h;утка.1.4.v;брат.0.0.v;труба.1.2.v;брак.5.0.h|акт рука", "лдкеса|сделка.1.2.v;еда.6.0.h;склад.4.0.h;след.1.4.v;сад.2.0.h;лес.0.0.v|", "узлбак|клуб.5.0.h;булка.2.0.v;блузка.2.0.h;лук.0.4.v;зуб.4.2.v;зал.0.1.v|указ", "вилсат|листва.0.3.v;лиса.5.0.h;слива.0.2.h;аист.3.0.h;сила.2.3.h;лист.2.5.v;ива.1.0.v|", "клотес|лесок.5.0.h;стекло.0.3.v;тело.1.3.h;лето.1.5.v;стол.2.0.v;кот.3.3.h;лес.0.1.h|село скот сок толк", "рамаке|камера.3.1.h;мера.3.3.v;река.5.3.h;рамка.0.1.v;рама.2.6.v;марка.1.0.h;арка.6.0.h|мак мрак", "оарткс|строка.4.0.h;тоска.0.5.v;роса.2.3.h;срок.3.2.v;рост.2.0.v;рот.0.3.h;крот.6.2.h|акт кот оса рота скот сок сорт", "рогадпу|подруга.3.0.h;пруд.3.0.v;год.3.5.v;друг.3.2.v;удар.0.3.v;дуга.6.0.h;гора.0.6.v;род.1.1.h|дар пар пора рог упор", "одьнпле|полдень.0.3.v;поле.2.1.h;дело.4.2.h;день.6.0.h;плед.0.3.h;пол.3.5.v;плод.3.0.v;дно.0.6.v|ель лень олень", "аугркши|игрушка.0.3.v;рука.2.3.h;груша.4.0.h;шарик.0.0.h;шаг.1.6.v;круг.3.1.v;игра.6.0.h;шар.0.0.v|шкура", "оустакч|участок.0.2.v;куча.1.0.h;тучка.4.2.h;тоска.0.6.v;куст.1.0.v;утка.6.0.h;час.2.4.h;кот.0.4.h|акт оса сачок скот сок стук точка туча", "аакрмле|реклама.2.0.h;марка.0.0.v;рамка.1.4.v;камера.2.2.v;арка.2.6.v;река.5.1.h;мера.0.0.h;рама.7.1.h|мак мрак", "ьртлсоа|отрасль.3.0.h;роль.0.6.v;роса.0.3.v;соль.2.0.v;лось.3.5.v;рост.5.3.h;стол.1.1.h;рот.5.3.v|оса рота сорт", "шамакор|ромашка.1.2.v;марка.3.2.h;каша.5.0.h;комар.3.5.v;рамка.2.0.v;арка.1.1.h;рама.0.6.v;шар.7.1.h|кошмар мак марш мрак", "австзро|возраст.5.0.h;роса.4.1.v;роза.2.4.v;автор.7.1.h;товар.2.0.h;рост.2.6.v;рот.5.3.v;сова.0.2.v|взор оса рота сорт", "ктсарао|красота.4.0.h;тоска.0.2.v;карта.3.6.v;рост.2.0.h;крот.6.3.h;срок.1.0.v;строка.0.1.h;роса.4.1.v;кот.0.5.v|акт арка астра оса раса рот рота скот сок сорт", "тукрпод|продукт.0.5.v;укроп.2.2.h;крот.6.2.h;порт.4.3.v;пруд.4.3.h;труд.0.2.v;кот.0.0.h;род.3.0.h;урок.2.0.v|код рот упор утро", "лсетпоь|постель.1.4.v;степь.7.0.h;лось.3.2.h;тепло.1.2.h;стол.0.2.v;пост.4.1.v;село.5.3.h;поле.4.6.v;пол.0.6.v;лес.0.0.h|ель лето отель плоть сеть соль тело"];
+
+const GAME = (() => {
+'use strict';
+/* localStorage: kuv_words_prog {уровень:{f:[слова],b:[бонусы],h:["r,c"]}}, kuv_words_done {уровень:1}, kuv_words_fl число светлячков,
+   kuv_words_bc бонусов к следующему светлячку, kuv_words_last текущий уровень, kuv_words_muted, kuv_words_seen */
+const LS = 'kuv_words_';
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(LS + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(LS + k, JSON.stringify(v)); } catch (e) {} }
+};
+const $ = id => document.getElementById(id);
+const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const LV = RAW.map(s => {
+  const [letters, g, b] = s.split('|');
+  const words = g.split(';').map(x => { const [w, r, c, d] = x.split('.'); return { w, r: +r, c: +c, d }; });
+  let H = 0, W = 0;
+  words.forEach(o => { H = Math.max(H, o.r + (o.d === 'v' ? o.w.length : 1)); W = Math.max(W, o.c + (o.d === 'h' ? o.w.length : 1)); });
+  return { letters, words, bonus: b ? b.split(' ') : [], H, W };
+});
+
+/* ---------- звук ---------- */
+let actx = null, muted = store.get('muted', false);
+function ac() { if (muted) return null; if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } } if (actx.state === 'suspended') actx.resume(); return actx; }
+function tone(f1, f2, dur, vol, type, delay) {
+  const c = ac(); if (!c) return; const t0 = c.currentTime + (delay || 0);
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type || 'sine'; o.frequency.setValueAtTime(f1, t0); o.frequency.exponentialRampToValueAtTime(f2, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g).connect(c.destination); o.start(t0); o.stop(t0 + dur + 0.02);
+}
+const NOTES = [392, 440, 494, 523, 587, 659, 740, 784];
+const snd = {
+  pick(i) { tone(NOTES[Math.min(i, 7)], NOTES[Math.min(i, 7)] * 1.005, 0.18, 0.05, 'sine'); },
+  good(n) { for (let k = 0; k < Math.min(n, 5); k++) tone(523 * Math.pow(1.122, k), 523 * Math.pow(1.122, k) * 1.01, 0.4, 0.05, 'sine', k * 0.07); },
+  bonus() { tone(880, 1320, 0.3, 0.05, 'triangle'); tone(1175, 1760, 0.35, 0.04, 'sine', 0.1); },
+  bad() { tone(220, 170, 0.2, 0.05, 'triangle'); },
+  dup() { tone(500, 500, 0.1, 0.04, 'sine'); },
+  win() { [523, 659, 784, 1046, 1318].forEach((f, i) => tone(f, f * 1.01, 0.8, 0.06, 'sine', i * 0.13)); },
+  shuf() { tone(300, 600, 0.2, 0.04, 'sine'); }
+};
+const buzz = n => { if (!muted && navigator.vibrate) navigator.vibrate(n); };
+const muteBtn = $('muteBtn');
+function drawMute() {
+  muteBtn.innerHTML = muted
+    ? '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>'
+    : '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
+  muteBtn.setAttribute('aria-label', muted ? 'Включить звук' : 'Выключить звук');
+}
+muteBtn.onclick = () => { muted = !muted; store.set('muted', muted); drawMute(); if (!muted) snd.good(2); };
+drawMute();
+
+/* ---------- состояние ---------- */
+let prog = store.get('prog', {}), done = store.get('done', {}), fl = store.get('fl', null), bc = store.get('bc', 0);
+if (!prog || typeof prog !== 'object') prog = {};
+if (!done || typeof done !== 'object') done = {};
+if (typeof fl !== 'number') { fl = 2; store.set('fl', fl); }
+let cur = 0, level = null, st = null, order = [], busy = 0;
+const saveProg = () => { store.set('prog', prog); store.set('done', done); store.set('fl', fl); store.set('bc', bc); store.set('last', cur); };
+function firstUndone() { let i = 0; while (i < LV.length && done[i]) i++; return Math.min(i, LV.length - 1); }
+const unlockedUpTo = () => Math.min(LV.length - 1, firstUndone() + 2);
+
+let toastT = 0;
+function toast(t) { const e = $('toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), 2200); }
+function setNote(t, warn) { const n = $('note'); n.textContent = t || ''; n.classList.toggle('warn', !!warn); }
+function show(id) { for (const s of document.querySelectorAll('.screen')) s.classList.toggle('on', s.id === id); $('ttl').textContent = id === 'game' ? 'Уровень ' + (cur + 1) : ''; window.scrollTo(0, 0); }
+
+function renderMenu() {
+  const g = $('grid'); g.innerHTML = ''; const up = unlockedUpTo(), nowI = firstUndone(); let n = 0;
+  LV.forEach((l, i) => {
+    const b = document.createElement('button'); const d = !!done[i], lock = i > up && !d; if (d) n++;
+    b.className = 'lv' + (d ? ' done' : '') + (lock ? ' locked' : '') + (i === nowI && !d ? ' now' : '');
+    b.textContent = i + 1;
+    b.setAttribute('aria-label', 'Уровень ' + (i + 1) + (d ? ', пройден' : lock ? ', закрыт' : ''));
+    b.onclick = () => { if (lock) { snd.bad(); toast('Сначала пройдите предыдущие уровни'); return; } startLevel(i); };
+    g.appendChild(b);
+  });
+  $('progress').textContent = n ? `Пройдено ${n} из ${LV.length}` : `${LV.length} ${LV.length % 10 === 1 && LV.length % 100 !== 11 ? 'уровень' : 'уровней'}`;
+  $('goBtn').textContent = n ? 'Продолжить · уровень ' + (nowI + 1) : 'Играть';
+}
+$('goBtn').onclick = () => startLevel(firstUndone());
+
+/* ---------- уровень ---------- */
+function startLevel(i) {
+  cur = i; level = LV[i];
+  const p = prog[i] || (prog[i] = { f: [], b: [], h: [] });
+  st = { f: new Set(p.f), b: new Set(p.b), h: new Set(p.h), cells: new Map() };
+  level.words.forEach((o, wi) => { for (let k = 0; k < o.w.length; k++) { const r = o.r + (o.d === 'v' ? k : 0), c = o.c + (o.d === 'h' ? k : 0), key = r + ',' + c; if (!st.cells.has(key)) st.cells.set(key, { ch: o.w[k], r, c, ws: [] }); st.cells.get(key).ws.push(wi); } });
+  order = level.letters.split('').map((_, k) => k);
+  store.set('last', i);
+  $('fin').classList.remove('on'); $('bar').style.visibility = '';
+  show('game'); buildBoard(); buildWheel(); updateInfo(); setNote(i === 0 && !Object.keys(done).length ? 'Проведите пальцем по буквам, чтобы составить слово.' : '');
+}
+function cellFilled(key) { const c = st.cells.get(key); return c.ws.some(wi => st.f.has(level.words[wi].w)) || st.h.has(key); }
+function buildBoard() {
+  const box = $('cells'), bd = $('board');
+  const gap = 5, bw = bd.clientWidth - 4, bh = bd.clientHeight - 4;
+  const s = Math.max(20, Math.min(54, Math.floor((bw - gap * (level.W - 1)) / level.W), Math.floor((bh - gap * (level.H - 1)) / level.H)));
+  box.style.gridTemplateColumns = `repeat(${level.W},${s}px)`; box.style.gridTemplateRows = `repeat(${level.H},${s}px)`; box.style.setProperty('--fs', Math.round(s * .55) + 'px');
+  box.innerHTML = '';
+  for (let r = 0; r < level.H; r++) for (let c = 0; c < level.W; c++) {
+    const key = r + ',' + c, d = document.createElement('div'), cell = st.cells.get(key);
+    d.className = 'cell ' + (cell ? 'e' : 'n'); d.dataset.k = key; d.style.width = d.style.height = s + 'px';
+    box.appendChild(d); if (cell) paintCell(key, true);
+  }
+}
+function paintCell(key) {
+  const d = $('cells').querySelector(`[data-k="${key}"]`), c = st.cells.get(key); if (!d || !c) return;
+  const wordDone = c.ws.some(wi => st.f.has(level.words[wi].w));
+  if (wordDone) { d.className = 'cell f'; d.textContent = c.ch; }
+  else if (st.h.has(key)) { d.className = 'cell f h'; d.textContent = c.ch; }
+  else { d.className = 'cell e'; d.textContent = ''; }
+}
+function updateInfo() {
+  $('cnt').textContent = `Слов: ${st.f.size} из ${level.words.length}`;
+  $('fl').textContent = fl; $('hb').textContent = fl; $('hb').style.display = fl ? '' : 'none';
+  $('bb').textContent = st.b.size; $('bb').style.display = st.b.size ? '' : 'none';
+}
+
+/* ---------- круг букв ---------- */
+let W = 280;
+const pads = [];
+function sizeWheel() { W = Math.round(Math.max(200, Math.min(innerWidth * .8, innerHeight * .33, 330))); $('wheel').style.setProperty('--W', W + 'px'); }
+function padPos(slot, n) { const a = -Math.PI / 2 + slot * 2 * Math.PI / n; return [50 + 36 * Math.cos(a), 50 + 36 * Math.sin(a)]; }
+function buildWheel() {
+  sizeWheel(); const wh = $('wheel'); pads.forEach(p => p.el.remove()); pads.length = 0;
+  const n = level.letters.length;
+  level.letters.split('').forEach((ch, k) => {
+    const el = document.createElement('div'); el.className = 'pad'; el.textContent = ch; wh.appendChild(el);
+    pads.push({ el, ch, slot: k });
+  });
+  layoutPads(); clearPick();
+}
+function layoutPads() { const n = pads.length; pads.forEach(p => { const [x, y] = padPos(p.slot, n); p.el.style.left = x + '%'; p.el.style.top = y + '%'; }); }
+function shuffle() {
+  if (busy) return; clearPick(); const n = pads.length; let slots = pads.map(p => p.slot);
+  for (let t = 0; t < 6; t++) { for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [slots[i], slots[j]] = [slots[j], slots[i]]; } if (slots.some((s, i) => s !== pads[i].slot)) break; }
+  pads.forEach((p, i) => p.slot = slots[i]);
+  layoutPads(); snd.shuf();
+}
+$('shuf').addEventListener('click', shuffle);
+
+let path = [], dragging = false;
+function clearPick() { path = []; pads.forEach(p => p.el.classList.remove('on')); drawTrail(null); showPv('', ''); }
+function showPv(t, cls) { const e = $('pvw'); if (!t) { e.classList.remove('on'); return; } e.textContent = t; e.className = 'on ' + (cls || ''); }
+function padCenter(p) { const r = $('wheel').getBoundingClientRect(), q = p.el.getBoundingClientRect(); return [(q.left + q.width / 2 - r.left) / r.width * 100, (q.top + q.height / 2 - r.top) / r.height * 100]; }
+function drawTrail(pt) {
+  const s = $('trail'); let h = '';
+  if (path.length) {
+    const pts = path.map(i => padCenter(pads[i])); if (pt) pts.push(pt);
+    h = `<polyline points="${pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ')}" fill="none" stroke="rgba(232,199,122,.85)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  }
+  s.innerHTML = h;
+}
+function pointAt(ev) { const r = $('wheel').getBoundingClientRect(); return [(ev.clientX - r.left) / r.width * 100, (ev.clientY - r.top) / r.height * 100]; }
+function padAt(pt) {
+  let best = -1, bd = 1e9;
+  pads.forEach((p, i) => { const c = padCenter(p), d = Math.hypot(c[0] - pt[0], c[1] - pt[1]); if (d < bd) { bd = d; best = i; } });
+  return bd < 11.5 ? best : -1;
+}
+function curWord() { return path.map(i => pads[i].ch).join(''); }
+function addPad(i) {
+  if (path.length && path[path.length - 1] === i) return;
+  if (path.length > 1 && path[path.length - 2] === i) { const o = path.pop(); pads[o].el.classList.remove('on'); }
+  else if (path.includes(i)) return;
+  else { path.push(i); pads[i].el.classList.add('on'); snd.pick(path.length - 1); buzz(5); }
+  showPv(curWord(), '');
+}
+const wh = $('wheel');
+wh.addEventListener('pointerdown', ev => {
+  if (busy || ev.target.closest('#shuf')) return; ac();
+  dragging = true; try { wh.setPointerCapture(ev.pointerId); } catch (e) {}
+  clearPick(); setNote('');
+  const pt = pointAt(ev), i = padAt(pt); if (i >= 0) addPad(i); drawTrail(pt); ev.preventDefault();
+});
+wh.addEventListener('pointermove', ev => {
+  if (!dragging) return; const pt = pointAt(ev), i = padAt(pt); if (i >= 0) addPad(i); drawTrail(pt);
+});
+const endDrag = () => { if (!dragging) return; dragging = false; submit(curWord(), true); };
+wh.addEventListener('pointerup', endDrag); wh.addEventListener('pointercancel', () => { dragging = false; clearPick(); });
+wh.addEventListener('contextmenu', e => e.preventDefault());
+
+/* ---------- проверка слова ---------- */
+function submit(w, fromUi) {
+  if (!level) return 'none';
+  const grid = level.words.find(o => o.w === w);
+  let res;
+  if (w.length < 2) { if (fromUi) clearPick(); return 'short'; }
+  if (grid && !st.f.has(w)) {
+    res = 'grid'; foundGrid(grid);
+  } else if (grid || st.b.has(w)) {
+    res = 'dup'; if (fromUi) { showPv(w, 'dup'); setNote('Это слово уже найдено.'); snd.dup(); setTimeout(clearPick, 650); }
+  } else if (level.bonus.includes(w)) {
+    res = 'bonus'; foundBonus(w);
+  } else {
+    res = 'bad'; if (w.length >= 3 || fromUi) { showPv(w, 'bad'); setNote(w.length < 3 ? 'Слишком короткое слово.' : 'Такого слова у нас нет.', true); snd.bad(); buzz(20); }
+    if (fromUi) setTimeout(clearPick, 650);
+  }
+  return res;
+}
+function foundGrid(o) {
+  st.f.add(o.w); prog[cur].f = [...st.f]; saveProg();
+  const srcEl = $('pvw'), sr = srcEl.getBoundingClientRect();
+  showPv(o.w, 'good'); setNote('');
+  snd.good(o.w.length); buzz(12);
+  busy++;
+  const keys = []; for (let k = 0; k < o.w.length; k++) keys.push((o.r + (o.d === 'v' ? k : 0)) + ',' + (o.c + (o.d === 'h' ? k : 0)));
+  let last = 0;
+  keys.forEach((key, k) => {
+    const d = $('cells').querySelector(`[data-k="${key}"]`), was = st.cells.get(key);
+    const dr = d.getBoundingClientRect(), already = d.classList.contains('f');
+    if (already) return;
+    d.style.visibility = 'hidden'; d.className = 'cell e';
+    const delay = reduced ? 0 : k * 90;
+    const fl = document.createElement('div'); fl.className = 'cell f'; fl.textContent = was.ch;
+    fl.style.cssText = `position:fixed;z-index:35;left:${dr.left}px;top:${dr.top}px;width:${dr.width}px;height:${dr.height}px;--fs:${parseFloat(getComputedStyle($('cells')).getPropertyValue('--fs'))}px;pointer-events:none`;
+    document.body.appendChild(fl);
+    const sx = sr.left + sr.width / 2 - dr.width / 2 + (k - (o.w.length - 1) / 2) * 30 - dr.left, sy = sr.top + sr.height / 2 - dr.height / 2 - dr.top;
+    const anim = reduced ? null : fl.animate([{ transform: `translate(${sx}px,${sy}px) scale(.7)`, opacity: .2 }, { transform: `translate(${sx * .3}px,${sy * .3 - 30}px) scale(1.2)`, opacity: 1, offset: .55 }, { transform: 'none', opacity: 1 }], { duration: 650, delay, easing: 'cubic-bezier(.3,.7,.2,1)', fill: 'both' });
+    last = Math.max(last, delay + 650);
+    const fin = () => { fl.remove(); d.style.visibility = ''; paintCell(key); d.classList.add('pulse'); };
+    if (anim) anim.onfinish = fin; else fin();
+  });
+  setTimeout(() => { showPv('', ''); clearPick(); updateInfo(); busy = Math.max(0, busy - 1); checkWin(); }, Math.max(450, last + 60));
+  // клетки, открытые светлячком, теперь принадлежат слову
+  updateInfo();
+}
+function foundBonus(w) {
+  st.b.add(w); prog[cur].b = [...st.b]; bc++; let msg = 'Бонусное слово! ';
+  if (bc >= 3) { bc = 0; fl++; msg += 'Светлячок ваш.'; toast('Новый светлячок!'); } else msg += 'Ещё ' + (3 - bc) + ' — и будет светлячок.';
+  saveProg(); showPv(w, 'good'); setNote(msg); snd.bonus(); buzz(12); updateInfo();
+  setTimeout(clearPick, 700);
+}
+function checkWin() {
+  if (st.f.size < level.words.length || done[cur]) { if (st.f.size === level.words.length && done[cur]) return; if (st.f.size < level.words.length) return; }
+  done[cur] = 1; saveProg(); snd.win(); buzz([20, 40, 20]);
+  const last = cur === LV.length - 1, n = st.b.size;
+  $('finT').innerHTML = last ? 'Все уровни <i>пройдены</i>' : 'Все слова <i>найдены</i>';
+  $('finP').textContent = (last ? 'Это был последний уровень. Спасибо, что играли! ' : '') + (n ? `Бонусных слов: ${n}.` : 'Тихо и красиво.');
+  $('fNext').textContent = last ? 'К началу' : 'Дальше';
+  setTimeout(() => $('fin').classList.add('on'), reduced ? 0 : 500);
+}
+$('fNext').onclick = () => startLevel(cur === LV.length - 1 ? 0 : cur + 1);
+$('fMenu').onclick = () => { $('fin').classList.remove('on'); renderMenu(); show('menu'); };
+
+/* ---------- светлячок ---------- */
+function hint() {
+  if (busy || !level) return;
+  if (fl < 1) { toast('Светлячков нет. Их приносят бонусные слова.'); snd.dup(); return; }
+  const cand = [];
+  level.words.forEach(o => { if (st.f.has(o.w)) return; const ks = []; for (let k = 0; k < o.w.length; k++) ks.push((o.r + (o.d === 'v' ? k : 0)) + ',' + (o.c + (o.d === 'h' ? k : 0))); const free = ks.filter(k => !cellFilled(k)); if (free.length) cand.push(free); });
+  if (!cand.length) return;
+  const free = cand.sort((a, b) => a.length - b.length)[0]; const key = free[Math.floor(Math.random() * free.length)];
+  fl--; st.h.add(key); prog[cur].h = [...st.h]; saveProg();
+  const d = $('cells').querySelector(`[data-k="${key}"]`), dr = d.getBoundingClientRect(), br = $('bHint').getBoundingClientRect();
+  const done2 = () => {
+    paintCell(key); d.classList.add('pulse'); updateInfo(); snd.bonus();
+    // слова, у которых все клетки открыты, считаются найденными
+    let any = false; level.words.forEach(o => { if (st.f.has(o.w)) return; let all = true; for (let k = 0; k < o.w.length; k++) { const kk = (o.r + (o.d === 'v' ? k : 0)) + ',' + (o.c + (o.d === 'h' ? k : 0)); if (!cellFilled(kk)) all = false; } if (all) { st.f.add(o.w); any = true; } });
+    if (any) { prog[cur].f = [...st.f]; saveProg(); level.words.forEach(o => { for (let k = 0; k < o.w.length; k++) paintCell((o.r + (o.d === 'v' ? k : 0)) + ',' + (o.c + (o.d === 'h' ? k : 0))); }); updateInfo(); checkWin(); }
+  };
+  updateInfo();
+  if (reduced) { done2(); return; }
+  const f = document.createElement('div'); f.className = 'flyer'; f.style.left = br.left + br.width / 2 + 'px'; f.style.top = br.top + 10 + 'px'; document.body.appendChild(f);
+  const dx = dr.left + dr.width / 2 - (br.left + br.width / 2), dy = dr.top + dr.height / 2 - (br.top + 10);
+  const a = f.animate([{ transform: 'translate(0,0) scale(1)' }, { transform: `translate(${dx * .4 + 40}px,${dy * .5}px) scale(1.6)`, offset: .5 }, { transform: `translate(${dx}px,${dy}px) scale(1)` }], { duration: 800, easing: 'ease-in-out', fill: 'forwards' });
+  busy++; a.onfinish = () => { f.remove(); busy--; done2(); };
+}
+$('bHint').onclick = hint;
+$('bMenu').onclick = () => { if (busy) return; renderMenu(); show('menu'); };
+function openSheet(id) { $('scrim').classList.add('on'); $(id).classList.add('on'); }
+function closeSheets() { $('scrim').classList.remove('on'); $('sheet').classList.remove('on'); $('bsheet').classList.remove('on'); store.set('seen', 1); }
+$('helpBtn').onclick = () => openSheet('sheet'); $('shClose').onclick = closeSheets; $('scrim').onclick = closeSheets; $('bsClose').onclick = closeSheets;
+$('bBonus').onclick = () => {
+  const l = $('bwList'); const arr = [...st.b];
+  l.innerHTML = arr.length ? '<div class="bw">' + arr.map(w => `<span>${w}</span>`).join('') + '</div>' : '<p class="z-lead" style="margin:6px 0 18px">Пока ничего. Составьте слово, которого нет в кроссворде, — оно засчитается здесь.</p>';
+  openSheet('bsheet');
+};
+addEventListener('resize', () => { if (level && $('game').classList.contains('on')) { sizeWheel(); buildBoard(); drawTrail(null); } });
+
+/* ---------- вода на фоне ---------- */
+(() => {
+  const cv = $('water'), ctx = cv.getContext('2d'); let w = 0, h = 0, t0 = performance.now(), running = true;
+  const lil = Array.from({ length: 7 }, (_, i) => ({ x: (i * 0.37 + .1) % 1, y: (i * 0.53 + .05) % 1, r: 26 + (i % 3) * 12, ph: i * 1.9, rot: i * 1.1 }));
+  function fit() { const d = Math.min(2, devicePixelRatio || 1) * .6; w = innerWidth; h = innerHeight; cv.width = Math.round(w * d); cv.height = Math.round(h * d); ctx.setTransform(cv.width / w, 0, 0, cv.height / h, 0, 0); }
+  function draw(now) {
+    const t = (now - t0) / 1000;
+    const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#12292b'); g.addColorStop(1, '#0a1618'); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+    ctx.lineWidth = 1.2;
+    for (let k = 0; k < 14; k++) {
+      ctx.strokeStyle = `rgba(156,205,190,${.05 + .025 * Math.sin(t * .5 + k)})`; ctx.beginPath();
+      for (let x = 0; x <= w + 10; x += 14) { const y = (k + .5) * h / 14 + Math.sin(x * .014 + t * .45 + k * 1.3) * 9 + Math.sin(x * .04 - t * .7 + k) * 3; x ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.stroke();
+    }
+    for (const p of lil) {
+      const x = ((p.x + Math.sin(t * .05 + p.ph) * .02) % 1) * w, y = ((p.y + t * .002 * (p.ph % 2 ? 1 : -1) + 1) % 1) * h, a = p.rot + Math.sin(t * .2 + p.ph) * .1;
+      ctx.save(); ctx.translate(x, y + Math.sin(t * .8 + p.ph) * 2); ctx.rotate(a);
+      ctx.fillStyle = 'rgba(70,128,102,.07)'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, p.r, .4, 6.28); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = 'rgba(160,215,190,.05)'; ctx.stroke(); ctx.restore();
+    }
+  }
+  function loop(now) { if (!running) return; draw(now); if (!reduced) requestAnimationFrame(loop); }
+  fit(); addEventListener('resize', () => { fit(); if (reduced) draw(performance.now()); });
+  document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) requestAnimationFrame(loop); });
+  requestAnimationFrame(loop);
+})();
+
+renderMenu();
+if (!store.get('seen', 0)) setTimeout(() => { if (!store.get('seen', 0)) openSheet('sheet'); }, 900);
+return {
+  count: LV.length, levels: LV, start: startLevel, submit, hint, shuffle,
+  state: () => ({ cur, found: st ? [...st.f] : [], bonus: st ? [...st.b] : [], fl, bc, done: Object.keys(done).length, busy }),
+};
+})();
+</script>
+</body>
+</html>

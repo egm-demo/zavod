@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1a1c">
+<title>Фонарики</title>
+<link rel="stylesheet" href="../../assets/fonts/fonts.css"><link rel="stylesheet" href="../../assets/ui.css">
+<style>
+html,body{height:100%}
+.z-app{height:100vh;height:100dvh;min-height:0;padding-bottom:calc(var(--safe-b) + 16px)}
+.head{margin:4px 0 14px}
+.head .z-h1{margin:0;font-size:46px}
+.head .meta{margin-top:8px;min-height:13px;font-variant-numeric:tabular-nums}
+.skybox{position:relative;flex:1;min-height:340px;border-radius:30px;overflow:hidden;background:#07111a;touch-action:manipulation;
+  box-shadow:0 24px 50px -22px rgba(0,0,0,.7),inset 0 0 0 1px rgba(243,236,224,.05)}
+#sky{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:pointer}
+.hint{position:absolute;left:0;right:0;top:34%;transform:translateY(-50%);padding:0 34px;text-align:center;pointer-events:none;transition:opacity .6s}
+.hint b{display:block;font:400 30px/1.1 var(--display);color:var(--ink);text-shadow:0 2px 18px rgba(5,10,16,.9);text-wrap:balance}
+.hint b i{color:var(--glow)}
+.hint span{display:block;margin-top:10px;font-size:14.5px;line-height:1.5;color:var(--ink-2);text-shadow:0 1px 10px rgba(5,10,16,.95);text-wrap:pretty}
+.hint.off{opacity:0}
+.card{position:absolute;left:12px;right:12px;bottom:12px;padding:16px 18px 8px;border-radius:22px;background:rgba(12,22,30,.84);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 14px 34px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);
+  transform:translateY(14px);opacity:0;pointer-events:none;transition:opacity .3s,transform .4s var(--ease)}
+.card.on{opacity:1;transform:none;pointer-events:auto}
+.card .row{display:flex;align-items:center;gap:12px;padding-right:44px}
+.card .dot{width:12px;height:12px;border-radius:50%;flex:none;background:var(--glow);box-shadow:0 0 14px var(--glow)}
+.card .date{font:500 23px/1.1 var(--display);color:var(--ink)}
+.card .sub{margin-top:3px;font-size:13.5px;color:var(--ink-2)}
+.card .note{margin:10px 0 0;font-size:16.5px;line-height:1.5;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere;max-height:8em;overflow:auto}
+.card .x{position:absolute;top:6px;right:6px}
+.card .acts{display:flex;justify-content:flex-end;margin:4px -8px 0}
+.card .acts .z-btn{font-size:14px;min-height:44px}
+.card .acts .warn{color:#e8a3ab}
+.dock{padding-top:14px}
+.sh-sub{margin:8px 0 18px;color:var(--ink-2);font-size:14.5px;line-height:1.5;text-wrap:pretty}
+.wish{position:relative;margin-bottom:10px}
+.wish textarea{min-height:62px;padding-right:16px}
+.wish .n{position:absolute;right:12px;bottom:8px;font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums;pointer-events:none}
+.more{margin:0 0 4px -12px}
+.status{min-height:20px;margin:6px 0 0;font-size:14px;color:var(--ink-2);text-align:center}
+.sheet-act{margin-top:10px}
+.stat{display:flex;gap:26px;margin:6px 0 4px}
+.stat div b{display:block;font:500 34px/1 var(--display);color:var(--glow);font-variant-numeric:tabular-nums}
+.stat div span{display:block;margin-top:6px}
+.day{margin-top:24px}
+.day .z-cap{margin-bottom:8px;display:block}
+.it{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:12px 4px;border-top:1px solid var(--line);min-height:48px}
+.it:first-of-type{border-top:0}
+.it i{flex:none;width:8px;height:12px;margin-top:6px;border-radius:3px 3px 5px 5px;background:linear-gradient(#e59a52,#ffe0a0);box-shadow:0 0 10px rgba(232,199,122,.7)}
+.it span{flex:1;font-size:15.5px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere;white-space:pre-wrap}
+.empty-l{margin:18px 0 6px;color:var(--ink-2);font-size:15px;line-height:1.55;text-wrap:pretty}
+.foot{margin:22px 0 0;color:var(--ink-2);font-size:13.5px;line-height:1.5}
+.z-toast{bottom:calc(var(--safe-b) + 92px);background:rgb(22,40,43);white-space:normal;text-align:center;max-width:calc(100% - 40px);width:max-content;border-radius:20px;line-height:1.4;text-wrap:balance}
+</style>
+<!--pwa--><link rel="manifest" href="../../manifest.webmanifest"><meta name="theme-color" content="#0e1a1c"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="icon" href="../../icons/icon-192.png"><link rel="apple-touch-icon" href="../../icons/icon-180.png"><style>html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{overscroll-behavior-y:none}</style><script>if('serviceWorker'in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('../../sw.js'))</script><!--/pwa-->
+</head>
+<body>
+<div class="z-app">
+  <header class="z-top">
+    <a class="z-icon" href="../../index.html" aria-label="Все приложения"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div class="z-title">Фонарики</div>
+    <button class="z-icon" id="snd" type="button" aria-label="Звук"></button>
+    <button class="z-icon" id="menu" type="button" aria-label="Лента вечеров"><svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/></svg></button>
+  </header>
+
+  <div class="head z-in">
+    <h1 class="z-h1" id="title">Небо <i>вечеров</i></h1>
+    <div class="z-cap meta" id="meta"></div>
+  </div>
+
+  <div class="skybox" id="skybox">
+    <canvas id="sky" aria-label="Ночное небо над прудом: каждый фонарик — одно хорошее событие дня"></canvas>
+    <div class="hint" id="hint"></div>
+    <div class="card" id="card" role="dialog" aria-live="polite">
+      <button class="z-icon x" id="cardx" type="button" aria-label="Закрыть"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="row"><span class="dot"></span><div><div class="date" id="cdate"></div><div class="sub" id="csub"></div></div></div>
+      <div class="note" id="cnote"></div>
+      <div class="acts"><button class="z-btn quiet warn" id="cdel" type="button">Убрать фонарик</button></div>
+    </div>
+  </div>
+
+  <div class="dock"><button class="z-btn wide" id="mark" type="button"></button></div>
+</div>
+
+<div class="z-scrim" id="scrim"></div>
+
+<div class="z-sheet" id="shWrite" role="dialog" aria-modal="true" aria-labelledby="wtitle">
+  <h2 class="z-h2" id="wtitle">Что сегодня <i>было хорошего?</i></h2>
+  <p class="sh-sub" id="wsub"></p>
+  <div id="wishes"></div>
+  <button class="z-btn quiet more" id="more" type="button">+ Ещё одно</button>
+  <div class="status" id="status" aria-live="polite"></div>
+  <button class="z-btn wide sheet-act" id="launch" type="button" disabled>Отпустить в небо</button>
+</div>
+
+<div class="z-sheet" id="shLog" role="dialog" aria-modal="true" aria-labelledby="ltitle">
+  <h2 class="z-h2" id="ltitle">Лента <i>вечеров</i></h2>
+  <div class="stat" id="stat"></div>
+  <div id="logbody"></div>
+  <p class="foot">Записи хранятся только на этом телефоне. Коснитесь строки, и фонарик в небе вспыхнет ярче.</p>
+</div>
+
+<div class="z-toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+'use strict';
+var KEY='kuv_lanterns_entries';      // [{id, d:'YYYY-MM-DD', x:text, t:timestamp, i:slot}]
+var KEY_MUTE='kuv_lanterns_mute', KEY_SEEN='kuv_lanterns_seen';
+var MAXDAY=3, MAXLEN=140;
+var MONTHS_G=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+var WD=['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+var PH=['Например: тёплый разговор с подругой','Например: дочитала главу у окна','Например: вкусный чай после дороги'];
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var TAU=Math.PI*2;
+
+function $(id){return document.getElementById(id);}
+function pad2(n){return (n<10?'0':'')+n;}
+function keyOf(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
+function todayKey(){return keyOf(new Date());}
+function parseKey(k){var p=String(k).split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
+function plural(n,a,b,c){var m10=n%10,m100=n%100;if(m10===1&&m100!==11)return a;if(m10>=2&&m10<=4&&(m100<12||m100>14))return b;return c;}
+function nowT(){return performance.now()/1000;}
+function easeOut(x){return 1-Math.pow(1-x,3);}
+function easeIO(x){return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;}
+function hashStr(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function rng(seed){var a=seed>>>0;return function(){a=(a+0x6D2B79F5)>>>0;var t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;};}
+function fmtDate(k){var d=parseKey(k);return d.getDate()+' '+MONTHS_G[d.getMonth()]+', '+WD[d.getDay()];}
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+
+// ---------- данные ----------
+function load(){
+  var a;
+  try{a=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){a=[];}
+  if(!Array.isArray(a))a=[];
+  a=a.filter(function(e){return e&&typeof e.x==='string'&&typeof e.d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(e.d);});
+  var used={},mx=-1;
+  a.forEach(function(e){if(typeof e.i==='number'&&e.i>=0&&!used[e.i]){used[e.i]=1;if(e.i>mx)mx=e.i;}else e.i=-1;});
+  a.forEach(function(e){if(e.i<0)e.i=++mx;if(!e.id)e.id='l'+(e.t||0)+'_'+e.i;if(typeof e.t!=='number')e.t=0;});
+  return a;
+}
+function store(){try{localStorage.setItem(KEY,JSON.stringify(items));}catch(e){}}
+var items=load();
+var muted=lsGet(KEY_MUTE)==='1';
+function todayCount(){var k=todayKey();return items.filter(function(e){return e.d===k;}).length;}
+
+// ---------- звук ----------
+var AC=null;
+function audio(){
+  if(muted)return null;
+  if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}
+  if(AC.state==='suspended')AC.resume();
+  return AC;
+}
+function tone(f,t0,dur,vol,type,f2){
+  var a=audio();if(!a)return;
+  var o=a.createOscillator(),g=a.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(f,a.currentTime+t0);
+  if(f2)o.frequency.exponentialRampToValueAtTime(f2,a.currentTime+t0+dur);
+  g.gain.setValueAtTime(0.0001,a.currentTime+t0);
+  g.gain.exponentialRampToValueAtTime(vol,a.currentTime+t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+t0+dur);
+  o.connect(g);g.connect(a.destination);o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+0.05);
+}
+function sndTap(){tone(880,0,0.35,0.035,'sine',660);tone(1320,0.03,0.25,0.01,'sine');}
+function sndSoft(){tone(330,0,0.45,0.028,'sine',250);}
+function sndLaunch(k){var b=[392,493.88,587.33][k%3];tone(b,0,1.8,0.04,'sine');tone(b*2,0.05,1.2,0.012,'sine');tone(b*3,0.1,0.7,0.005,'sine');}
+function buzz(n){if(!muted&&navigator.vibrate)try{navigator.vibrate(n||8);}catch(e){}}
+function syncSnd(){
+  var b=$('snd');
+  b.innerHTML=muted?'<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>'
+    :'<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11"/></svg>';
+  b.setAttribute('aria-label',muted?'Включить звук':'Выключить звук');
+  b.classList.toggle('on',!muted);
+}
+$('snd').addEventListener('click',function(){muted=!muted;lsSet(KEY_MUTE,muted?'1':'0');syncSnd();if(!muted)sndTap();});
+
+// ---------- холст ----------
+var cv=$('sky'),ctx=cv.getContext('2d'),box=$('skybox');
+var W=0,H=0,DPR=1,HZ=0,bg=null,raf=0;
+var stars=[],sprites={},cache=[],ripples=[],parts=[],hills=[];
+var anim={};          // id -> {b, x0, y0, delay}
+var focusId=null,focusT=0,openId=null,delArm=false;
+
+function resize(){
+  var w=box.clientWidth,h=box.clientHeight;
+  if(w<100||h<100)return;
+  DPR=Math.min(window.devicePixelRatio||1,3);
+  W=w;H=h;HZ=Math.round(H*0.74);
+  cv.width=Math.round(w*DPR);cv.height=Math.round(h*DPR);
+  sprites={};
+  buildStatic();
+}
+function buildStatic(){
+  var r=rng(hashStr('stars'+Math.round(W)));
+  stars=[];for(var i=0;i<70;i++){var y=Math.pow(r(),1.3)*HZ*0.9;stars.push({x:r(),y:y,a:0.18+r()*0.55,p:r()*6.28,sz:r()<0.12?1.6:0.9});}
+  bg=document.createElement('canvas');bg.width=cv.width;bg.height=cv.height;
+  var c=bg.getContext('2d');c.setTransform(DPR,0,0,DPR,0,0);
+  var g=c.createLinearGradient(0,0,0,HZ);
+  g.addColorStop(0,'#040913');g.addColorStop(0.45,'#0a1a2a');g.addColorStop(0.85,'#18353f');g.addColorStop(1,'#2a4a48');
+  c.fillStyle=g;c.fillRect(0,0,W,HZ);
+  var hg=c.createRadialGradient(W*0.5,HZ,4,W*0.5,HZ,W*0.9);
+  hg.addColorStop(0,'rgba(232,160,90,.20)');hg.addColorStop(1,'rgba(232,160,90,0)');
+  c.fillStyle=hg;c.fillRect(0,0,W,HZ);
+  var vg=c.createRadialGradient(W*0.9,H*0.05,5,W*0.9,H*0.05,W*0.8);
+  vg.addColorStop(0,'rgba(91,63,122,.30)');vg.addColorStop(1,'rgba(91,63,122,0)');
+  c.fillStyle=vg;c.fillRect(0,0,W,HZ);
+  // луна
+  var mx=W*0.17,my=H*0.085,mr=Math.min(W,H)*0.05;
+  var mg=c.createRadialGradient(mx,my,0,mx,my,mr*5);
+  mg.addColorStop(0,'rgba(246,239,228,.16)');mg.addColorStop(1,'rgba(246,239,228,0)');
+  c.fillStyle=mg;c.beginPath();c.arc(mx,my,mr*5,0,TAU);c.fill();
+  var md=c.createRadialGradient(mx-mr*0.25,my-mr*0.25,0,mx,my,mr);
+  md.addColorStop(0,'#fbf6ea');md.addColorStop(1,'#d9d2bf');
+  c.fillStyle=md;c.beginPath();c.arc(mx,my,mr,0,TAU);c.fill();
+  c.fillStyle='rgba(150,140,120,.16)';
+  [[-.3,-.1,.22],[.25,.2,.3],[.1,-.4,.15]].forEach(function(k){c.beginPath();c.arc(mx+k[0]*mr,my+k[1]*mr,k[2]*mr,0,TAU);c.fill();});
+  // далёкие холмы
+  var hr=rng(hashStr('hills'+Math.round(W)));
+  [[0.55,'#0c1e26'],[0.35,'#08161d']].forEach(function(L,li){
+    var ph=hr()*6,amp=H*0.03*(1+li*0.4),base=HZ-H*0.012*(li+1)+ (li?H*0.004:0);
+    c.fillStyle=L[1];c.beginPath();c.moveTo(0,HZ);
+    for(var x=0;x<=W+8;x+=8){c.lineTo(x,base-amp*(0.5+0.5*Math.sin(x*0.011+ph)*Math.cos(x*0.0043+ph*1.7))-li*2);}
+    c.lineTo(W,HZ);c.closePath();c.fill();
+  });
+  // огоньки на дальнем берегу
+  c.fillStyle='rgba(240,190,110,.55)';
+  for(var q=0;q<9;q++){c.beginPath();c.arc(hr()*W,HZ-2-hr()*4,0.9,0,TAU);c.fill();}
+  // вода
+  var wg=c.createLinearGradient(0,HZ,0,H);
+  wg.addColorStop(0,'#17353b');wg.addColorStop(0.35,'#0d232a');wg.addColorStop(1,'#060f15');
+  c.fillStyle=wg;c.fillRect(0,HZ,W,H-HZ);
+  // отражение луны
+  var rg=c.createLinearGradient(mx-mr,0,mx+mr,0);
+  rg.addColorStop(0,'rgba(246,239,228,0)');rg.addColorStop(.5,'rgba(246,239,228,.10)');rg.addColorStop(1,'rgba(246,239,228,0)');
+  c.fillStyle=rg;c.fillRect(mx-mr*1.2,HZ+4,mr*2.4,(H-HZ)*0.55);
+  // листья по краям
+  var pr=rng(hashStr('pads'+Math.round(W)));
+  [[0.05,0.93,34],[0.96,0.88,40],[0.2,0.985,30],[0.82,0.99,34]].forEach(function(p){
+    var px=p[0]*W,py=p[1]*H,R=p[2]*Math.min(1.3,W/330),rot=pr()*TAU;
+    c.save();c.translate(px,py);c.scale(1,0.38);
+    var pg=c.createRadialGradient(-R*0.2,-R*0.25,2,0,0,R);
+    pg.addColorStop(0,'#5f8c63');pg.addColorStop(0.7,'#34583b');pg.addColorStop(1,'#1d3524');
+    c.fillStyle=pg;c.beginPath();c.moveTo(0,0);c.arc(0,0,R,rot+0.22,rot+TAU-0.22);c.closePath();c.fill();
+    c.strokeStyle='rgba(170,210,160,.28)';c.lineWidth=1;c.beginPath();c.arc(0,0,R-0.6,rot+0.3,rot+TAU-0.3);c.stroke();
+    c.restore();
+  });
+  var vv=c.createRadialGradient(W/2,H*0.45,Math.min(W,H)*0.4,W/2,H/2,Math.max(W,H)*0.75);
+  vv.addColorStop(0,'rgba(0,0,0,0)');vv.addColorStop(1,'rgba(0,0,0,.5)');
+  c.fillStyle=vv;c.fillRect(0,0,W,H);
+}
+
+// ---------- фонарики ----------
+var PAL=[
+  {a:'#b4521f',b:'#f0a050',c:'#ffe3a4',glow:'255,176,88'},
+  {a:'#a8473c',b:'#ee9a7a',c:'#ffdcc0',glow:'250,150,120'},
+  {a:'#b87a28',b:'#f4c56c',c:'#fff0c0',glow:'255,205,110'}
+];
+function sprite(kind,v,s){
+  var qs=Math.round(s*20)/20;
+  var key=kind+v+'|'+qs;
+  if(sprites[key])return sprites[key];
+  var U=112,px=Math.ceil(U*qs*DPR);
+  var c=document.createElement('canvas');c.width=px;c.height=px;
+  var x=c.getContext('2d'),k=px/U;
+  x.scale(k,k);x.translate(56,56);
+  var P=PAL[v];
+  if(kind==='g'){
+    var g=x.createRadialGradient(0,2,2,0,2,54);
+    g.addColorStop(0,'rgba('+P.glow+',.55)');g.addColorStop(0.35,'rgba('+P.glow+',.18)');g.addColorStop(1,'rgba('+P.glow+',0)');
+    x.fillStyle=g;x.fillRect(-56,-56,112,112);
+  }else{
+    x.fillStyle='rgba(0,0,0,.2)';
+    // корпус
+    x.beginPath();x.moveTo(-9.5,-17);x.quadraticCurveTo(0,-23,9.5,-17);x.lineTo(14,11);x.quadraticCurveTo(0,17,-14,11);x.closePath();
+    var bgd=x.createLinearGradient(0,-20,0,14);
+    bgd.addColorStop(0,P.a);bgd.addColorStop(0.5,P.b);bgd.addColorStop(1,P.c);
+    x.fillStyle=bgd;x.fill();
+    // внутренний свет
+    var ig=x.createRadialGradient(0,8,1,0,6,22);
+    ig.addColorStop(0,'rgba(255,250,225,.95)');ig.addColorStop(0.5,'rgba(255,225,150,.35)');ig.addColorStop(1,'rgba(255,225,150,0)');
+    x.fillStyle=ig;x.fill();
+    // рёбра
+    x.strokeStyle='rgba(110,45,20,.30)';x.lineWidth=0.7;
+    [-6.5,0,6.5].forEach(function(o){x.beginPath();x.moveTo(o*0.7,-19);x.quadraticCurveTo(o*1.5,-3,o*1.9,13);x.stroke();});
+    x.beginPath();x.moveTo(-11.6,-3);x.quadraticCurveTo(0,1,11.6,-3);x.stroke();
+    // верхняя крышка
+    x.fillStyle='rgba(60,25,15,.55)';x.beginPath();x.ellipse(0,-18.6,6.2,1.6,0,0,TAU);x.fill();
+    // нижнее кольцо
+    x.fillStyle='rgba(70,30,12,.6)';x.beginPath();x.ellipse(0,12.4,12.8,3,0,0,TAU);x.fill();
+    var fl=x.createRadialGradient(0,10.6,0.3,0,10.6,6);
+    fl.addColorStop(0,'#fffbe8');fl.addColorStop(0.5,'rgba(255,214,120,.95)');fl.addColorStop(1,'rgba(255,170,70,0)');
+    x.fillStyle=fl;x.beginPath();x.ellipse(0,10.6,6,4,0,0,TAU);x.fill();
+    // блик
+    x.fillStyle='rgba(255,255,255,.22)';x.beginPath();x.ellipse(-6,-6,1.6,7,0.12,0,TAU);x.fill();
+  }
+  var o={c:c,w:U*qs,o:56*qs};sprites[key]=o;return o;
+}
+
+function density(){return Math.max(0.42,Math.min(1,1.12-items.length/170));}
+function slotOf(e){
+  // R2-последовательность: устойчивая раскладка, не меняется при добавлении новых
+  var i=e.i+1,a1=0.7548776662466927,a2=0.5698402909980532;
+  var fx=(0.5+a1*i)%1,fy=(0.5+a2*i)%1;
+  var r=rng(hashStr(e.id));
+  var x=0.09+0.82*fx+(r()-0.5)*0.03;
+  var y=0.07+0.80*fy+(r()-0.5)*0.03;
+  var sky=HZ/H;
+  return {fx:x,fy:y*(sky-0.04),ph:r()*TAU,v:Math.floor(r()*3),sw:0.6+r()*0.7,sc:0.9+r()*0.25};
+}
+function pos(e,t){
+  var s=slotOf(e);
+  var depth=0.72+0.5*(s.fy/(HZ/H));
+  var sc=density()*Math.min(1.35,Math.max(0.95,W/300))*depth*s.sc;
+  var tx=s.fx*W,ty=s.fy*H;
+  var sway=reduce?0:Math.sin(t*0.5*s.sw+s.ph)*(2.2+3*sc),bob=reduce?0:Math.sin(t*0.38*s.sw+s.ph*1.7)*(2+2*sc);
+  var an=anim[e.id],alpha=1,rise=1;
+  if(an){
+    var q=(t-an.b-an.delay)/6.0;
+    if(q<0){return {x:an.x0,y:an.y0,sc:0.01,alpha:0,v:s.v,ph:s.ph,hidden:true};}
+    if(q>=1){delete anim[e.id];}
+    else{
+      var ez=easeIO(Math.min(1,q));
+      rise=ez;
+      var sw2=Math.sin(q*9+s.ph)*(1-q)*14*sc;
+      tx=an.x0+(tx-an.x0)*ez+sw2;ty=an.y0+(ty-an.y0)*easeOut(q);
+      sc=sc*(0.35+0.65*easeOut(Math.min(1,q*1.6)));alpha=Math.min(1,q*4);
+    }
+  }
+  return {x:tx+sway,y:ty+bob,sc:sc,alpha:alpha,v:s.v,ph:s.ph,rising:an?rise<1:false};
+}
+function addRipple(x,y,max,a){ripples.push({x:x,y:y,b:nowT(),max:max,a:a});}
+function sparks(x,y,n){
+  if(reduce)return;var t=nowT();
+  for(var i=0;i<n;i++){var an=-Math.PI/2+(Math.random()-0.5)*2.2,sp=20+Math.random()*50;
+    parts.push({x:x,y:y,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,b:t,life:1+Math.random()*1.3,r:0.8+Math.random()*1.4});}
+}
+
+function frame(ms){
+  raf=0;
+  if(document.hidden||!bg)return;
+  var t=ms/1000,i;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.drawImage(bg,0,0,W,H);
+  for(i=0;i<stars.length;i++){
+    var st=stars[i],a=st.a*(reduce?1:(0.6+0.4*Math.sin(t*1.2+st.p)));
+    ctx.fillStyle='rgba(232,238,244,'+a.toFixed(3)+')';ctx.beginPath();ctx.arc(st.x*W,st.y,st.sz*0.6,0,TAU);ctx.fill();
+  }
+  // отражение луны мерцает
+  ctx.globalCompositeOperation='lighter';
+  var mx=W*0.17;
+  for(i=0;i<8;i++){
+    var ry=HZ+6+i*(H-HZ)*0.075,wd=Math.min(W,H)*0.09*(1.2-i*0.1),off=reduce?0:Math.sin(t*0.9+i*1.4)*6;
+    var ga=(0.10-i*0.011)*(reduce?1:(0.7+0.3*Math.sin(t*1.6+i*2)));
+    var g=ctx.createLinearGradient(mx-wd+off,0,mx+wd+off,0);
+    g.addColorStop(0,'rgba(246,239,228,0)');g.addColorStop(.5,'rgba(246,239,228,'+Math.max(0,ga).toFixed(3)+')');g.addColorStop(1,'rgba(246,239,228,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(mx+off,ry,wd,1.3,0,0,TAU);ctx.fill();
+  }
+  ctx.globalCompositeOperation='source-over';
+
+  // позиции
+  cache=[];
+  var list=[];
+  for(i=0;i<items.length;i++){var p=pos(items[i],t);if(p.hidden)continue;p.e=items[i];list.push(p);}
+  var flick=function(p){return reduce?0.9:(0.8+0.12*Math.sin(t*(2.4+p.ph%1.5)+p.ph*5)+0.08*Math.sin(t*7.3+p.ph*9));};
+
+  // отражения (под водой)
+  ctx.save();ctx.beginPath();ctx.rect(0,HZ,W,H-HZ);ctx.clip();
+  for(i=0;i<list.length;i++){
+    var p=list[i],ry=HZ+(HZ-p.y)*0.42,fl=flick(p);
+    var body=sprite('b',p.v,p.sc),gl=sprite('g',p.v,p.sc*1.1);
+    var rx=p.x+(reduce?0:Math.sin(t*1.3+p.ph+ry*0.04)*2.2);
+    ctx.save();ctx.translate(rx,ry);ctx.scale(1,-0.55);
+    ctx.globalAlpha=0.16*p.alpha;ctx.drawImage(body.c,-body.o,-body.o,body.w,body.w);
+    ctx.globalCompositeOperation='lighter';
+    ctx.globalAlpha=0.32*fl*p.alpha;ctx.drawImage(gl.c,-gl.o*1.1,-gl.o*1.1,gl.w*1.1,gl.w*1.1);
+    ctx.restore();
+  }
+  ctx.restore();
+  // рябь по воде
+  ctx.lineWidth=1;
+  for(var l=0;l<12;l++){
+    var ly=HZ+4+(H-HZ)*(l/12)*(l/12+0.2)+(reduce?0:Math.sin(t*0.4+l)*1.2);
+    ctx.strokeStyle='rgba(150,195,200,'+(0.035+0.02*Math.sin(l*1.7+t*0.5)).toFixed(3)+')';
+    ctx.beginPath();ctx.moveTo(0,ly);
+    var stp=Math.max(10,W/10);
+    for(var xx=0;xx<=W+stp;xx+=stp)ctx.lineTo(xx,ly+Math.sin(xx*0.03+l*1.3+t*0.5)*1.6);
+    ctx.stroke();
+  }
+  // берег-дымка
+  var mg=ctx.createLinearGradient(0,HZ-H*0.05,0,HZ+H*0.03);
+  mg.addColorStop(0,'rgba(120,160,160,0)');mg.addColorStop(0.55,'rgba(120,160,160,'+(reduce?0.07:0.07+0.02*Math.sin(t*0.3)).toFixed(3)+')');mg.addColorStop(1,'rgba(120,160,160,0)');
+  ctx.fillStyle=mg;ctx.fillRect(0,HZ-H*0.05,W,H*0.08);
+
+  // сами фонарики
+  list.sort(function(a,b){return a.y-b.y;});
+  for(i=0;i<list.length;i++){
+    var q=list[i],fl2=flick(q);
+    var b2=sprite('b',q.v,q.sc),g2=sprite('g',q.v,q.sc*1.25);
+    var focus=(focusId===q.e.id);
+    var fb=focus?Math.max(0,1-(t-focusT)/2.6):0;
+    ctx.globalCompositeOperation='lighter';
+    ctx.globalAlpha=Math.min(1,(0.78*fl2+fb*0.5)*q.alpha);
+    ctx.drawImage(g2.c,q.x-g2.o*1.25,q.y-g2.o*1.25,g2.w*1.25,g2.w*1.25);
+    ctx.globalCompositeOperation='source-over';
+    ctx.globalAlpha=q.alpha;
+    ctx.save();ctx.translate(q.x,q.y);if(!reduce)ctx.rotate(Math.sin(t*0.5+q.ph)*0.035);
+    ctx.drawImage(b2.c,-b2.o,-b2.o,b2.w,b2.w);ctx.restore();
+    ctx.globalAlpha=1;
+    if(fb>0||openId===q.e.id){
+      var rr=(openId===q.e.id?26:30+(1-fb)*18)*q.sc*1.2;
+      ctx.strokeStyle='rgba(243,236,224,'+(openId===q.e.id?0.45:fb*0.7).toFixed(3)+')';ctx.lineWidth=1.2;
+      ctx.beginPath();ctx.arc(q.x,q.y,rr,0,TAU);ctx.stroke();
+    }
+    if(q.rising&&!reduce&&Math.random()<0.5)sparks(q.x,q.y+10*q.sc,1);
+    cache.push({id:q.e.id,x:q.x,y:q.y,sc:q.sc});
+  }
+  // круги на воде
+  for(var r=ripples.length-1;r>=0;r--){
+    var rp=ripples[r],ag=t-rp.b;
+    if(ag>2.8){ripples.splice(r,1);continue;}
+    if(ag<0)continue;
+    var pr=ag/2.8;
+    for(var ring=0;ring<3;ring++){
+      var qq=pr-ring*0.16;if(qq<=0)continue;
+      var rad=rp.max*easeOut(qq);
+      ctx.strokeStyle='rgba(235,225,200,'+((1-qq)*rp.a*(1-ring*0.25)).toFixed(3)+')';ctx.lineWidth=1.2;
+      ctx.beginPath();ctx.ellipse(rp.x,rp.y,rad,rad*0.32,0,0,TAU);ctx.stroke();
+    }
+  }
+  // искры
+  ctx.globalCompositeOperation='lighter';
+  for(var k=parts.length-1;k>=0;k--){
+    var pt=parts[k],pa=t-pt.b;
+    if(pa>pt.life){parts.splice(k,1);continue;}
+    var ppx=pt.x+pt.vx*pa,ppy=pt.y+pt.vy*pa+14*pa*pa;
+    ctx.globalAlpha=Math.max(0,1-pa/pt.life)*0.85;ctx.fillStyle='#ffd98a';
+    ctx.beginPath();ctx.arc(ppx,ppy,pt.r,0,TAU);ctx.fill();
+  }
+  ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+  raf=requestAnimationFrame(frame);
+}
+function kick(){if(!raf&&!document.hidden)raf=requestAnimationFrame(frame);}
+document.addEventListener('visibilitychange',kick);
+
+// ---------- касания ----------
+var down=null;
+cv.addEventListener('pointerdown',function(e){down={x:e.clientX,y:e.clientY};});
+cv.addEventListener('pointercancel',function(){down=null;});
+cv.addEventListener('pointerup',function(e){
+  if(!down)return;
+  var dx=e.clientX-down.x,dy=e.clientY-down.y;down=null;
+  if(Math.abs(dx)>12||Math.abs(dy)>12)return;
+  var rc=cv.getBoundingClientRect(),x=e.clientX-rc.left,y=e.clientY-rc.top;
+  var best=null,bd=1e9;
+  for(var i=0;i<cache.length;i++){
+    var c=cache[i],d=Math.hypot(x-c.x,y-c.y);
+    var lim=Math.max(26,24*c.sc*1.4);
+    if(d<lim&&d<bd){bd=d;best=c;}
+  }
+  buzz(6);
+  if(best){sndTap();showCard(best.id);}
+  else{if(y>HZ){addRipple(x,y,46,0.4);sndSoft();}hideCard();}
+});
+
+function showCard(id){
+  var e=null;for(var i=0;i<items.length;i++)if(items[i].id===id)e=items[i];
+  if(!e)return;
+  openId=id;delArm=false;$('cdel').textContent='Убрать фонарик';
+  $('cdate').textContent=fmtDate(e.d)+(e.d===todayKey()?' · сегодня':'');
+  var same=items.filter(function(z){return z.d===e.d;}).length;
+  $('csub').textContent=same>1?('Один из '+same+' за этот вечер'):'Хорошее за этот день';
+  $('cnote').textContent=e.x;
+  $('hint').classList.add('off');
+  $('card').classList.add('on');
+}
+function hideCard(){openId=null;$('card').classList.remove('on');}
+$('cardx').addEventListener('click',hideCard);
+$('cdel').addEventListener('click',function(){
+  if(!openId)return;
+  if(!delArm){delArm=true;this.textContent='Точно убрать?';return;}
+  items=items.filter(function(z){return z.id!==openId;});store();hideCard();buzz(10);
+  renderAll();toast('Фонарик погас и ушёл с неба');
+});
+
+// ---------- шторки ----------
+var openSheet=null;
+function showSheet(id){if(openSheet)hideSheet(true);openSheet=id;$(id).classList.add('on');$('scrim').classList.add('on');}
+function hideSheet(keep){if(!openSheet)return;$(openSheet).classList.remove('on');openSheet=null;if(!keep)$('scrim').classList.remove('on');}
+$('scrim').addEventListener('click',function(){hideSheet();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){hideSheet();hideCard();}});
+var tTimer=0;
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tTimer);tTimer=setTimeout(function(){t.classList.remove('on');},3600);}
+
+// ---------- запись ----------
+var wishEls=[];
+function wishCap(){return MAXDAY-todayCount();}
+function addWish(){
+  if(wishEls.length>=wishCap())return;
+  var w=document.createElement('div');w.className='wish';
+  var ta=document.createElement('textarea');ta.className='z-field';ta.maxLength=MAXLEN;ta.rows=2;
+  ta.placeholder=PH[wishEls.length%PH.length];ta.setAttribute('aria-label','Хорошее событие дня, '+(wishEls.length+1));
+  var n=document.createElement('span');n.className='n';n.textContent='';
+  ta.addEventListener('input',function(){n.textContent=ta.value.length>MAXLEN-40?(ta.value.length+' / '+MAXLEN):'';syncWrite();});
+  w.appendChild(ta);w.appendChild(n);$('wishes').appendChild(w);wishEls.push(ta);
+  syncWrite();return ta;
+}
+function syncWrite(){
+  var cap=wishCap(),filled=wishEls.filter(function(t){return t.value.trim();}).length;
+  $('launch').disabled=!filled;
+  $('launch').textContent=filled>1?'Отпустить '+filled+' '+plural(filled,'фонарик','фонарика','фонариков')+' в небо':'Отпустить в небо';
+  $('more').style.display=wishEls.length<cap?'':'none';
+}
+function openWrite(){
+  hideCard();
+  var cap=wishCap();
+  if(cap<=0){toast('Три фонарика на сегодня уже в небе. Завтра небо будет ждать новых.');return;}
+  $('wishes').innerHTML='';wishEls=[];
+  var td=todayCount();
+  $('wsub').textContent=td?('Сегодня в небе уже '+td+' '+plural(td,'фонарик','фонарика','фонариков')+'. Можно добавить ещё, до трёх за вечер.')
+    :'Одна, две или три вещи — любые, даже самые маленькие. Каждая станет фонариком.';
+  $('status').textContent='';
+  addWish();
+  showSheet('shWrite');
+}
+$('mark').addEventListener('click',openWrite);
+$('more').addEventListener('click',function(){var t=addWish();if(t)t.focus();buzz(6);});
+$('launch').addEventListener('click',function(){
+  var texts=wishEls.map(function(t){return t.value.trim().slice(0,MAXLEN);}).filter(Boolean).slice(0,wishCap());
+  if(!texts.length)return;
+  var mx=-1;items.forEach(function(e){if(e.i>mx)mx=e.i;});
+  var d=todayKey(),t0=Date.now(),added=[];
+  texts.forEach(function(x,k){
+    var e={id:'l'+t0+'_'+k,d:d,x:x,t:t0+k,i:++mx};
+    items.push(e);added.push(e);
+  });
+  store();hideSheet();
+  var tt=nowT();
+  added.forEach(function(e,k){
+    var lx=W*(0.28+0.44*((k+0.5)/added.length))+(Math.random()-0.5)*20;
+    anim[e.id]={b:tt,x0:lx,y0:HZ+(H-HZ)*0.45,delay:0.3+k*1.0};
+    (function(lx,k){setTimeout(function(){addRipple(lx,HZ+(H-HZ)*0.45,60,0.45);sparks(lx,HZ+(H-HZ)*0.4,14);sndLaunch(k);buzz([10,40,14]);},300+k*1000);})(lx,k);
+  });
+  renderAll();
+  toast(added.length>1?'Фонарики поднимаются над водой':'Фонарик поднимается над водой');
+});
+
+// ---------- лента ----------
+function renderLog(){
+  var body=$('logbody');body.innerHTML='';
+  var days={};items.forEach(function(e){(days[e.d]=days[e.d]||[]).push(e);});
+  var keys=Object.keys(days).sort().reverse();
+  var st=$('stat');st.innerHTML='';
+  function stat(n,l){var d=document.createElement('div');var b=document.createElement('b');b.textContent=n;var s=document.createElement('span');s.className='z-cap';s.textContent=l;d.appendChild(b);d.appendChild(s);st.appendChild(d);}
+  stat(keys.length,plural(keys.length,'вечер','вечера','вечеров'));
+  stat(items.length,plural(items.length,'фонарик','фонарика','фонариков'));
+  if(!items.length){var p=document.createElement('p');p.className='empty-l';p.textContent='Здесь соберутся ваши вечера: что было хорошего и когда. Пока небо чистое.';body.appendChild(p);return;}
+  keys.forEach(function(k){
+    var wrap=document.createElement('div');wrap.className='day';
+    var cap=document.createElement('span');cap.className='z-cap';cap.textContent=fmtDate(k)+(k===todayKey()?' · сегодня':'');wrap.appendChild(cap);
+    days[k].sort(function(a,b){return a.t-b.t;}).forEach(function(e){
+      var b=document.createElement('button');b.type='button';b.className='it';
+      var i=document.createElement('i');var s=document.createElement('span');s.textContent=e.x;
+      b.appendChild(i);b.appendChild(s);
+      b.addEventListener('click',function(){hideSheet();focusId=e.id;focusT=nowT();buzz(6);sndTap();setTimeout(function(){showCard(e.id);},350);kick();});
+      wrap.appendChild(b);
+    });
+    body.appendChild(wrap);
+  });
+}
+$('menu').addEventListener('click',function(){renderLog();showSheet('shLog');});
+
+// ---------- интерфейс ----------
+function renderAll(){
+  var n=items.length,hint=$('hint');
+  $('meta').textContent=n?(n+' '+plural(n,'фонарик','фонарика','фонариков')+' в небе'):'небо пока чистое';
+  if(!n){
+    hint.innerHTML='<b>Небо <i>ждёт</i> первый фонарик</b><span>Каждый вечер отмечайте от одной до трёх хороших вещей. Каждая поднимется над прудом и останется в небе. Лучше всего писать вечером, когда день уже сложился.</span>';
+    hint.classList.remove('off');
+  }else hint.classList.add('off');
+  var mk=$('mark'),c=todayCount();
+  if(c>=MAXDAY){mk.textContent='Три фонарика на сегодня уже в небе';mk.className='z-btn wide ghost';}
+  else if(c>0){mk.textContent='Добавить ещё один';mk.className='z-btn wide ghost';}
+  else{mk.textContent='Что сегодня было хорошего?';mk.className='z-btn wide';}
+  kick();
+}
+
+syncSnd();
+var rz;
+function rs(){clearTimeout(rz);rz=setTimeout(function(){resize();kick();},80);}
+window.addEventListener('resize',rs);
+if(window.ResizeObserver)new ResizeObserver(rs).observe(box);
+resize();renderAll();kick();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(rs);
+lsSet(KEY_SEEN,'1');
+// отладочный крючок для проверки (ничего не меняет в данных)
+window.__lanterns={count:function(){return items.length;},open:openWrite};
+})();
+</script>
+</body>
+</html>
