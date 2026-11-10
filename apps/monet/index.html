@@ -39,6 +39,12 @@ body{overflow:hidden}
 .pal i{width:24px;height:24px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);transition:transform .3s var(--ease),box-shadow .3s}
 .pal[aria-pressed=true] i{transform:scale(1.14);box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--accent)}
 .dock .z-bar{margin:0 -6px;padding-top:4px}
+.moods{display:none;justify-content:space-between;gap:0;margin:0 0 4px}
+.moods.on{display:flex}
+.md{flex:1;min-width:0;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:var(--r);color:var(--ink-2);font:400 10px/1 var(--text);letter-spacing:-.02em;white-space:nowrap}
+.md i{width:22px;height:22px;border-radius:50%;transition:transform .3s var(--ease),box-shadow .3s;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.md[aria-pressed=true]{color:var(--ink)}
+.md[aria-pressed=true] i{transform:scale(1.12);box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--accent)}
 .dock .z-tool{font-size:11px;min-height:58px;gap:5px;position:relative}
 .dock .z-tool.on{color:var(--ink);background:var(--surface-2)}
 .dock .z-tool.on::after{content:"";position:absolute;bottom:5px;width:4px;height:4px;border-radius:50%;background:var(--accent)}
@@ -86,6 +92,7 @@ body{overflow:hidden}
     </div>
   </div>
   <div class="dock">
+    <div class="moods" id="moods" role="group" aria-label="Настроение кувшинки"></div>
     <div class="pals" id="pals" role="group" aria-label="Время дня"></div>
     <div class="z-bar" id="brushes" role="group" aria-label="Кисти"></div>
   </div>
@@ -129,7 +136,7 @@ body{overflow:hidden}
 (()=>{
 'use strict';
 const LS='kuv_monet_';
-/* схема v1 (не менять): pal, brush, current(jpeg dataURL), name, gallery(JSON [id]), img_<id>(jpeg dataURL); новое: v2_seen */
+/* схема v1 (не менять): pal, brush, current(jpeg dataURL), name, gallery(JSON [id]), img_<id>(jpeg dataURL); новое: v2_seen, mood, v3_seen */
 const store={get(k){try{return localStorage.getItem(LS+k)}catch(_){return null}},set(k,v){try{localStorage.setItem(LS+k,v);return true}catch(_){return false}},del(k){try{localStorage.removeItem(LS+k)}catch(_){}}};
 const $=s=>document.querySelector(s);
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -351,7 +358,27 @@ function pad(x,y,r){
     dab(x+Math.cos(a)*r*R(.3,.7),y+Math.sin(a)*ry*R(.3,.7),R(.14,.24)*r,R(.1,.16)*ry,R(-.1,.1),jit(pick(P.sky),5,5,4),R(.3,.5),false);
   }
 }
-function flower(x,y,s){
+/* кувшинки настроения — те же, что в «Пруду настроений» */
+const MOODS=[
+ {id:'plain',name:'Обычная'},
+ {id:'light',name:'Светло',chip:'radial-gradient(circle at 40% 35%,#fff0f4,#f0b6c4 55%,#d9648a)',
+  petal:[[338,90,88],[345,86,82],[350,80,94]],white:[[48,100,96],[345,90,95]],center:[[46,96,62],[40,96,58]],spread:1.25,lenK:1.12,widK:1.04,glowA:.3,glowC:[46,100,78],halo:.5,light:.45},
+ {id:'calm',name:'Спокойно',chip:'radial-gradient(circle at 40% 35%,#fffbf3,#f1e8d8 55%,#b9ad95)',
+  petal:[[40,42,92],[36,26,84],[48,40,95]],white:[[44,60,97],[40,30,94]],center:[[46,80,64],[42,78,58]],spread:.9,lenK:1,widK:1.08,glowA:.14,light:.18},
+ {id:'tired',name:'Устала',chip:'radial-gradient(circle at 40% 35%,#f2dcbb,#d9b98c 55%,#85644a)',
+  petal:[[34,58,80],[28,40,66],[38,50,74]],white:[[38,60,88],[32,44,84]],center:[[42,60,54],[38,56,50]],spread:.55,lenK:.92,widK:1,glowA:0,light:0,tilt:.42,droop:true},
+ {id:'anxious',name:'Тревожно',chip:'radial-gradient(circle at 40% 35%,#e0d4f6,#a98bd0 55%,#58389a)',
+  petal:[[266,62,84],[262,46,68],[276,52,78]],white:[[268,70,92],[258,50,88]],center:[[46,70,62],[44,64,58]],spread:1,lenK:1.02,widK:.74,glowA:.2,light:.12,jit:.3},
+ {id:'sad',name:'Грустно',chip:'radial-gradient(circle at 40% 35%,#d8e6f1,#86a9c6 55%,#4f7396)',
+  petal:[[206,44,86],[210,38,70],[202,40,78]],white:[[206,50,92],[214,40,86]],center:null,spread:.32,lenK:1.12,widK:1,glowA:.18,glowC:[205,60,86],light:0,bud:true},
+ {id:'angry',name:'Сержусь',chip:'radial-gradient(circle at 40% 35%,#e8737f,#b8414f 55%,#52101c)',
+  petal:[[352,66,58],[348,72,42],[2,72,54]],white:[[356,74,70],[350,60,64]],center:[[34,96,58],[28,96,54]],spread:1.15,lenK:1.12,widK:.58,glowA:.22,light:.1}
+];
+const MOOD={};MOODS.forEach(m=>MOOD[m.id]=m);
+let mood=store.get('mood');if(!MOOD[mood])mood='plain';
+function flower(x,y,s,mid){
+  const M=MOOD[mid||'plain'];
+  if(M&&M.petal)return moodFlower(x,y,s,M);
   const up=-Math.PI/2;
   glow(x,y-s*.3,s*1.5,pick(P.petal),.16,'screen');
   for(let i=0;i<6;i++){const t=i/6;dab(x+R(-.3,.3)*s,y+(.55+t*.9)*s,R(.5,.8)*s*(1-t*.5),R(.07,.11)*s,R(-.04,.04),jit(pick(P.petal),6,6,-2),R(.3,.45)*(1-t*.6),false)}
@@ -369,6 +396,47 @@ function flower(x,y,s){
   fr.forEach((a,i)=>petal(a,(i>1?R(.42,.55):R(.6,.75))*s,R(.24,.3)*s,jit(i===4?pick(P.petal):pick(P.white),5,6,3),.96));
   for(let i=0;i<3;i++){const a=up+R(-1.1,1.1);dab(x+Math.cos(a)*.5*s,y-.08*s+Math.sin(a)*.45*s,R(.12,.2)*s,R(.05,.08)*s,a,jit(pick(P.white),4,4,2),.85,false);}
   glow(x,y-s*.5,s*.5,pick(P.light),.22,'screen');
+}
+function moodFlower(x,y,s,M){
+  const up=-Math.PI/2,sp=M.spread,tl=M.tilt||0,jj=M.jit||0;
+  const PET=M.petal,WH=M.white;
+  if(M.glowA)glow(x,y-s*.3,s*1.6,M.glowC||pick(PET),M.glowA,'screen');
+  if(M.halo)glow(x,y-s*.4,s*2.4,[48,100,80],M.halo*.5,'screen');
+  /* отражение и тень на воде */
+  for(let i=0;i<6;i++){const t=i/6;dab(x+R(-.3,.3)*s,y+(.55+t*.9)*s,R(.5,.8)*s*(1-t*.5),R(.07,.11)*s,R(-.04,.04),jit(pick(PET),6,6,-4),R(.25,.4)*(1-t*.6),false)}
+  /* лист-подложка */
+  for(let i=0;i<9;i++)dab(x+R(-.75,.75)*s,y+R(.05,.3)*s,R(.3,.55)*s,R(.1,.16)*s,R(-.12,.12),jit(pick(P.leaf),6,6,5),R(.75,.92));
+  const bx0=x+(M.droop?s*.12:0),by0=y-.08*s;
+  const petal=(ang,len,wid,c,al)=>{
+    const bx=bx0+R(-.04,.04)*s;
+    const cx=bx+Math.cos(ang)*len*.5,cy=by0+Math.sin(ang)*len*.5*.85;
+    dab(cx,cy,len,wid,ang,c,al);
+    dab(cx+Math.cos(ang)*len*.08,cy+Math.sin(ang)*len*.06,len*.62,wid*.42,ang+R(-.06,.06),sh(c,9,-6),al*.75,false);
+  };
+  const L=M.lenK,Wd=M.widK;
+  if(M.bud){
+    /* закрытый бутон: зелёные чашелистики и сомкнутые лепестки вверх */
+    for(const a of [up-.55,up+.55,up-.2,up+.2])petal(a,R(.5,.6)*s,R(.2,.24)*s,jit(sh(pick(P.leaf),6),5,5,4),.92);
+    for(let i=0;i<5;i++){const t=i/4;petal(up+(t-.5)*sp*2+R(-.05,.05),R(.7,.85)*s*L,R(.2,.25)*s*Wd,jit(sh(pick(PET),-4,4),4,5,4),.96)}
+    for(let i=0;i<3;i++){const t=i/2;petal(up+(t-.5)*sp*1.1,R(.62,.74)*s*L,R(.17,.21)*s*Wd,jit(pick(WH),4,5,3),.95)}
+    for(let i=0;i<3;i++)dab(bx0+(i-1)*.1*s,by0-.45*s,s*.4,s*.05,up+(i-1)*.15,[206,40,96],.55,false);
+    dab(bx0,by0-.82*s,s*.16,s*.08,up,jit(pick(WH),3,3,2),.85,false);
+    return;
+  }
+  const A=(a)=>up+tl+(a)*sp+R(-.08-jj,.08+jj);
+  if(M.droop){/* поникший лепесток к воде */
+    petal(Math.PI*.15+tl,R(.55,.7)*s,R(.22,.26)*s,jit(sh(pick(PET),-8),5,5,4),.9);
+  }
+  for(let i=0;i<7;i++){const t=i/6;petal(A((t-.5)*2.5),R(.62,.85)*s*L,R(.24,.3)*s*Wd,jit(sh(pick(PET),-7,6),5,6,4),.95)}
+  for(let i=0;i<5;i++){const t=i/4;petal(A((t-.5)*1.4),R(.6,.78)*s*L,R(.24,.3)*s*Wd,jit(pick(PET),5,6,4),.95)}
+  if(M.center)for(let i=0;i<7;i++)dab(bx0+R(-.12,.12)*s,by0-R(.04,.24)*s,R(.1,.18)*s,R(.05,.09)*s,up+R(-.6,.6),jit(pick(M.center),5,6,5),.95,false);
+  const side=Math.min(1,sp);
+  const fr=[Math.PI-R(.05,.35)*side+(1-side)*-1.2,R(.05,.35)*side+(1-side)*1.2-Math.PI*(1-side)*0,Math.PI*.5+R(-.5,-.2),Math.PI*.5+R(.2,.5),up+R(-.35,.35)];
+  fr.forEach((a,i)=>{
+    if(sp<.8&&i<4)a=up+tl+(i%2?1:-1)*R(.5,.9)*sp*1.6;
+    petal(a+tl*.5,(i>1?R(.42,.55):R(.6,.75))*s*L,R(.24,.3)*s*Wd,jit(i===4?pick(PET):pick(WH),5,6,3),.96)});
+  for(let i=0;i<3;i++){const a=up+tl+R(-1.1,1.1)*sp;dab(bx0+Math.cos(a)*.5*s,by0+Math.sin(a)*.45*s,R(.12,.2)*s,R(.05,.08)*s,a,jit(pick(WH),4,4,2),.85,false);}
+  if(M.light)glow(x,y-s*.5,s*.6,pick(P.light),M.light,'screen');
 }
 function strand(x,y,L){
   const k=K(),sway=R(-1,1)*L*.18,ph=R(0,6),amp=R(1.5,4)*k;
@@ -420,10 +488,10 @@ const BR={
    start(p,st){st.next=this.place(p)},
    step(p,st){st.acc=(st.acc||0)+4;if(st.acc>st.next){st.acc=0;st.next=this.place({x:p.x+R(-6,6),y:p.y+R(-4,4)})}},
    place(p){const r=R(19,30)*persp(p.y);pad(p.x,p.y,r);return r*1.55}},
- lily:{name:'Кувшинки',hint:'Нажми на воду или на лист — распустится цветок',sp:4,
+ lily:{name:'Кувшинки',hint:'Выбери настроение цветка и нажми на воду',sp:4,
    start(p,st){st.next=this.place(p)},
    step(p,st){st.acc=(st.acc||0)+4;if(st.acc>st.next*1.6){st.acc=0;st.next=this.place(p)}},
-   place(p){const s=R(20,28)*persp(p.y);flower(p.x,p.y,s);return s*1.4}},
+   place(p){const s=R(20,28)*persp(p.y);flower(p.x,p.y,s,mood);return s*1.4}},
  willow:{name:'Ивы',hint:'Веди пальцем поперёк сверху — свесятся ветви ивы',sp:8,
    start(p){strand(p.x,p.y,R(70,170)*K())},
    step(p){strand(p.x+R(-3,3),p.y+R(-4,4),R(60,180)*K()*clamp(1-p.y/H*.6,.4,1))}},
@@ -684,10 +752,19 @@ const pals=$('#pals');
 PAL_KEYS.forEach(k=>{const b=document.createElement('button');b.className='pal';b.dataset.k=k;b.setAttribute('aria-label',PAL[k].name);
   const c=PAL[k].chip;b.innerHTML='<i style="background:conic-gradient('+c[0]+' 0 40%,'+c[1]+' 0 70%,'+c[2]+' 0)"></i>';
   b.onclick=()=>{palKey=k;P=PAL[k];store.set('pal',k);syncUI();toast(PAL[k].name,1400);buzz(6)};pals.appendChild(b)});
+const mds=$('#moods');
+MOODS.forEach(m=>{const b=document.createElement('button');b.className='md';b.dataset.k=m.id;
+  const bg=m.chip||('conic-gradient('+PAL[palKey].chip[0]+' 0 40%,'+PAL[palKey].chip[1]+' 0 70%,'+PAL[palKey].chip[2]+' 0)');
+  b.innerHTML='<i style="background:'+bg+'"></i><span>'+m.name+'</span>';
+  b.onclick=()=>{mood=m.id;store.set('mood',m.id);syncUI();toast(m.id==='plain'?'Обычная кувшинка, в цвет картины':'Кувшинка «'+m.name.toLowerCase()+'»',1500);buzz(6)};mds.appendChild(b)});
 const brs=$('#brushes');
 Object.keys(BR).forEach(k=>{const b=document.createElement('button');b.className='z-tool';b.dataset.k=k;b.innerHTML=ICON[k]+'<span>'+BR[k].name+'</span>';
   b.onclick=()=>{brush=k;store.set('brush',k);syncUI();toast(BR[k].hint);buzz(6)};brs.appendChild(b)});
 function syncUI(){
+  mds.classList.toggle('on',brush==='lily');
+  requestAnimationFrame(()=>{const d=document.querySelector('.dock');if(d)$('#toast').style.bottom='calc(var(--safe-b) + '+(d.offsetHeight+14)+'px)'});
+  mds.querySelectorAll('.md').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.k===mood);
+    if(b.dataset.k==='plain'){const c=PAL[palKey].chip;b.querySelector('i').style.background='conic-gradient('+c[0]+' 0 40%,'+c[1]+' 0 70%,'+c[2]+' 0)'}});
   pals.querySelectorAll('.pal').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===palKey));
   brs.querySelectorAll('.z-tool').forEach(b=>{const on=b.dataset.k===brush;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});
 }
@@ -726,13 +803,14 @@ syncUI();
   new ResizeObserver(()=>fit(false)).observe(easel);
   if(im){drawFull(im);$('#empty').classList.add('hide');touched=true}
   document.fonts&&document.fonts.load('italic 500 40px "Cormorant Garamond"','Аб').catch(()=>{});
-  if(!store.get('v2_seen')){
+  if(store.get('v2_seen')&&!store.get('v3_seen')){store.set('v3_seen','1');setTimeout(()=>toast('Новое: кувшинки настроения. Выбери кисть «Кувшинки»',4200),900)}
+  if(!store.get('v2_seen')){store.set('v3_seen','1');
     store.set('v2_seen','1');
     const had=!!cur||galIds().length>0;
     setTimeout(()=>toast(had?'Ваши картины на месте. Кисти стали живее: краски смешиваются':'Веди пальцем по холсту — краски смешиваются сами',4200),900);
   }
 })();
-window.monet={dab,pad,flower,strand,waterDabs,lightDabs,fogDab,makePond,sign,doUndo,saveToGallery,galIds,composite,
+window.monet={moodFlower,setMood:k=>{mood=k;syncUI()},pad,flower,strand,waterDabs,lightDabs,fogDab,makePond,sign,doUndo,saveToGallery,galIds,composite,
   setBrush:k=>{brush=k;syncUI()},setPal:k=>{palKey=k;P=PAL[k];syncUI()},size:()=>({W,H,DPR,ar}),undoLen:()=>undo.length,blank,
   stroke:(pts)=>{const b=BR[brush];pushUndo();markTouched();stroke={id:-1,last:pts[0],carry:0,dir:0};b.start(pts[0],stroke);for(let i=1;i<pts.length;i++)moveTo(pts[i]);stroke=null;scheduleSave()}};
 })();
