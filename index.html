@@ -74,7 +74,7 @@ footer{margin:44px 2px 0;color:var(--ink-3);font-size:13px;line-height:1.5}
  <header class="hello z-in">
   <span class="z-cap" id="greet">Добрый день</span>
   <h1>Тихая <i>заводь</i></h1>
-  <p>Двадцать тихих приложений: поиграть, подышать, порисовать и побыть с собой.</p>
+  <p>Двадцать три тихих приложения: поиграть, подышать, порисовать и побыть с собой.</p>
  </header>
 
  <a class="cont" id="cont" href="#"><span class="ic"><img alt="" id="contIc"></span><span class="tx"><span class="z-cap">Продолжить</span><b id="contT"></b></span><svg class="ar" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></a>
@@ -126,10 +126,14 @@ const APPS={
  glass:['Витраж','Раскрась витраж — и солнце пройдёт сквозь него'],
  music:['Поющий пруд','Касайся воды — она звучит'],
  cartouche:['Картуш','Твоё имя египетскими иероглифами'],
+ liza:['Лиза','Мя-мя. Серая, вредная, любимая'],
+ aquarium:['Аквариум','Свои рыбки: покорми, назови, посади цветы'],
+ habits:['Сад привычек','Каждое доброе дело — кувшинка в саду'],
 };
-const NEW=new Set(['lanterns','night','zen','kaleido','stars','words','nonogram','shadows','glass','cartouche']);
+const NEW=new Set(['liza','aquarium','habits']);
 const GROUPS=[
- ['Для души','6',['pond','jar','lanterns','breathe','night','zen'],'rgba(239,179,193,.10)'],
+ ['Живые','2',['liza','aquarium'],'rgba(232,199,122,.12)'],
+ ['Для души','7',['pond','habits','jar','lanterns','breathe','night','zen'],'rgba(239,179,193,.10)'],
  ['Заглянуть в себя','3',['mirror','thought','kaleido'],'rgba(160,120,220,.12)'],
  ['Головоломки','7',['frogs','mahjong','sniper','stars','words','nonogram','shadows'],'rgba(232,199,122,.10)'],
  ['Творить','4',['monet','glass','music','cartouche'],'rgba(127,169,122,.12)'],
