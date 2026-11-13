@@ -28,7 +28,23 @@ html,body{height:100%}
 .hint b i{color:#ffe6ec;text-shadow:0 0 14px rgba(255,160,190,.55),0 2px 18px rgba(5,12,14,.9)}
 .hint span{display:block;margin-top:10px;font-size:15px;font-weight:500;line-height:1.5;color:#fff;text-shadow:0 1px 10px rgba(5,12,14,.95);text-wrap:pretty}
 .hint.off{opacity:0}
-.dock{padding-top:14px}
+.dock{padding-top:14px;display:flex;gap:10px}
+.dock .z-btn{flex:1 1 0;min-width:0;padding:0 14px;white-space:nowrap}
+.dock #tasks b{font-weight:600;font-variant-numeric:tabular-nums;color:var(--accent)}
+.dock #tasks.all b{color:var(--glow)}
+.tl{display:flex;flex-direction:column;gap:8px;margin:16px 0 18px}
+.tk{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:16px;background:var(--surface)}
+.tk .ck{flex:none;width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--line-2);display:grid;place-items:center}
+.tk .ck svg{width:15px;height:15px;fill:none;stroke:var(--accent-ink);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.tk.ok .ck{background:var(--accent);box-shadow:none}.tk.ok .ck svg{opacity:1}
+.tk .tx{flex:1;min-width:0}
+.tk .tx b{display:block;font:600 15px/1.3 var(--text);color:var(--ink)}
+.tk .tx span{display:block;margin-top:3px;font-size:12.5px;line-height:1.35;color:var(--ink-2)}
+.tk.ok .tx b,.tk.ok .tx span{color:var(--ink-3)}
+.tk .rw{flex:none;display:flex;align-items:center;gap:5px;font:600 15px/1 var(--text);color:var(--ink);font-variant-numeric:tabular-nums}
+.tk .rw svg{width:15px;height:15px}
+.tk.ok .rw{color:var(--ink-3)}
+.tnew{margin:10px 0 0;padding:10px 14px;border-radius:16px;background:var(--accent-soft);color:var(--ink);font-size:14px;line-height:1.45}
 .z-toast{bottom:calc(var(--safe-b) + 90px);background:rgb(22,40,43);white-space:normal;text-align:center;max-width:calc(100% - 40px);width:max-content;border-radius:20px;line-height:1.4;text-wrap:balance}
 .seg{margin:6px 0 16px}
 .shop{padding-bottom:70px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -74,7 +90,7 @@ html,body{height:100%}
     <canvas id="c" aria-label="Живой пруд с рыбками: коснитесь воды, чтобы покормить"></canvas>
     <div class="hint" id="hint"></div>
   </div>
-  <div class="dock"><button class="z-btn wide" id="add" type="button"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Пополнить аквариум</button></div>
+  <div class="dock"><button class="z-btn ghost" id="tasks" type="button"><svg viewBox="0 0 24 24"><path d="M5 12.5l4 4 10-10"/></svg>Задания <b id="tcnt">0/10</b></button><button class="z-btn" id="add" type="button"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Пополнить</button></div>
 </div>
 <div class="z-scrim" id="scrim"></div>
 
@@ -109,10 +125,17 @@ html,body{height:100%}
   <div class="how" style="margin-top:16px">
     <p><b>Коснитесь воды</b> — рыбки приплывут за кормом. Коснитесь рыбки — узнаете, как её зовут, и можно дать новое имя.</p>
     <p>Растения и камни можно двигать пальцем. Постучите по краю стекла — рыбки разбегутся.</p>
-    <p class="soft">Каждый день пруд дарит 3 жемчужины. Ничего здесь не гибнет: если вы долго не заходили, вода чуть мутнеет, а рыбки скучают. Один корм — и всё снова хорошо.</p>
+    <p class="soft">Каждый день пруд дарит 6 жемчужин и ещё 2 за первое кормление. А за дневные задания (кнопка «Задания» внизу) — ещё больше. Ничего здесь не гибнет: если вы долго не заходили, вода чуть мутнеет, а рыбки скучают. Один корм — и всё снова хорошо.</p>
     <p class="soft" id="mstat"></p>
     <p class="soft" style="font-size:12.5px;line-height:1.5">Фото рыб (Wikimedia Commons, вырезаны и слегка подкрашены): Goldfish Ryukin.jpg — Lerdsuwa, CC BY-SA 3.0; OrangeWhite Ryukin.jpg — Lawrencekhoo, CC BY-SA 4.0; Sarasa comet goldfish.JPG — Humanfeather / michelle jo, CC BY 3.0; Black Comet Goldfish.JPG — Humanfeather / Michelle Jo, CC BY-SA 3.0; 弥富金魚ワキン.jpg и 弥富金魚コメット.jpg — Yatokin, CC BY-SA 4.0; Yatomi Goldfish Wakin ac.jpg — Asturio Cantabrio, CC BY-SA 4.0; (Carassius auratus) Gold fish at meenalokam aquarium 02.JPG — Adityamadhav83, CC BY-SA 3.0. Фон аквариума: Forests Underwater (122868199).jpeg — Georg Pirrung, CC BY 3.0, кадрирован и подкрашен. Страницы файлов: commons.wikimedia.org/wiki/File:имя_файла.</p>
   </div>
+</div>
+<div class="z-sheet" id="shTasks" role="dialog" aria-modal="true" aria-labelledby="ttitle">
+  <h2 class="z-h2" id="ttitle">Задания <i>на сегодня</i></h2>
+  <p class="tnew" id="tnew" hidden>Новое: жемчужины теперь копятся в два раза быстрее, а каждый день — 10 заданий. За каждое — жемчужины.</p>
+  <p class="sh-sub" id="tsub"></p>
+  <div class="tl" id="tlist"></div>
+  <button class="z-btn wide" id="tok" type="button">Хорошо</button>
 </div>
 <div class="z-toast" id="toast" role="status"></div>
 
@@ -1247,7 +1270,7 @@ cv.addEventListener('pointermove',function(e){
 cv.addEventListener('pointerup',function(e){
   if(!downP||e.pointerId!==downP.id)return;
   var d=downP;downP=null;var p=pos(e);
-  if(d.drag){save();buzz(6);ripples.push({x:d.hit.rec.x*W,y:sy,b:T(),max:16*u,a:.3});return;}
+  if(d.drag){save();buzz(6);tEv('move');ripples.push({x:d.hit.rec.x*W,y:sy,b:T(),max:16*u,a:.3});return;}
   if(Math.hypot(p.x-d.x,p.y-d.y)>14)return;
   if(d.hit&&d.hit.t==='fish'){hideHint();openFish(d.hit.f);return;}
   if(d.hit&&d.hit.t==='item'){hideHint();openItem(d.hit);return;}
@@ -1267,14 +1290,15 @@ function feedAt(x){
   var wasBored=Lbored;
   S.lastFed=Date.now();
   var td=dayKey();
-  if(S.fedDay!==td){S.fedDay=td;S.pearls+=1;pearlFx('+1');}
+  if(S.fedDay!==td){S.fedDay=td;S.pearls+=2;pearlFx('+2');}
+  tEv('feed');
   if(wasBored){toast('Рыбки рады вам. Вода скоро станет прозрачной.');}
   save();refreshHud(true);
 }
 function knock(x,y){
   var t=T();
   knocks.push({x:x<W/2?6*u:W-6*u,y:y,b:t});
-  sndKnock();buzz(10);
+  sndKnock();buzz(10);tEv('knock');
   F.forEach(function(f){
     var away=f.x>(x<W/2?0:W)?(x<W/2?1:-1):1;
     if(f.kind==='sw'){f.st=1.3;f.sdir=x<W/2?1:-1;f.vx=f.sdir*(160+Math.random()*100)*u;f.vy=(Math.random()-.5)*120*u;f.full=Math.min(f.full,3);}
@@ -1358,14 +1382,14 @@ function openFish(f){
   var hrsB=Lbored;
   $('fmood').textContent=hrsB?'Соскучилось':(f.full>2?'Сыто':'Спокойное');
   por.cv=$('fpor');por.kind='fish';por.f=f;
-  showSheet('shFish');
+  showSheet('shFish');tEv('fish',rec.id);
   sizeCanvas(por.cv,por.cv.clientWidth||320,118);por.on=true;
   sndSoft();buzz(6);
 }
 function commitName(){
   if(!curFish)return;
   var v=$('fname').value.replace(/\s+/g,' ').trim().slice(0,16);
-  if(v&&v!==curFish.rec.name){curFish.rec.name=v;save();toast('Теперь это '+v);}
+  if(v&&v!==curFish.rec.name){curFish.rec.name=v;save();toast('Теперь это '+v);tEv('rename');}
   else $('fname').value=curFish.rec.name;
 }
 $('fsave').addEventListener('click',function(){commitName();hideSheet();});
@@ -1378,7 +1402,7 @@ function openItem(h){
   $('iname').textContent=def.n;$('idesc').textContent=def.d+' Двигайте пальцем по воде.';
   $('irem').textContent='Убрать из аквариума';
   por.cv=$('ipor');por.kind='item';por.rec=h.rec;por.cat=h.cat;
-  showSheet('shItem');sizeCanvas(por.cv,por.cv.clientWidth||320,118);por.on=true;sndSoft();buzz(6);
+  showSheet('shItem');tEv('item');sizeCanvas(por.cv,por.cv.clientWidth||320,118);por.on=true;sndSoft();buzz(6);
 }
 $('idone').addEventListener('click',function(){hideSheet();});
 $('irem').addEventListener('click',function(){
@@ -1484,12 +1508,102 @@ $('tabs').addEventListener('click',function(e){
   [].forEach.call($('tabs').children,function(x){x.classList.toggle('on',x===b);});
   sndSoft();renderShop();syncBuy();
 });
-$('add').addEventListener('click',function(){hideHint();sel=null;renderShop();syncBuy();showSheet('shShop');sndSoft();buzz(6);});
+$('add').addEventListener('click',function(){hideHint();sel=null;renderShop();syncBuy();showSheet('shShop');sndSoft();buzz(6);tEv('shop');});
 $('menu').addEventListener('click',function(){
   var nf=S.fish.length,np=S.plants.length,nd=S.decor.length;
   $('mstat').textContent='В пруду: '+nf+' '+plural(nf,'житель','жителя','жителей')+', '+np+' '+plural(np,'растение','растения','растений')+', '+nd+' '+plural(nd,'предмет','предмета','предметов')+'.';
-  showSheet('shMenu');sndSoft();
+  showSheet('shMenu');sndSoft();tEv('about');
 });
+
+
+/* ---------- задания на день ----------
+ kuv_aquarium_tasks      : JSON {day,ids:[10],p:{id:n},done:{id:1},seen:[fishId],t0:ms,bonus:bool}
+ kuv_aquarium_tasks_seen : '1'  (показали окно «Новое») */
+var KEY_T='kuv_aquarium_tasks',KEY_TSEEN='kuv_aquarium_tasks_seen',T_BONUS=5;
+var TK={
+  feed3: {t:'Покормить рыбок 3 раза',h:'Коснитесь воды',n:3,r:1,ev:'feed'},
+  feed8: {t:'Покормить рыбок 8 раз',h:'Коснитесь воды',n:8,r:2,ev:'feed'},
+  knock1:{t:'Постучать по стеклу',h:'Коснитесь самого края аквариума',n:1,r:1,ev:'knock'},
+  knock3:{t:'Постучать по стеклу 3 раза',h:'Коснитесь самого края аквариума',n:3,r:2,ev:'knock'},
+  fish2: {t:'Узнать имена двух жителей',h:'Коснитесь рыбки',n:2,r:1,ev:'fish',uniq:1},
+  fish3: {t:'Узнать имена трёх жителей',h:'Коснитесь рыбки',n:3,r:2,ev:'fish',uniq:1},
+  rename:{t:'Дать кому-нибудь новое имя',h:'Коснитесь рыбки и впишите имя',n:1,r:2,ev:'rename'},
+  move1: {t:'Передвинуть растение или камень',h:'Ведите пальцем по растению',n:1,r:1,ev:'move'},
+  move3: {t:'Переставить растения или камни 3 раза',h:'Ведите пальцем по растению',n:3,r:2,ev:'move'},
+  item:  {t:'Рассмотреть растение или украшение',h:'Коснитесь растения или камня',n:1,r:1,ev:'item'},
+  shop:  {t:'Заглянуть в «Пополнить»',h:'Кнопка внизу справа',n:1,r:1,ev:'shop'},
+  stay3: {t:'Побыть у пруда 3 минуты',h:'Просто полюбуйтесь',n:180,r:2,ev:'stay',time:1},
+  stay6: {t:'Побыть у пруда 6 минут',h:'Просто полюбуйтесь',n:360,r:2,ev:'stay',time:1},
+  again: {t:'Заглянуть ещё раз через час',h:'Закройте аквариум и откройте позже',n:1,r:2,ev:'again'},
+  about: {t:'Почитать «Про пруд»',h:'Кнопка с полосками вверху справа',n:1,r:1,ev:'about'}
+};
+var TGROUPS=[['feed3','feed8'],['knock1','knock3'],['fish2','fish3'],['rename'],['move1','move3'],['item'],['shop'],['stay3','stay6'],['again'],['about']];
+var pearlSvg='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="url(#pg)"/><circle cx="12" cy="12" r="9" fill="url(#pgi)"/></svg>';
+function tNew(d){var r=rng(hashStr('aq-tasks-'+d));return {day:d,ids:TGROUPS.map(function(g){return g[Math.floor(r()*g.length)%g.length];}),p:{},done:{},seen:[],t0:Date.now(),bonus:false};}
+function tLoad(){
+  var o=null;try{o=JSON.parse(lsGet(KEY_T));}catch(e){}
+  if(!o||typeof o!=='object'||o.day!==dayKey()||!Array.isArray(o.ids)||o.ids.length!==TGROUPS.length||!o.ids.every(function(i){return TK[i];}))return tNew(dayKey());
+  return {day:o.day,ids:o.ids,p:(o.p&&typeof o.p==='object')?o.p:{},done:(o.done&&typeof o.done==='object')?o.done:{},seen:Array.isArray(o.seen)?o.seen:[],t0:num(o.t0,Date.now()),bonus:!!o.bonus};
+}
+var TS=tLoad();
+function tSave(){lsSet(KEY_T,JSON.stringify(TS));}
+function tCheckDay(){var d=dayKey();if(TS.day!==d){TS=tNew(d);tSave();tBtn();if(openSheetId==='shTasks')tRender();}}
+function tGoal(id){var k=TK[id];return k.uniq?Math.max(1,Math.min(k.n,S.fish.length)):k.n;}
+function tDoneN(){return TS.ids.filter(function(i){return TS.done[i];}).length;}
+var tQ=[],tQT=0;
+function tToast(msg){if(openSheetId==='shTasks')return;tQ.push(msg);if(!tQT)tNext();}
+function tTitle(id){var k=TK[id];if(!k.uniq)return k.t;var g=tGoal(id);return g===1?'Узнать имя жителя пруда':'Узнать имена '+(g===2?'двух':'трёх')+' жителей';}
+function tNext(){var m=tQ.shift();if(!m){tQT=0;return;}toast(m);tQT=setTimeout(tNext,2600);}
+function tEv(ev,arg){
+  tCheckDay();
+  if(ev==='fish'&&arg!=null&&TS.seen.indexOf(arg)<0)TS.seen.push(arg);
+  var ch=false;
+  TS.ids.forEach(function(id){
+    var k=TK[id];if(k.ev!==ev||TS.done[id])return;
+    if(k.uniq)TS.p[id]=TS.seen.length;else TS.p[id]=(TS.p[id]||0)+(k.time?arg:1);
+    ch=true;
+    if(TS.p[id]>=tGoal(id)){
+      TS.done[id]=1;S.pearls+=k.r;save();
+      setTimeout(function(){pearlFx('+'+k.r);refreshHud(true);},250);
+      var tt=tTitle(id);tToast('Задание выполнено: '+tt.charAt(0).toLowerCase()+tt.slice(1)+'. +'+k.r+' '+plural(k.r,'жемчужина','жемчужины','жемчужин'));
+    }
+  });
+  if(!ch)return;
+  if(!TS.bonus&&tDoneN()===TS.ids.length){
+    TS.bonus=true;S.pearls+=T_BONUS;save();
+    setTimeout(function(){pearlFx('+'+T_BONUS);refreshHud(true);},2700);
+    tToast('Все 10 заданий! Подарок пруда: ещё '+T_BONUS+' жемчужин');
+  }
+  tSave();tBtn();if(openSheetId==='shTasks')tRender();
+}
+function tBtn(){var n=tDoneN(),L2=TS.ids.length;$('tcnt').textContent=n+'/'+L2;$('tasks').classList.toggle('all',n===L2);}
+function tProg(id){
+  var k=TK[id],g=tGoal(id),p=Math.min(TS.p[id]||0,g);
+  if(TS.done[id])return 'Готово';
+  if(k.time)return k.h+' · '+Math.floor(p/60)+' из '+Math.round(g/60)+' мин';
+  return k.h+(g>1?' · '+p+' из '+g:'');
+}
+function tRender(){
+  var box=$('tlist');box.innerHTML='';
+  TS.ids.forEach(function(id){
+    var k=TK[id],row=document.createElement('div');row.className='tk'+(TS.done[id]?' ok':'');
+    var ck=document.createElement('div');ck.className='ck';ck.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 12.5l4 4 10-10"/></svg>';
+    var tx=document.createElement('div');tx.className='tx';
+    var b=document.createElement('b');b.textContent=tTitle(id);var sp=document.createElement('span');sp.textContent=tProg(id);
+    tx.appendChild(b);tx.appendChild(sp);
+    var rw=document.createElement('div');rw.className='rw';rw.innerHTML='+'+k.r+pearlSvg;
+    row.appendChild(ck);row.appendChild(tx);row.appendChild(rw);box.appendChild(row);
+  });
+  var n=tDoneN(),L2=TS.ids.length;
+  $('tsub').textContent=n===L2?'Всё выполнено! Подарок за все задания получен. Завтра будут новые.':
+    'Выполнено '+n+' из '+L2+'. За все десять — подарок: ещё '+T_BONUS+' жемчужин. Завтра будут новые задания.';
+}
+function tOpen(isNew){tCheckDay();tQ=[];clearTimeout(tQT);tQT=0;clearTimeout(tTimer);$('toast').classList.remove('on');$('tnew').hidden=!isNew;tRender();showSheet('shTasks');sndSoft();buzz(6);}
+$('tasks').addEventListener('click',function(){hideHint();tOpen(false);});
+$('tok').addEventListener('click',function(){hideSheet();});
+function tAgain(){tCheckDay();if(Date.now()-TS.t0>=36e5)tEv('again');}
+document.addEventListener('visibilitychange',function(){if(!document.hidden)tAgain();});
+setInterval(function(){if(!document.hidden){tCheckDay();var need=TS.ids.some(function(i){return TK[i].time&&!TS.done[i];});if(need)tEv('stay',5);}},5000);
 
 /* ---------- цикл ---------- */
 function frame(ms){
@@ -1508,10 +1622,10 @@ function dailyCheck(first){
   var td=dayKey();
   if(S.lastVisit===td)return;
   var gap=S.lastVisit?daysBetween(S.lastVisit,td):0;
-  S.lastVisit=td;S.pearls+=3;save();
+  S.lastVisit=td;S.pearls+=6;save();
   setTimeout(function(){
-    pearlFx('+3');refreshHud(true);
-    toast(gap>1?'С возвращением! Рыбки скучали. Вам — 3 жемчужины.':'Жемчужины за визит: 3');
+    pearlFx('+6');refreshHud(true);
+    toast(gap>1?'С возвращением! Рыбки скучали. Вам — 6 жемчужин.':'Жемчужины за визит: 6');
   },first?1100:300);
 }
 
@@ -1531,12 +1645,14 @@ resize();
     $('hint').innerHTML='<b>Коснитесь <i>воды</i></b><span>Рыбки приплывут за кормом. Коснитесь рыбки, чтобы узнать её имя.</span>';
     setTimeout(hideHint,9000);
   }else $('hint').classList.add('off');
+  tSave();tBtn();tAgain();
   if(!wasNew)dailyCheck(true);
+  if(!lsGet(KEY_TSEEN)){lsSet(KEY_TSEEN,'1');if(!wasNew)setTimeout(function(){if(!openSheetId)tOpen(true);},2600);}
   else if(Lbored)toast('Рыбки скучали.');
   kick();
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(rs);
 })();
-window.__aq={S:S,F:function(){return F;},feed:feedAt,flakes:function(){return flakes;},cloud:function(){return cloud;},L:function(){return L;}};
+window.__aq={TS:function(){return TS;},tEv:tEv,S:S,F:function(){return F;},feed:feedAt,flakes:function(){return flakes;},cloud:function(){return cloud;},L:function(){return L;}};
 })();
 </script>
 </body>
