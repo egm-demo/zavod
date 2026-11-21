@@ -953,7 +953,7 @@ function resize(){
   var w=tank.clientWidth,h=tank.clientHeight;if(w<100||h<100)return;
   var ow=W,oh=H;
   DPR=Math.min(window.devicePixelRatio||1,2.5);
-  W=w;H=h;u=clamp(W/330,.9,1.35);
+  W=w;H=h;u=clamp(W/330,.9,1.35)/1.5;
   if(BGOK){BS=Math.max(W/BGW,H/BGH);BDW=BGW*BS;BDH=BGH*BS;BDX=(W-BDW)*.5;BDY=H-BDH;sy=Math.round(H*.07);gy=Math.round(BDY+BDH*.915);}
   else{sy=Math.round(H*.17);gy=H-Math.round(H*.11);}
   cv.width=Math.round(w*DPR);cv.height=Math.round(h*DPR);
