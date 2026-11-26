@@ -193,7 +193,7 @@ var DECOR={
   amphora:{n:'Амфора',d:'Узор в золотых знаках.',price:6},
   cat:    {n:'Бастет',d:'Каменная кошка. Хранит пруд.',price:12,once:true}
 };
-var CAPS={fish:18,plant:28,decor:16};
+var CAPS={fish:18,plant:45,decor:16};
 var KV=[
   {base:'#f4ece0',top:'#c8bdac',bot:'#fffaf0',pt:['#e2492a','#ec6a31'],ink:null,fin:'#f6c9ae'},
   {base:'#f2eadc',top:'#c4b9a8',bot:'#fffaf0',pt:['#e2492a','#f07a38'],ink:'#2a2730',fin:'#f3c4aa'},
@@ -895,6 +895,33 @@ function drawPlant(c,k,x,gyy,syy,u2,t,seed,pre,L2){
     drawLilyFlower(c,x+5*u2,py-1.5*u2,u2,k==='lilyW',t,typeof L2==='number'?L2:0);
   }
 }
+/* кэш растений: каждое растение рисуется один раз в картинку, качание — дешёвым сдвигом полос */
+var PC={},PCsc=0,pcBud=0,PHW={grass:48,weed:38,reed:32};
+function plantImg(k,seed,gyy,syy,sc){
+  var key=k+'|'+seed+'|'+Math.round(gyy)+'|'+sc,e=PC[key];if(e)return e;if(pcBud<=0)return null;pcBud--;
+  var hw=PHW[k]*u,top=k==='reed'?syy-46*u:gyy-(k==='weed'?160:118)*u,bot=gyy+8*u,w=Math.ceil(hw*2*sc),h=Math.ceil((bot-top)*sc);
+  var cc=document.createElement('canvas');cc.width=w;cc.height=h;var x=cc.getContext('2d');
+  x.setTransform(sc,0,0,sc,hw*sc,-top*sc);drawPlant(x,k,0,gyy,syy,u,0,seed,true,0);
+  e={c:cc,hw:hw,top:top,bot:bot,sc:sc};PC[key]=e;return e;
+}
+function drawPlantC(c,k,px,gyy,syy,t,seed){
+  if(!PHW[k])return drawPlant(c,k,px,gyy,syy,u,t,seed,false,0);
+  var s0=DPR*camZ,sc=s0<=1.6?1.5:s0<=2.6?2.5:s0<=4?4:6;sc=Math.min(sc,Q===0?4:6);
+  if(sc!==PCsc){for(var kk in PC)if(PC[kk].sc!==sc&&PC[kk].sc!==1.5)delete PC[kk];PCsc=sc;}
+  var e=plantImg(k,seed,gyy,syy,sc)||PC[k+'|'+seed+'|'+Math.round(gyy)+'|1.5']||(sc!==1.5?plantImg(k,seed,gyy,syy,1.5):null);
+  if(!e)return drawPlant(c,k,px,gyy,syy,u,t,seed,false,0);
+  var hh=e.bot-e.top,full=gyy-e.top,N=Q===0?3:6,i,A=(k==='grass'?13:k==='weed'?14:5)*u,sp=k==='weed'?.6:k==='reed'?.5:.7,ph=t*sp+seed*1.37;
+  if(reduce)A*=.4;
+  var y0=e.bot,dx0=0,f,y1,dx1,cs;
+  for(i=1;i<=N;i++){
+    y1=e.bot-hh*i/N;f=clamp((gyy-y1)/full,0,1);dx1=A*f*f*Math.sin(ph-f*1.4);
+    cs=-(dx1-dx0)/(y0-y1);
+    var sy0=(y1-e.top)*e.sc,shh=(y0-y1)*e.sc+(i<N?1:0);
+    c.save();c.transform(1,0,cs,1,dx0-cs*y0,0);
+    c.drawImage(e.c,0,sy0,e.c.width,Math.min(shh,e.c.height-sy0),px-e.hw,y1,e.hw*2,(y0-y1)+(i<N?1/e.sc:0));
+    c.restore();y0=y1;dx0=dx1;
+  }
+}
 function drawDecor(c,k,x,gyy,u2,seed,t,night){
   var r=rng(seed*29+3),i,g;
   c.fillStyle='rgba(0,0,0,.25)';
@@ -1018,7 +1045,7 @@ function resize(){
   if(BGOK){BS=Math.max(W/BGW,H/BGH);BDW=BGW*BS;BDH=BGH*BS;BDX=(W-BDW)*.5;BDY=H-BDH;sy=Math.round(H*.07);gy=Math.round(BDY+BDH*.915);}
   else{sy=Math.round(H*.17);gy=H-Math.round(H*.11);}
   cv.width=Math.round(w*DPR);cv.height=Math.round(h*DPR);
-  camFix();bgD=paintBg(false);bgN=paintBg(true);glassC=paintGlass();
+  PC={};PCsc=0;camFix();bgD=paintBg(false);bgN=paintBg(true);glassC=paintGlass();
   if(BGOK){fgD=paintFg(false);fgN=paintFg(true);}
   LAY=document.createElement('canvas');LAY.width=cv.width;LAY.height=cv.height;LAYC=LAY.getContext('2d');
   if(ow&&F.length){
@@ -1153,7 +1180,7 @@ function flyPos(fl,t){
 /* ---------- отрисовка ---------- */
 function render(t){
   var c=ctx,i,f,g,ts=reduce?t*.3:t;
-  c.setTransform(DPR*camZ,0,0,DPR*camZ,DPR*camX,DPR*camY);vx0=-camX/camZ;vx1=vx0+W/camZ;
+  c.setTransform(DPR*camZ,0,0,DPR*camZ,DPR*camX,DPR*camY);vx0=-camX/camZ;vx1=vx0+W/camZ;pcBud=PCsc?4:40;
   var night=1-L;
   if(L>.002)c.drawImage(bgD,0,0,W,H);
   if(night>.002){c.globalAlpha=L>.002?night:1;c.drawImage(bgN,0,0,W,H);c.globalAlpha=1;}
@@ -1221,7 +1248,7 @@ function render(t){
   S.decor.forEach(function(d){items.push({z:1,d:d});});
   var lilyGlow=Math.max(0,night-.3)*1.2;
   layer(c,function(x){
-    items.forEach(function(it){if(it.z===0&&!(BGOK&&it.p.id<=7)&&vis(it.p.x*W,70*u))drawPlant(x,it.p.k,it.p.x*W,G(it.p.x*W)+2*u,sy,u,ts,it.p.id,false,(it.p.k==='lily'||it.p.k==='lilyW')?'stems':0);});
+    items.forEach(function(it){if(it.z===0&&!(BGOK&&it.p.id<=7)&&vis(it.p.x*W,70*u)){if(it.p.k==='lily'||it.p.k==='lilyW')drawPlant(x,it.p.k,it.p.x*W,G(it.p.x*W)+2*u,sy,u,ts,it.p.id,false,'stems');else drawPlantC(x,it.p.k,it.p.x*W,G(it.p.x*W)+2*u,sy,ts,it.p.id);}});
     items.forEach(function(it){if(it.z===1&&!(BGOK&&it.d.id<=7)&&(!BGOK||it.d.x<=.5)&&vis(it.d.x*W,60*u))drawDecor(x,it.d.k,it.d.x*W,G(it.d.x*W)+3*u,u,it.d.id,ts,night>.4);});
   });
   // тени рыб на песке
@@ -1239,7 +1266,7 @@ function render(t){
   // передние растения
   if(BGOK){if(L>.002)c.drawImage(fgD,0,0,W,H);if(night>.002){c.globalAlpha=L>.002?night:1;c.drawImage(fgN,0,0,W,H);c.globalAlpha=1;}}
   layer(c,function(x){
-    items.forEach(function(it){if(it.z===2&&!(BGOK&&it.p.id<=7)&&vis(it.p.x*W,70*u))drawPlant(x,it.p.k,it.p.x*W,G(it.p.x*W)+3*u,sy,u,ts,it.p.id,false,0);});
+    items.forEach(function(it){if(it.z===2&&!(BGOK&&it.p.id<=7)&&vis(it.p.x*W,70*u))drawPlantC(x,it.p.k,it.p.x*W,G(it.p.x*W)+3*u,sy,ts,it.p.id);});
     if(BGOK)items.forEach(function(it){if(it.z===1&&it.d.id>7&&it.d.x>.5&&vis(it.d.x*W,60*u))drawDecor(x,it.d.k,it.d.x*W,G(it.d.x*W)+3*u,u,it.d.id,ts,night>.4);});
   });
   // корм
